@@ -1,0 +1,1 @@
+﻿-- Roles are string-based in this scaffold: ADMIN, MANAGER, EMPLOYEE

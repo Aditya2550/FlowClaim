@@ -1,0 +1,20 @@
+openapi: 3.0.3
+info:
+  title: Reimbursement API
+  version: 1.0.0
+paths:
+  /api/v1/companies/bootstrap:
+    post:
+      summary: Auto-provision first company and admin
+  /api/v1/expenses:
+    post:
+      summary: Create multi-currency expense
+  /api/v1/expenses/ocr:
+    post:
+      summary: OCR receipt parser
+  /api/v1/approvals/queue:
+    get:
+      summary: Manager/Admin decision queue
+  /api/v1/analytics/summary:
+    get:
+      summary: Aggregate dashboard metrics
