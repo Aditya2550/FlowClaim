@@ -1,6 +1,8 @@
 ﻿import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import routes from "./routes/index.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -9,6 +11,8 @@ import { env } from "./config/env.js";
 
 const app = express();
 app.use(helmet());
+app.use(compression());
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(cors({ origin: env.FRONTEND_URL }));
 app.use(morgan("dev"));
 app.use(express.json({ limit: "5mb" }));
