@@ -7,7 +7,6 @@ import approvalRoutes from "../modules/approvals/approvals.routes.js";
 import workflowRoutes from "../modules/workflows/workflows.routes.js";
 import analyticsRoutes from "../modules/analytics/analytics.routes.js";
 import notificationRoutes from "../modules/notifications/notifications.routes.js";
-import aiRoutes from "../modules/ai/ai.routes.js";
 
 //these are routes
 
@@ -20,6 +19,5 @@ router.use("/approvals", approvalRoutes);
 router.use("/workflows", workflowRoutes);
 router.use("/analytics", analyticsRoutes);
 router.use("/notifications", notificationRoutes);
-router.use("/ai", aiRoutes);
 
 export default router;
