@@ -4,16 +4,19 @@ import { env } from "../../config/env.js";
 import { query } from "../../config/db.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { authModel } from "./auth.model.js";
+import { randomUUID } from "crypto";
+import { redis } from "../../config/redis.js";
 
 function signAuthToken(user) {
   return jwt.sign(
     {
       userId: user.id,
       role: user.role,
-      companyId: user.company_id
+      companyId: user.company_id,
+      jti: randomUUID(),
     },
     env.JWT_SECRET,
-    { expiresIn: "24h" }
+    { expiresIn: "24h" },
   );
 }
 
@@ -33,13 +36,17 @@ async function detectCountryCode(countryCodeFromRequest) {
 
 async function countryInfo(countryCode) {
   try {
-    const res = await fetch(`https://restcountries.com/v3.1/alpha/${countryCode}`);
+    const res = await fetch(
+      `https://restcountries.com/v3.1/alpha/${countryCode}`,
+    );
     const data = await res.json();
     const country = Array.isArray(data) ? data[0] : null;
-    const currencies = country?.currencies ? Object.keys(country.currencies) : [];
+    const currencies = country?.currencies
+      ? Object.keys(country.currencies)
+      : [];
     return {
       countryCode: country?.cca2 || countryCode,
-      currency: currencies[0] || "USD"
+      currency: currencies[0] || "USD",
     };
   } catch {
     return { countryCode, currency: "USD" };
@@ -52,7 +59,7 @@ export const register = asyncHandler(async (req, res) => {
     name,
     email,
     password,
-    countryCode: requestedCountryCode
+    countryCode: requestedCountryCode,
   } = req.body;
 
   const existing = await authModel.findByEmail(email);
@@ -69,14 +76,14 @@ export const register = asyncHandler(async (req, res) => {
     const company = await authModel.createCompany({
       name: companyName,
       currency: country.currency,
-      countryCode: country.countryCode
+      countryCode: country.countryCode,
     });
 
     const admin = await authModel.createAdmin({
       companyId: company.rows[0].id,
       name,
       email,
-      passwordHash
+      passwordHash,
     });
 
     await query("COMMIT");
@@ -85,7 +92,7 @@ export const register = asyncHandler(async (req, res) => {
     return res.status(201).json({
       token,
       company: company.rows[0],
-      user: admin.rows[0]
+      user: admin.rows[0],
     });
   } catch (error) {
     await query("ROLLBACK");
@@ -111,9 +118,27 @@ export const login = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      managerId: user.manager_id
-    }
+      managerId: user.manager_id,
+    },
   });
+});
+
+export const logout = asyncHandler(async (req, res) => {
+  const header = req.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
+  if (!token) return res.status(400).json({ message: "No token provided" });
+
+  const decoded = jwt.decode(token);
+  if (!decoded?.jti || !decoded?.exp) {
+    return res.status(400).json({ message: "Invalid token" });
+  }
+
+  const ttlSeconds = decoded.exp - Math.floor(Date.now() / 1000);
+  if (ttlSeconds > 0) {
+    await redis.set(`blacklist:${decoded.jti}`, "true", { ex: ttlSeconds });
+  }
+
+  res.json({ message: "Logged out successfully" });
 });
 
 export const me = asyncHandler(async (req, res) => {
