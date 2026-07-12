@@ -1,22 +1,37 @@
 ﻿import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
+import { redis } from "../config/redis.js";
 
-export function authenticate(req, res, next) {
+export async function authenticate(req, res, next) {
   const header = req.headers.authorization || "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
   if (!token) return res.status(401).json({ message: "Missing token" });
 
+  let decoded;
   try {
-    const decoded = jwt.verify(token, env.JWT_SECRET);
-    req.user = {
-      userId: decoded.userId || decoded.id,
-      id: decoded.userId || decoded.id,
-      role: decoded.role,
-      companyId: decoded.companyId,
-      email: decoded.email
-    };
-    next();
+    decoded = jwt.verify(token, env.JWT_SECRET);
   } catch {
-    res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: "Invalid token" });
   }
+
+  if (decoded.jti) {
+    try {
+      const isBlacklisted = await redis.exists(`blacklist:${decoded.jti}`);
+      if (isBlacklisted) {
+        return res.status(401).json({ message: "Token has been revoked" });
+      }
+    } catch (error) {
+      // If Redis is unreachable, dont lock out every user
+      console.error("Redis blacklist check failed:", error.message);
+    }
+  }
+
+  req.user = {
+    userId: decoded.userId || decoded.id,
+    id: decoded.userId || decoded.id,
+    role: decoded.role,
+    companyId: decoded.companyId,
+    email: decoded.email,
+  };
+  next();
 }
