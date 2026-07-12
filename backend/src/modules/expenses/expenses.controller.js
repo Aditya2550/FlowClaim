@@ -1,11 +1,10 @@
 ﻿import { pool } from "../../config/db.js";
-import { parseReceiptWithOcr } from "../../services/ocr.service.js";
 import {
   getApprovalTimeline,
   getCurrentPendingApprover,
   getPendingApprovers,
   initializeApprovalSteps,
-  processApproval
+  processApproval,
 } from "../../services/approvalEngine.js";
 import { expensesModel } from "./expenses.model.js";
 
@@ -36,7 +35,7 @@ async function convertUsingExchangeRateApi(amount, fromCurrency, toCurrency) {
   const rate = Number(data.rates[target]);
   return {
     rate,
-    convertedAmount: Number((Number(amount) * rate).toFixed(2))
+    convertedAmount: Number((Number(amount) * rate).toFixed(2)),
   };
 }
 
@@ -46,8 +45,10 @@ export async function createExpense(req, res) {
       return fail(res, 403, "Only employees can submit expenses");
     }
 
-    const { amount, currency, category, vendor, description, receipt_url } = req.body;
-    if (!amount || Number(amount) <= 0) return fail(res, 400, "Amount must be greater than zero");
+    const { amount, currency, category, vendor, description, receipt_url } =
+      req.body;
+    if (!amount || Number(amount) <= 0)
+      return fail(res, 400, "Amount must be greater than zero");
     if (!currency) return fail(res, 400, "Currency is required");
     if (!ALLOWED_CATEGORIES.includes(category)) {
       return fail(res, 400, "Invalid category");
@@ -57,19 +58,29 @@ export async function createExpense(req, res) {
     try {
       await client.query("BEGIN");
 
-      const submitter = await expensesModel.findUserById(req.user.userId, client);
+      const submitter = await expensesModel.findUserById(
+        req.user.userId,
+        client,
+      );
       if (!submitter || submitter.company_id !== req.user.companyId) {
         await client.query("ROLLBACK");
         return fail(res, 403, "User does not belong to this company");
       }
 
-      const company = await expensesModel.findCompanyBaseCurrency(req.user.companyId, client);
+      const company = await expensesModel.findCompanyBaseCurrency(
+        req.user.companyId,
+        client,
+      );
       if (!company) {
         await client.query("ROLLBACK");
         return fail(res, 404, "Company not found");
       }
 
-      const conversion = await convertUsingExchangeRateApi(amount, currency, company.currency);
+      const conversion = await convertUsingExchangeRateApi(
+        amount,
+        currency,
+        company.currency,
+      );
 
       const expense = await expensesModel.insertExpense(
         {
@@ -82,9 +93,9 @@ export async function createExpense(req, res) {
           category,
           vendor: vendor || null,
           description: description || null,
-          receiptUrl: receipt_url || null
+          receiptUrl: receipt_url || null,
         },
-        client
+        client,
       );
 
       await initializeApprovalSteps(expense.id, req.user.companyId, client);
@@ -111,7 +122,9 @@ export async function listExpenses(req, res) {
       return fail(res, 403, "Not allowed");
     }
 
-    const status = req.query.status ? String(req.query.status).toLowerCase() : undefined;
+    const status = req.query.status
+      ? String(req.query.status).toLowerCase()
+      : undefined;
     if (status && !["pending", "approved", "rejected"].includes(status)) {
       return fail(res, 400, "Invalid status filter");
     }
@@ -120,7 +133,7 @@ export async function listExpenses(req, res) {
       userId: req.user.userId,
       companyId: req.user.companyId,
       role,
-      status
+      status,
     });
 
     return ok(res, 200, rows);
@@ -138,7 +151,7 @@ export async function listPendingForApprover(req, res) {
 
     const rows = await expensesModel.listPendingForApprover({
       userId: req.user.userId,
-      companyId: req.user.companyId
+      companyId: req.user.companyId,
     });
 
     return ok(res, 200, rows);
@@ -161,7 +174,11 @@ export async function approveExpense(req, res) {
     try {
       await client.query("BEGIN");
 
-      const expense = await expensesModel.findExpenseForCompany(id, req.user.companyId, client);
+      const expense = await expensesModel.findExpenseForCompany(
+        id,
+        req.user.companyId,
+        client,
+      );
       if (!expense) {
         await client.query("ROLLBACK");
         return fail(res, 404, "Expense not found");
@@ -172,19 +189,27 @@ export async function approveExpense(req, res) {
         req.user.userId,
         "approved",
         comment,
-        client
+        client,
       );
 
       await client.query("COMMIT");
       const updated = await expensesModel.getExpenseWithSteps(id);
       const currentPendingApprover = await getCurrentPendingApprover(id, pool);
       const timeline = await getApprovalTimeline(id, pool);
-      return ok(res, 200, { ...updated, engine: engineResult, currentPendingApprover, timeline });
+      return ok(res, 200, {
+        ...updated,
+        engine: engineResult,
+        currentPendingApprover,
+        timeline,
+      });
     } catch (error) {
       await client.query("ROLLBACK");
-      if (error.message === "Expense not found") return fail(res, 404, error.message);
-      if (error.message === "Not your turn to approve") return fail(res, 403, error.message);
-      if (error.message === "Expense already finalized") return fail(res, 400, error.message);
+      if (error.message === "Expense not found")
+        return fail(res, 404, error.message);
+      if (error.message === "Not your turn to approve")
+        return fail(res, 403, error.message);
+      if (error.message === "Expense already finalized")
+        return fail(res, 400, error.message);
       return fail(res, 500, error.message || "Failed to approve expense");
     } finally {
       client.release();
@@ -211,7 +236,11 @@ export async function rejectExpense(req, res) {
     try {
       await client.query("BEGIN");
 
-      const expense = await expensesModel.findExpenseForCompany(id, req.user.companyId, client);
+      const expense = await expensesModel.findExpenseForCompany(
+        id,
+        req.user.companyId,
+        client,
+      );
       if (!expense) {
         await client.query("ROLLBACK");
         return fail(res, 404, "Expense not found");
@@ -222,20 +251,29 @@ export async function rejectExpense(req, res) {
         req.user.userId,
         "rejected",
         String(comment).trim(),
-        client
+        client,
       );
 
       await client.query("COMMIT");
       const updated = await expensesModel.getExpenseWithSteps(id);
       const currentPendingApprover = await getCurrentPendingApprover(id, pool);
       const timeline = await getApprovalTimeline(id, pool);
-      return ok(res, 200, { ...updated, engine: engineResult, currentPendingApprover, timeline });
+      return ok(res, 200, {
+        ...updated,
+        engine: engineResult,
+        currentPendingApprover,
+        timeline,
+      });
     } catch (error) {
       await client.query("ROLLBACK");
-      if (error.message === "Expense not found") return fail(res, 404, error.message);
-      if (error.message === "Not your turn to approve") return fail(res, 403, error.message);
-      if (error.message === "Expense already finalized") return fail(res, 400, error.message);
-      if (error.message === "Rejection comment is required") return fail(res, 400, error.message);
+      if (error.message === "Expense not found")
+        return fail(res, 404, error.message);
+      if (error.message === "Not your turn to approve")
+        return fail(res, 403, error.message);
+      if (error.message === "Expense already finalized")
+        return fail(res, 400, error.message);
+      if (error.message === "Rejection comment is required")
+        return fail(res, 400, error.message);
       return fail(res, 500, error.message || "Failed to reject expense");
     } finally {
       client.release();
@@ -246,26 +284,26 @@ export async function rejectExpense(req, res) {
 }
 
 export async function parseReceipt(req, res) {
-  try {
-    const { fileBase64 } = req.body;
-    const extracted = await parseReceiptWithOcr(fileBase64);
-    return ok(res, 200, extracted);
-  } catch (error) {
-    return fail(res, 500, error.message || "OCR failed");
-  }
+  return fail(res, 501, "OCR feature not implemented");
 }
 
 export async function getExpenseApprovalStatus(req, res) {
   try {
     const { id } = req.params;
-    const expense = await expensesModel.findExpenseForCompany(id, req.user.companyId, pool);
+    const expense = await expensesModel.findExpenseForCompany(
+      id,
+      req.user.companyId,
+      pool,
+    );
     if (!expense) {
       return fail(res, 404, "Expense not found");
     }
 
     const timeline = await getApprovalTimeline(id, pool);
     const pendingApprovers = await getPendingApprovers(id, pool);
-    const approvedCount = timeline.filter((step) => step.status === "approved").length;
+    const approvedCount = timeline.filter(
+      (step) => step.status === "approved",
+    ).length;
     const totalSteps = timeline.length;
     const currentStep = pendingApprovers[0]?.sequence || null;
 
@@ -274,7 +312,7 @@ export async function getExpenseApprovalStatus(req, res) {
       totalSteps,
       approvedCount,
       pendingApprovers,
-      timeline
+      timeline,
     });
   } catch (error) {
     return fail(res, 500, error.message || "Failed to fetch approval status");
