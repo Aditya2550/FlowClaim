@@ -118,7 +118,9 @@ export async function createExpense(req, res) {
 export async function listExpenses(req, res) {
   try {
     const role = String(req.user.role || "").toLowerCase();
-    if (!["employee", "manager", "admin"].includes(role)) {
+    if (
+      !["employee", "manager", "admin", "director", "finance"].includes(role)
+    ) {
       return fail(res, 403, "Not allowed");
     }
 
@@ -145,8 +147,12 @@ export async function listExpenses(req, res) {
 export async function listPendingForApprover(req, res) {
   try {
     const role = String(req.user.role || "").toLowerCase();
-    if (!["manager", "admin"].includes(role)) {
-      return fail(res, 403, "Only manager/admin can view pending approvals");
+    if (!["manager", "admin", "director", "finance"].includes(role)) {
+      return fail(
+        res,
+        403,
+        "Only director/finance/admin/manager can view pending approvals",
+      );
     }
 
     const rows = await expensesModel.listPendingForApprover({
@@ -163,8 +169,12 @@ export async function listPendingForApprover(req, res) {
 export async function approveExpense(req, res) {
   try {
     const role = String(req.user.role || "").toLowerCase();
-    if (!["manager", "admin"].includes(role)) {
-      return fail(res, 403, "Only manager/admin can approve expenses");
+    if (!["manager", "admin", "director", "finance"].includes(role)) {
+      return fail(
+        res,
+        403,
+        "Only director/finance/admin/manager can approve expenses",
+      );
     }
 
     const { id } = req.params;
@@ -222,8 +232,12 @@ export async function approveExpense(req, res) {
 export async function rejectExpense(req, res) {
   try {
     const role = String(req.user.role || "").toLowerCase();
-    if (!["manager", "admin"].includes(role)) {
-      return fail(res, 403, "Only manager/admin can reject expenses");
+    if (!["manager", "admin", "director", "finance"].includes(role)) {
+      return fail(
+        res,
+        403,
+        "Only director/finance/admin/manager can reject expenses",
+      );
     }
 
     const { id } = req.params;

@@ -22,8 +22,16 @@ router.get(
   authorize("employee", "manager", "admin"),
   getExpenseApprovalStatus,
 );
-router.patch("/:id/approve", authorize("manager", "admin"), approveExpense);
-router.patch("/:id/reject", authorize("manager", "admin"), rejectExpense);
+router.patch(
+  "/:id/approve",
+  authorize("manager", "finance", "director", "admin"),
+  approveExpense,
+);
+router.patch(
+  "/:id/reject",
+  authorize("manager", "finance", "director", "admin"),
+  rejectExpense,
+);
 router.post("/ocr", parseReceipt);
 
 export default router;
