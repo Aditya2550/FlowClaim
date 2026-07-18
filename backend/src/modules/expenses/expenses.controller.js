@@ -1,4 +1,6 @@
 ﻿import { pool } from "../../config/db.js";
+import { notificationsModel } from "../notifications/notifications.model.js";
+import { notifyUser } from "../../services/notification.service.js";
 import {
   getApprovalTimeline,
   getCurrentPendingApprover,
@@ -203,6 +205,24 @@ export async function approveExpense(req, res) {
       );
 
       await client.query("COMMIT");
+
+      const nextApprover = await getCurrentPendingApprover(id, pool);
+      if (nextApprover) {
+        const note = await notificationsModel.create({
+          userId: nextApprover.id,
+          title: "Expense pending your approval",
+          body: `An expense from your queue needs review.`,
+        });
+        notifyUser(nextApprover.id, note.rows[0]);
+      } else {
+        const note = await notificationsModel.create({
+          userId: expense.user_id,
+          title: "Expense approved",
+          body: `Your expense has been fully approved.`,
+        });
+        notifyUser(expense.user_id, note.rows[0]);
+      }
+
       const updated = await expensesModel.getExpenseWithSteps(id);
       const currentPendingApprover = await getCurrentPendingApprover(id, pool);
       const timeline = await getApprovalTimeline(id, pool);
@@ -269,6 +289,12 @@ export async function rejectExpense(req, res) {
       );
 
       await client.query("COMMIT");
+      const note = await notificationsModel.create({
+        userId: expense.user_id,
+        title: "Expense rejected",
+        body: `Your expense was rejected: ${String(comment).trim()}`,
+      });
+      notifyUser(expense.user_id, note.rows[0]);
       const updated = await expensesModel.getExpenseWithSteps(id);
       const currentPendingApprover = await getCurrentPendingApprover(id, pool);
       const timeline = await getApprovalTimeline(id, pool);
