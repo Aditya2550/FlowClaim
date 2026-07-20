@@ -2,13 +2,13 @@
 import { analyticsQueries } from "../../db/queries/analytics/analytics.queries.js";
 
 export const analyticsModel = {
-  byCategory() {
-    return query(analyticsQueries.byCategory);
+  byCategory(companyId) {
+    return query(analyticsQueries.byCategory, [companyId]);
   },
-  byUser() {
-    return query(analyticsQueries.byUser);
+  byUser(companyId) {
+    return query(analyticsQueries.byUser, [companyId]);
   },
-  riskSummary() {
-    return query(analyticsQueries.riskSummary);
-  }
+  riskSummary(companyId) {
+    return query(analyticsQueries.riskSummary, [companyId]);
+  },
 };
