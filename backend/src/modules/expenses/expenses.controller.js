@@ -10,8 +10,6 @@ import {
 } from "../../services/approvalEngine.js";
 import { expensesModel } from "./expenses.model.js";
 
-const ALLOWED_CATEGORIES = ["Travel", "Food", "Office", "Other"];
-
 function fail(res, status, error) {
   return res.status(status).json({ success: false, error });
 }
@@ -49,12 +47,6 @@ export async function createExpense(req, res) {
 
     const { amount, currency, category, vendor, description, receipt_url } =
       req.body;
-    if (!amount || Number(amount) <= 0)
-      return fail(res, 400, "Amount must be greater than zero");
-    if (!currency) return fail(res, 400, "Currency is required");
-    if (!ALLOWED_CATEGORIES.includes(category)) {
-      return fail(res, 400, "Invalid category");
-    }
 
     const client = await pool.connect();
     try {
