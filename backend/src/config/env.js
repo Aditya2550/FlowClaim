@@ -8,5 +8,8 @@ export const env = {
   JWT_SECRET: process.env.JWT_SECRET || "change_me",
   DATABASE_URL: process.env.DATABASE_URL || "",
   COMPANY_DEFAULT_COUNTRY: process.env.COMPANY_DEFAULT_COUNTRY || "IN",
-  EXCHANGE_API_URL: process.env.EXCHANGE_API_URL || "https://api.exchangerate.host"
+  EXCHANGE_API_URL:
+    process.env.EXCHANGE_API_URL || "https://api.exchangerate.host",
+  UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL || "",
+  UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN || "",
 };
