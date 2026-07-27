@@ -1,57 +1,121 @@
-﻿# 💸 Reimbursement Management System
+# Reimbursify
 
-An automated, real-time enterprise expense management platform built in 8 hours for [Insert Hackathon Name]. 
+A production-grade expense reimbursement platform with a configurable, multi-strategy approval engine, strict role-based access control, and real-time notifications.
 
-This system eliminates manual expense tracking by introducing a dynamic, multi-level approval engine, strict Role-Based Access Control (RBAC), and real-time Socket.io notifications.
-
-## 🚀 Tech Stack
-* **Frontend:** React, Tailwind CSS, Vite
-* **Backend:** Node.js, Express.js
-* **Database:** PostgreSQL
-* **Real-time:** Socket.io
-* **Security:** JWT Authentication
+Originally built as an 8-hour hackathon prototype, this project has been rebuilt from the ground up: audited for architectural debt, migrated to a managed cloud stack, and hardened with proper authentication, validation, and authorization layers.
 
 ---
 
-<p align="center">
-  <img src="./assets/approval_flow.svg" alt="System Approval Workflow" width="800"/>
-</p>
+## Overview
 
---- 
+Reimbursify lets employees submit expense claims that route through a company-configured approval chain — sequential, percentage-based, or hybrid — before being finalized. Admins define the rule; the engine enforces it. Every step is real-time: approvers get notified the moment an expense reaches them.
 
-## ⚙️ Core Architecture & Approval Workflow
-Our backend features a robust, state-machine-like rule engine that handles complex organizational hierarchies. 
+## Tech Stack
 
-1. **Submission & Processing:** * **Employee** submits an expense claim and receipt.
-   * **System** immediately validates the data and automatically converts the currency to the company's default standard via external API.
-2. **Policy Routing:**
-   * The system evaluates the **"Is Manager First?"** policy flag. If active, it routes directly to the direct manager.
-   * A **Socket.io** event pushes a live notification to the manager's dashboard.
-3. **Dynamic Rule Engine:**
-   * If the manager approves (or if the manager step is skipped), the expense enters the **Rule Engine**.
-   * The engine processes **Sequential Steps** (e.g., Finance $\rightarrow$ Director).
-   * It evaluates **Custom Conditions**, such as:
-     * **Percentage Rule:** (e.g., Requires 60% of assigned approvers to agree).
-     * **Override Rule:** (e.g., Immediate approval if the CFO signs off).
-4. **Final Resolution:**
-   * **Approved:** If conditions are met, the expense is finalized.
-   * **Rejected:** If a manager rejects it, or if a threshold fails, it is immediately marked as rejected.
-   * **Live Loopback:** In all final outcomes, a Socket.io event triggers a live notification back to the employee, updating their ledger without a page refresh.
+**Frontend**
+React · Vite · Tailwind CSS — deployed on Vercel
 
----
+**Backend**
+Node.js · Express — deployed on Railway
 
-## ✨ Key Features
+**Database**
+PostgreSQL via Supabase
 
-* **Strict Role-Based Access Control (RBAC):** Secure JWT session persistence ensures Employees, Managers, and Admins are strictly isolated to their specific dashboard views and API endpoints.
-* **Real-Time Live Notifications:** Integrated Socket.io rooms push status updates instantly across the platform.
-* **Complex Workflow Builder:** Admins can visually configure approval rules (Sequential, Percentage-based, or Specific Approver) directly from their dashboard.
-* **Live Analytics:** A data-backed dashboard aggregating pending capital, approved expenses, and system bottlenecks using relational PostgreSQL queries.
+**Real-time**
+Socket.io
+
+**Auth**
+JWT with `jti`-based session revocation (blacklist backed by Upstash Redis)
+
+**Validation**
+Zod, applied at the middleware layer
 
 ---
 
-## 🛠️ Local Setup & Installation
+## Core Architecture
 
-**1. Clone the repository**
-```bash
-git clone [https://github.com/Aditya2550/Reimbursement-Management.git](https://github.com/Aditya2550/Reimbursement-Management.git)
+### Approval Engine
+
+Every company configures exactly one active approval rule at a time, chosen from three strategies:
+
+- **Sequential** — expenses move through an ordered chain of roles (e.g. Manager → Finance → Director), one approval unlocking the next.
+- **Percentage** — all users holding a designated role vote in parallel; the expense resolves once a configured approval threshold is met.
+- **Hybrid** — expenses above a configured amount route directly to a single override approver (e.g. CFO); everything else follows a default sequential chain.
+
+Rules are stored append-only, so every configuration change is preserved as history rather than overwritten.
+
+### Authentication & Session Revocation
+
+Standard JWT authentication is extended with real logout support: each token carries a `jti` claim, and revoked tokens are recorded by that identifier — not the full token string — in Redis, with a TTL matching the token's remaining lifetime. If Redis is unreachable, the system fails open rather than locking out every user.
+
+### Notifications
+
+Socket.io pushes real-time updates on every approval-chain transition: the next approver is notified the moment it's their turn, and the submitter is notified on final approval or rejection.
+
+---
+
+## Key Features
+
+- **Configurable approval workflows** — admins choose and tune the routing strategy per company without a deploy.
+- **Strict RBAC** — employee, manager, finance, director, cfo, and admin roles are enforced at both the route and query level, including tenant isolation on analytics data.
+- **Real-time updates** — approvers and submitters see status changes instantly, no polling.
+- **Schema-validated input** — request bodies are validated upstream via Zod, keeping controllers focused on business logic.
+- **Full approval audit trail** — every step of an expense's approval history is queryable, including who acted, when, and with what comment.
+
+---
+
+## Local Setup
+
+### Prerequisites
+
+- Node.js 18+
+- A Supabase project (PostgreSQL)
+- An Upstash Redis database
+
+### 1. Clone the repository
+
+\`\`\`bash
+git clone https://github.com/Aditya2550/Reimbursement-Management.git
 cd Reimbursement-Management
+\`\`\`
+
+### 2. Backend setup
+
+\`\`\`bash
+cd backend
+npm install
+cp .env.example .env
+\`\`\`
+
+Fill in `.env` with your Supabase connection string, JWT secret, and Upstash Redis credentials.
+
+\`\`\`bash
+npm run seed   # optional: populates demo company + users
+npm run dev
+\`\`\`
+
+### 3. Frontend setup
+
+\`\`\`bash
+cd frontend
+npm install
+cp .env.example .env
+\`\`\`
+
+Set `VITE_API_URL` and `VITE_SOCKET_URL` to your backend's address (e.g. `http://localhost:5000/api` and `http://localhost:5000`).
+
+\`\`\`bash
+npm run dev
+\`\`\`
+
+---
+
+## Project Status
+
+This project is under active development, moving through cleanup, cloud migration, full functionality, DevOps tooling, and final polish phases.
+
+---
+
+## License
+
+This project is private and not currently licensed for external use or distribution.
