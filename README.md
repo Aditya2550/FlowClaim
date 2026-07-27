@@ -1,4 +1,4 @@
-# Reimbursify
+# FlowClaim
 
 A production-grade expense reimbursement platform with a configurable, multi-strategy approval engine, strict role-based access control, and real-time notifications.
 
@@ -8,27 +8,23 @@ Originally built as an 8-hour hackathon prototype, this project has been rebuilt
 
 ## Overview
 
-Reimbursify lets employees submit expense claims that route through a company-configured approval chain — sequential, percentage-based, or hybrid — before being finalized. Admins define the rule; the engine enforces it. Every step is real-time: approvers get notified the moment an expense reaches them.
+FlowClaim lets employees submit expense claims that route through a company-configured approval chain - sequential, percentage-based, or hybrid — before being finalized. Admins define the rule; the engine enforces it. Every step is real-time: approvers get notified the moment an expense reaches them.
+
+---
 
 ## Tech Stack
 
-**Frontend**
-React · Vite · Tailwind CSS — deployed on Vercel
-
-**Backend**
-Node.js · Express — deployed on Railway
-
-**Database**
-PostgreSQL via Supabase
-
-**Real-time**
-Socket.io
-
-**Auth**
-JWT with `jti`-based session revocation (blacklist backed by Upstash Redis)
-
-**Validation**
-Zod, applied at the middleware layer
+| Layer | Technology |
+|---|---|
+| Frontend | React, Vite, Tailwind CSS |
+| Backend | Node.js, Express |
+| Database | PostgreSQL (Supabase) |
+| Real-time | Socket.io |
+| Auth | JWT (`jti`-based revocation) |
+| Session store | Upstash Redis |
+| Validation | Zod |
+<!-- | Frontend hosting | Vercel |
+| Backend hosting | Railway | -->
 
 ---
 
@@ -38,15 +34,15 @@ Zod, applied at the middleware layer
 
 Every company configures exactly one active approval rule at a time, chosen from three strategies:
 
-- **Sequential** — expenses move through an ordered chain of roles (e.g. Manager → Finance → Director), one approval unlocking the next.
-- **Percentage** — all users holding a designated role vote in parallel; the expense resolves once a configured approval threshold is met.
-- **Hybrid** — expenses above a configured amount route directly to a single override approver (e.g. CFO); everything else follows a default sequential chain.
+- **Sequential** - expenses move through an ordered chain of roles (e.g. Manager → Finance → Director), one approval unlocking the next.
+- **Percentage** - all users holding a designated role vote in parallel; the expense resolves once a configured approval threshold is met.
+- **Hybrid** - expenses above a configured amount route directly to a single override approver (e.g. CFO); everything else follows a default sequential chain.
 
 Rules are stored append-only, so every configuration change is preserved as history rather than overwritten.
 
 ### Authentication & Session Revocation
 
-Standard JWT authentication is extended with real logout support: each token carries a `jti` claim, and revoked tokens are recorded by that identifier — not the full token string — in Redis, with a TTL matching the token's remaining lifetime. If Redis is unreachable, the system fails open rather than locking out every user.
+Standard JWT authentication is extended with real logout support: each token carries a `jti` claim, and revoked tokens are recorded by that identifier - not the full token string - in Redis, with a TTL matching the token's remaining lifetime. If Redis is unreachable, the system fails open rather than locking out every user.
 
 ### Notifications
 
@@ -61,6 +57,20 @@ Socket.io pushes real-time updates on every approval-chain transition: the next 
 - **Real-time updates** — approvers and submitters see status changes instantly, no polling.
 - **Schema-validated input** — request bodies are validated upstream via Zod, keeping controllers focused on business logic.
 - **Full approval audit trail** — every step of an expense's approval history is queryable, including who acted, when, and with what comment.
+
+---
+
+## Screenshots
+
+*Coming soon*
+
+## System Design
+
+*Coming soon*
+
+## Database Schema
+
+*Coming soon*
 
 ---
 
@@ -112,10 +122,10 @@ npm run dev
 
 ## Project Status
 
-This project is under active development, moving through cleanup, cloud migration, full functionality, DevOps tooling, and final polish phases.
+Under active development — moving through cleanup, cloud migration, full functionality, DevOps tooling, and final polish phases.
 
 ---
 
 ## License
 
-This project is private and not currently licensed for external use or distribution.
+MIT — see [LICENSE](./LICENSE).
