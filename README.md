@@ -15,7 +15,7 @@ FlowClaim lets employees submit expense claims that route through a company-conf
 ## Tech Stack
 
 | Layer           | Technology                   |
-| --------------- | ---------------------------- | ------ |
+| --------------- | ---------------------------- |
 | Frontend        | React, Vite, Tailwind CSS    |
 | Backend         | Node.js, Express             |
 | Database        | PostgreSQL (Supabase)        |
@@ -23,8 +23,8 @@ FlowClaim lets employees submit expense claims that route through a company-conf
 | Auth            | JWT (`jti`-based revocation) |
 | Session store   | Upstash Redis                |
 | Validation      | Zod                          |
-| <!--            | Frontend hosting             | Vercel |
-| Backend hosting | Railway                      | -->    |
+<!--| Frontend hosting| Vercel                       |
+| Backend hosting | Railway                      | -->    
 
 ---
 
