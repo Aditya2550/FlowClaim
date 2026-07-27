@@ -8,23 +8,23 @@ Originally built as an 8-hour hackathon prototype, this project has been rebuilt
 
 ## Overview
 
-FlowClaim lets employees submit expense claims that route through a company-configured approval chain - sequential, percentage-based, or hybrid — before being finalized. Admins define the rule; the engine enforces it. Every step is real-time: approvers get notified the moment an expense reaches them.
+FlowClaim lets employees submit expense claims that route through a company-configured approval chain - sequential, percentage-based, or hybrid - before being finalized. Admins define the rule; the engine enforces it. Every step is real-time: approvers get notified the moment an expense reaches them.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React, Vite, Tailwind CSS |
-| Backend | Node.js, Express |
-| Database | PostgreSQL (Supabase) |
-| Real-time | Socket.io |
-| Auth | JWT (`jti`-based revocation) |
-| Session store | Upstash Redis |
-| Validation | Zod |
-<!-- | Frontend hosting | Vercel |
-| Backend hosting | Railway | -->
+| Layer           | Technology                   |
+| --------------- | ---------------------------- | ------ |
+| Frontend        | React, Vite, Tailwind CSS    |
+| Backend         | Node.js, Express             |
+| Database        | PostgreSQL (Supabase)        |
+| Real-time       | Socket.io                    |
+| Auth            | JWT (`jti`-based revocation) |
+| Session store   | Upstash Redis                |
+| Validation      | Zod                          |
+| <!--            | Frontend hosting             | Vercel |
+| Backend hosting | Railway                      | -->    |
 
 ---
 
@@ -52,25 +52,25 @@ Socket.io pushes real-time updates on every approval-chain transition: the next 
 
 ## Key Features
 
-- **Configurable approval workflows** — admins choose and tune the routing strategy per company without a deploy.
-- **Strict RBAC** — employee, manager, finance, director, cfo, and admin roles are enforced at both the route and query level, including tenant isolation on analytics data.
-- **Real-time updates** — approvers and submitters see status changes instantly, no polling.
-- **Schema-validated input** — request bodies are validated upstream via Zod, keeping controllers focused on business logic.
-- **Full approval audit trail** — every step of an expense's approval history is queryable, including who acted, when, and with what comment.
+- **Configurable approval workflows** - admins choose and tune the routing strategy per company without a deploy.
+- **Strict RBAC** - employee, manager, finance, director, cfo, and admin roles are enforced at both the route and query level, including tenant isolation on analytics data.
+- **Real-time updates** - approvers and submitters see status changes instantly, no polling.
+- **Schema-validated input** - request bodies are validated upstream via Zod, keeping controllers focused on business logic.
+- **Full approval audit trail** - every step of an expense's approval history is queryable, including who acted, when, and with what comment.
 
 ---
 
 ## Screenshots
 
-*Coming soon*
+_Coming soon_
 
 ## System Design
 
-*Coming soon*
+_Coming soon_
 
 ## Database Schema
 
-*Coming soon*
+_Coming soon_
 
 ---
 
@@ -100,7 +100,7 @@ cp .env.example .env
 Fill in `.env` with your Supabase connection string, JWT secret, and Upstash Redis credentials.
 
 \`\`\`bash
-npm run seed   # optional: populates demo company + users
+npm run seed # optional: populates demo company + users
 npm run dev
 \`\`\`
 
@@ -122,10 +122,10 @@ npm run dev
 
 ## Project Status
 
-Under active development — moving through cleanup, cloud migration, full functionality, DevOps tooling, and final polish phases.
+Under active development - moving through cleanup, cloud migration, full functionality, DevOps tooling, and final polish phases.
 
 ---
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT - see [LICENSE](./LICENSE).
