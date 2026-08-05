@@ -5,12 +5,14 @@ import companyRoutes from "../modules/companies/companies.routes.js";
 import expenseRoutes from "../modules/expenses/expenses.routes.js";
 import analyticsRoutes from "../modules/analytics/analytics.routes.js";
 import notificationRoutes from "../modules/notifications/notifications.routes.js";
+import approvalRulesRoutes from "../modules/approvalRules/approvalRules.routes.js";
 
 //these are routes
 
 const router = Router();
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
+router.use("/approval-rules", approvalRulesRoutes);
 router.use("/companies", companyRoutes);
 router.use("/expenses", expenseRoutes);
 router.use("/analytics", analyticsRoutes);
