@@ -8,6 +8,7 @@ import {
   FileCheck,
   Receipt,
   Settings,
+  ShieldCheck,
   LogOut,
   ChevronDown,
   Search,
@@ -23,7 +24,12 @@ const NAV_ITEMS = [
     icon: LayoutDashboard,
     roles: ["admin", "manager"],
   },
-  { path: "/admin", label: "Settings", icon: Settings, roles: ["admin"] },
+  {
+    path: "/admin",
+    label: "Approval Rules",
+    icon: ShieldCheck,
+    roles: ["admin"],
+  },
 ];
 
 export default function AppLayout() {

@@ -60,9 +60,22 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/expenses" element={<ExpensePage />} />
-        <Route path="/approvals" element={<ApprovalQueuePage />} />
+        <Route
+  path="/dashboard"
+  element={<DashboardPage />}
+/>
+        <Route
+  path="/expenses"
+  element={<ExpensePage />}
+/>
+        <Route
+  path="/approvals"
+  element={
+    <ProtectedRoute allowedRoles={["manager", "admin"]}>
+      <ApprovalQueuePage />
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="/analytics"
           element={
