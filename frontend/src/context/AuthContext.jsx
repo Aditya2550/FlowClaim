@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import {
   login as loginRequest,
   signup as signupRequest,
+  logout as logoutRequest,
 } from "../api/authService";
 
 const AuthContext = createContext(null);
@@ -93,12 +94,18 @@ export function AuthProvider({ children }) {
     [persistAuth],
   );
 
-  const logout = useCallback(() => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("auth_user");
-    window.location.href = "/login";
+  const logout = useCallback(async () => {
+    try {
+      await logoutRequest();
+    } catch {
+      // proceed with client-side cleanup even if server call fails
+    } finally {
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem("token");
+      localStorage.removeItem("auth_user");
+      window.location.href = "/login";
+    }
   }, []);
 
   const switchRole = useCallback((role) => {
