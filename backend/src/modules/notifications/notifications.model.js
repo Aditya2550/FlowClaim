@@ -14,4 +14,11 @@ export const notificationsModel = {
       [userId, title, body],
     );
   },
+
+  markRead(id, userID) {
+    return query(
+      "UPDATE notifications SET is_read = true WHERE id = $1 AND user_id = $2 RETURNING id, title, body, is_read, created_at",
+      [id, userID],
+    );
+  },
 };
