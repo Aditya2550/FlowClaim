@@ -14,13 +14,15 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+  if (!isAuthenticated) return;
 
-    const role = String(user?.role || "").toLowerCase();
-    if (role === "admin") navigate("/admin", { replace: true });
-    else if (role === "manager") navigate("/manager", { replace: true });
-    else navigate("/employee", { replace: true });
-  }, [isAuthenticated, user?.role, navigate]);
+  const role = String(user?.role || "").toLowerCase();
+  if (role === "admin") navigate("/admin", { replace: true });
+  else if (role === "manager") navigate("/manager", { replace: true });
+  else if (role === "finance") navigate("/manager", { replace: true });
+  else if (role === "director") navigate("/manager", { replace: true });
+  else navigate("/employee", { replace: true });
+}, [isAuthenticated, user?.role, navigate]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -35,6 +37,8 @@ export default function LoginPage() {
 
       if (role === "admin") navigate("/admin", { replace: true });
       else if (role === "manager") navigate("/manager", { replace: true });
+      else if (role === "finance") navigate("/manager", { replace: true });
+      else if (role === "director") navigate("/manager", { replace: true });
       else navigate("/employee", { replace: true });
     } catch (err) {
       setError(

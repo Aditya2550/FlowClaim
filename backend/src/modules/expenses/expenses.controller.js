@@ -97,6 +97,17 @@ export async function createExpense(req, res) {
       await client.query("COMMIT");
 
       const created = await expensesModel.getExpenseWithSteps(expense.id);
+
+      const firstApprover = await getCurrentPendingApprover(expense.id, pool);
+      if (firstApprover) {
+        const note = await notificationsModel.create({
+          userId: firstApprover.id,
+          title: "New expense pending your approval",
+          body: `${submitter.name || "An employee"} submitted a new expense for review.`,
+        });
+        notifyUser(firstApprover.id, note.rows[0]);
+      }
+
       return ok(res, 201, created);
     } catch (error) {
       await client.query("ROLLBACK");

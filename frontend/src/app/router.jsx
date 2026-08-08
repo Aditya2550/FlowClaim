@@ -18,6 +18,8 @@ function RoleHomeRedirect() {
 
   if (role === "admin") return <Navigate to="/admin" replace />;
   if (role === "manager") return <Navigate to="/manager" replace />;
+  if (role === "finance") return <Navigate to="/manager" replace />;
+  if (role === "director") return <Navigate to="/manager" replace />;
   if (role === "employee") return <Navigate to="/employee" replace />;
   return <Navigate to="/login" replace />;
 }

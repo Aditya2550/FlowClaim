@@ -9,7 +9,7 @@ export const createExpenseSchema = z.object({
     category: z.enum(ALLOWED_CATEGORIES),
     vendor: z.string().optional(),
     description: z.string().optional(),
-    receipt_url: z.string().url().optional(),
+    receipt_url: z.string().url().nullable().optional(),
   }),
 });
 
