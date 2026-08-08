@@ -1,6 +1,6 @@
 import { X, Zap } from "lucide-react";
 
-export default function ToastStack({ items = [] }) {
+export default function ToastStack({ items = [], onDismiss }) {
   if (!items || items.length === 0) return null;
 
   return (
@@ -20,7 +20,10 @@ export default function ToastStack({ items = [] }) {
             </p>
             <p className="text-sm text-forest-900">{toast.title}</p>
           </div>
-          <button className="text-surface-400 hover:text-forest-600 transition-colors flex-shrink-0">
+          <button
+            onClick={() => onDismiss?.(toast.id)}
+            className="text-surface-400 hover:text-forest-600 transition-colors flex-shrink-0"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
