@@ -34,7 +34,7 @@ const NAV_ITEMS = [
 
 export default function AppLayout() {
   const { user, logout, switchRole } = useAuthContext();
-  const { notifications } = useNotifications();
+  const { toasts, dismiss } = useNotifications();
   const location = useLocation();
 
   const visibleNav = NAV_ITEMS.filter(
@@ -153,7 +153,7 @@ export default function AppLayout() {
       </div>
 
       {/* Toast Stack */}
-      <ToastStack items={notifications} />
+      <ToastStack items={toasts} onDismiss={dismiss} />
     </div>
   );
 }
