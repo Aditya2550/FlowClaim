@@ -77,7 +77,7 @@ export function AppRouter() {
         <Route
           path="/analytics"
           element={
-            <ProtectedRoute allowedRoles={["admin", "manager"]}>
+            <ProtectedRoute allowedRoles={["admin", "manager", "finance", "director"]}>
               <AnalyticsPage />
             </ProtectedRoute>
           }

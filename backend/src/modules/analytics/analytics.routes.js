@@ -5,6 +5,10 @@ import { summary } from "./analytics.controller.js";
 
 const router = Router();
 router.use(authenticate);
-router.get("/summary", authorizeRole("ADMIN", "MANAGER"), summary);
+router.get(
+  "/summary",
+  authorizeRole("ADMIN", "MANAGER", "FINANCE", "DIRECTOR"),
+  summary,
+);
 
 export default router;

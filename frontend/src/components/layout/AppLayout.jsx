@@ -22,7 +22,7 @@ const NAV_ITEMS = [
     path: "/analytics",
     label: "Analytics",
     icon: LayoutDashboard,
-    roles: ["admin", "manager"],
+    roles: ["admin", "manager", "finance", "director"],
   },
   {
     path: "/admin",
