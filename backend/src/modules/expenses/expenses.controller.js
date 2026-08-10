@@ -103,7 +103,8 @@ export async function createExpense(req, res) {
         const note = await notificationsModel.create({
           userId: firstApprover.id,
           title: "New expense pending your approval",
-          body: `${submitter.name || "An employee"} submitted a new expense for review.`,
+          body: `${submitter.name || "An employee"} submitted a ${category} expense for ${currency} ${amount}.`,
+          expenseId: expense.id,
         });
         notifyUser(firstApprover.id, note.rows[0]);
       }
@@ -214,14 +215,16 @@ export async function approveExpense(req, res) {
         const note = await notificationsModel.create({
           userId: nextApprover.id,
           title: "Expense pending your approval",
-          body: `An expense from your queue needs review.`,
+          body: `${expense.category} expense for ${expense.currency} ${expense.amount} needs your review.`,
+          expenseId: expense.id,
         });
         notifyUser(nextApprover.id, note.rows[0]);
       } else {
         const note = await notificationsModel.create({
           userId: expense.user_id,
           title: "Expense approved",
-          body: `Your expense has been fully approved.`,
+          body: `Your ${expense.category} expense for ${expense.currency} ${expense.amount} has been fully approved.`,
+          expenseId: expense.id,
         });
         notifyUser(expense.user_id, note.rows[0]);
       }
@@ -295,7 +298,8 @@ export async function rejectExpense(req, res) {
       const note = await notificationsModel.create({
         userId: expense.user_id,
         title: "Expense rejected",
-        body: `Your expense was rejected: ${String(comment).trim()}`,
+        body: `Your ${expense.category} expense for ${expense.currency} ${expense.amount} was rejected: ${String(comment).trim()}`,
+        expenseId: expense.id,
       });
       notifyUser(expense.user_id, note.rows[0]);
       const updated = await expensesModel.getExpenseWithSteps(id);
