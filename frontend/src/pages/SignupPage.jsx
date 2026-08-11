@@ -77,7 +77,7 @@ export default function SignupPage() {
 
         <div className="relative z-10">
           <h1 className="font-manrope font-bold text-3xl text-white leading-tight">
-            Reimbursify
+            FlowClaim
           </h1>
           <p className="text-xs text-white/40 uppercase tracking-[0.3em] mt-2 font-semibold">
             Reimbursement Management App
@@ -118,7 +118,7 @@ export default function SignupPage() {
         </div>
 
         <p className="text-white/30 text-xs relative z-10">
-          © 2024 Reimbursify. All rights reserved.
+          © 2026 FlowClaim. All rights reserved.
         </p>
       </div>
 
@@ -127,7 +127,7 @@ export default function SignupPage() {
         <div className="w-full max-w-md animate-fade-in">
           <div className="lg:hidden mb-10 text-center">
             <h1 className="font-manrope font-bold text-2xl text-forest-500">
-              Reimbursify
+              FlowClaim
             </h1>
           </div>
 
@@ -136,7 +136,7 @@ export default function SignupPage() {
           </h2>
           <p className="text-surface-500 text-sm mb-8">
             {step === 1
-              ? "Set up your organization on Reimbursify"
+              ? "Set up your organization on FlowClaim"
               : "You'll be the first admin of your company"}
           </p>
 
