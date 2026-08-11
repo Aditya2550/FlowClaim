@@ -61,7 +61,7 @@ export default function LoginPage() {
 
         <div className="relative z-10">
           <h1 className="font-manrope font-bold text-3xl text-white leading-tight">
-            Reimbursify
+            FlowClaim
           </h1>
           <p className="text-xs text-white/40 uppercase tracking-[0.3em] mt-2 font-semibold">
             Reimbursement Management App
@@ -90,7 +90,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-white/30 text-xs relative z-10">
-          © 2024 Reimbursify. All rights reserved.
+          © 2026 FlowClaim. All rights reserved.
         </p>
       </div>
 
@@ -100,7 +100,7 @@ export default function LoginPage() {
           {/* Mobile Brand */}
           <div className="lg:hidden mb-10 text-center">
             <h1 className="font-manrope font-bold text-2xl text-forest-500">
-              Reimbursify
+              FlowClaim
             </h1>
             <p className="text-xs text-surface-500 uppercase tracking-widest mt-1">
               Reimbursement Management App
