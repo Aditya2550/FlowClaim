@@ -60,7 +60,7 @@ export default function AppLayout() {
         {/* Brand */}
         <div className="px-6 pt-8 pb-6">
           <h1 className="font-manrope font-bold text-xl text-white leading-tight">
-            Reimbursify
+            FlowClaim
           </h1>
           <p className="text-xs text-white/50 uppercase tracking-widest mt-1 font-semibold">
             Reimbursement Management App
