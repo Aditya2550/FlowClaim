@@ -1,9 +1,19 @@
 import { useState } from "react";
 import ExpenseForm from "../features/expense/components/ExpenseForm.jsx";
 import ExpenseList from "../features/expense/components/ExpenseList.jsx";
+import { useNotifications } from "../context/NotificationContext.jsx";
 
 export default function ExpensePage() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const { push } = useNotifications();
+
+  function handleSubmitted() {
+    setRefreshKey((prev) => prev + 1);
+    push({
+      title: "Expense submitted",
+      body: "Your expense was submitted for approval.",
+    });
+  }
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -17,7 +27,7 @@ export default function ExpensePage() {
       </div>
 
       <div className="ethereal-card">
-        <ExpenseForm onSubmitted={() => setRefreshKey((prev) => prev + 1)} />
+        <ExpenseForm onSubmitted={handleSubmitted} />
       </div>
 
       <ExpenseList refreshKey={refreshKey} />
