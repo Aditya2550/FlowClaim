@@ -1,4 +1,4 @@
-// ─── Placeholder Data for Reimbursify ───
+// ─── Placeholder Data for FlowClaim ───
 
 export const CURRENCIES = [
   { code: "USD", symbol: "$", name: "US Dollar" },
