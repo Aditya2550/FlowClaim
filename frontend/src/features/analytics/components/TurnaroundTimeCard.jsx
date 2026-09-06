@@ -1,8 +1,7 @@
-import { TrendingDown, Clock } from "lucide-react";
-import { ANALYTICS_TURNAROUND } from "../../../utils/mockData.js";
+import { Clock } from "lucide-react";
 
-export default function TurnaroundTimeCard() {
-  const { averageDays, trend, trendLabel } = ANALYTICS_TURNAROUND;
+export default function TurnaroundTimeCard({ avgDays = 0 }) {
+  const days = Number(avgDays || 0);
 
   return (
     <div className="ethereal-card">
@@ -23,24 +22,16 @@ export default function TurnaroundTimeCard() {
       <div className="flex items-end gap-4 mt-6">
         <div>
           <p className="font-manrope font-bold text-5xl text-forest-900 tracking-tight">
-            {averageDays}
+            {days}
           </p>
           <p className="text-sm text-surface-500 mt-1">days</p>
         </div>
-
-        <div className="flex items-center gap-1.5 mb-2 bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-lg">
-          <TrendingDown className="w-4 h-4" />
-          <span className="text-sm font-semibold">{Math.abs(trend)} days</span>
-        </div>
       </div>
 
-      <p className="text-xs text-emerald-600 mt-3">{trendLabel}</p>
-
-      {/* Mini bar */}
       <div className="mt-6 bg-surface-100 rounded-full h-2 overflow-hidden">
         <div
           className="h-full bg-gradient-to-r from-neon to-forest-500 rounded-full transition-all duration-1000"
-          style={{ width: `${(1 - averageDays / 7) * 100}%` }}
+          style={{ width: `${Math.min((1 - days / 7) * 100, 100)}%` }}
         />
       </div>
       <div className="flex justify-between mt-1">
