@@ -1,16 +1,41 @@
-import { RECENT_EXPENSES, CATEGORIES } from "../../../utils/mockData.js";
+import { useEffect, useState } from "react";
+import { getExpenses } from "../../../api/expenseService.js";
 import { ArrowRight } from "lucide-react";
 
-const CATEGORY_COLORS = {
-  dining: { bg: "bg-amber-50", tag: "bg-amber-100 text-amber-700" },
-  travel: { bg: "bg-blue-50", tag: "bg-blue-100 text-blue-700" },
-  supplies: { bg: "bg-purple-50", tag: "bg-purple-100 text-purple-700" },
-  tech: { bg: "bg-cyan-50", tag: "bg-cyan-100 text-cyan-700" },
-  operations: { bg: "bg-emerald-50", tag: "bg-emerald-100 text-emerald-700" },
-  transport: { bg: "bg-pink-50", tag: "bg-pink-100 text-pink-700" },
+const CATEGORY_STYLE = {
+  Travel: { bg: "bg-blue-50", tag: "bg-blue-100 text-blue-700", emoji: "✈️" },
+  Food: { bg: "bg-amber-50", tag: "bg-amber-100 text-amber-700", emoji: "🍽️" },
+  Office: { bg: "bg-purple-50", tag: "bg-purple-100 text-purple-700", emoji: "📦" },
+  Other: { bg: "bg-cyan-50", tag: "bg-cyan-100 text-cyan-700", emoji: "💼" },
 };
 
+function timeAgo(dateStr) {
+  if (!dateStr) return "";
+  const diffMs = Date.now() - new Date(dateStr).getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays}d ago`;
+}
+
 export default function RecentSpendingCards() {
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    getExpenses()
+      .then((rows) => {
+        if (!active) return;
+        setExpenses((Array.isArray(rows) ? rows : []).slice(0, 3));
+      })
+      .catch(() => {})
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, []);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
@@ -28,58 +53,56 @@ export default function RecentSpendingCards() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {RECENT_EXPENSES.map((expense) => {
-          const cat = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS.tech;
-          const categoryLabel = CATEGORIES.find((c) => c.id === expense.category)?.label || expense.category;
+      {loading && <p className="text-sm text-surface-500">Loading...</p>}
+      {!loading && expenses.length === 0 && (
+        <p className="text-sm text-surface-500">No expenses submitted yet.</p>
+      )}
 
-          return (
-            <div
-              key={expense.id}
-              className="ethereal-card hover:scale-[1.02] cursor-pointer group"
-            >
-              {/* Category Image Area */}
-              <div className={`${cat.bg} rounded-xl h-36 flex items-center justify-center mb-4 relative overflow-hidden`}>
-                <div className="text-4xl opacity-30 group-hover:opacity-50 transition-opacity">
-                  {expense.category === "dining" && "🍽️"}
-                  {expense.category === "travel" && "✈️"}
-                  {expense.category === "supplies" && "📦"}
-                  {expense.category === "tech" && "💻"}
-                  {expense.category === "operations" && "⚙️"}
+      {!loading && expenses.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {expenses.map((expense) => {
+            const cat = CATEGORY_STYLE[expense.category] || CATEGORY_STYLE.Other;
+            const amount = Number(expense.converted_amount || expense.amount || 0);
+            const currency = expense.base_currency || expense.currency || "USD";
+
+            return (
+              <div key={expense.id} className="ethereal-card hover:scale-[1.02] cursor-pointer group">
+                <div className={`${cat.bg} rounded-xl h-36 flex items-center justify-center mb-4 relative overflow-hidden`}>
+                  <div className="text-4xl opacity-30 group-hover:opacity-50 transition-opacity">
+                    {cat.emoji}
+                  </div>
+                  <span className={`absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${cat.tag}`}>
+                    {expense.category}
+                  </span>
                 </div>
-                <span className={`absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg ${cat.tag}`}>
-                  {categoryLabel}
-                </span>
-              </div>
 
-              {/* Details */}
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="font-manrope font-bold text-sm text-forest-900">
-                    {expense.title}
-                  </p>
-                  <p className="text-xs text-surface-500 mt-0.5">
-                    {expense.description}
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="font-manrope font-bold text-sm text-forest-900">
+                      {expense.vendor || "Expense"}
+                    </p>
+                    <p className="text-xs text-surface-500 mt-0.5">
+                      {expense.description || "-"}
+                    </p>
+                  </div>
+                  <p className="font-manrope font-bold text-base text-forest-900">
+                    {currency} {amount.toFixed(2)}
                   </p>
                 </div>
-                <p className="font-manrope font-bold text-base text-forest-900">
-                  ${expense.amount.toFixed(2)}
-                </p>
-              </div>
 
-              {/* Time badge */}
-              <div className="mt-3 flex items-center gap-1.5">
-                <div className={`w-2 h-2 rounded-full ${
-                  expense.status === "APPROVED" ? "bg-neon" : "bg-amber-400"
-                }`} />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-surface-500">
-                  {expense.timeAgo}
-                </span>
+                <div className="mt-3 flex items-center gap-1.5">
+                  <div className={`w-2 h-2 rounded-full ${
+                    expense.status === "approved" ? "bg-neon" : "bg-amber-400"
+                  }`} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-surface-500">
+                    {timeAgo(expense.submitted_at)}
+                  </span>
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
