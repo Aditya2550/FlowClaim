@@ -346,6 +346,11 @@ export async function getExpenseApprovalStatus(req, res) {
       return fail(res, 404, "Expense not found");
     }
 
+    const role = String(req.user.role || "").toLowerCase();
+    if (role === "employee" && expense.user_id !== req.user.userId) {
+      return fail(res, 403, "Not authorized to view this expense");
+    }
+
     const timeline = await getApprovalTimeline(id, pool);
     const pendingApprovers = await getPendingApprovers(id, pool);
     const approvedCount = timeline.filter(

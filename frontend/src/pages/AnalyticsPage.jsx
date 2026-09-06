@@ -13,6 +13,10 @@ export default function AnalyticsPage() {
     byCategory: [],
     byUser: [],
     risk: [],
+    riskTrend: [],
+    approvalRate: [],
+    monthlyVelocity: [],
+    turnaround: null,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,6 +33,10 @@ export default function AnalyticsPage() {
           byCategory: data?.byCategory || [],
           byUser: data?.byUser || [],
           risk: data?.risk || [],
+          riskTrend: data?.riskTrend || [],
+          approvalRate: data?.approvalRate || [],
+          monthlyVelocity: data?.monthlyVelocity || [],
+          turnaround: data?.turnaround || null,
         });
       })
       .catch((err) => {
@@ -132,16 +140,16 @@ export default function AnalyticsPage() {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SpendByCategoryChart />
-        <ApprovalRateChart />
+        <SpendByCategoryChart data={analytics.byCategory} />
+        <ApprovalRateChart data={analytics.approvalRate} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RiskScoreTrendChart />
-        <TurnaroundTimeCard />
+        <RiskScoreTrendChart data={analytics.riskTrend} />
+        <TurnaroundTimeCard avgDays={analytics.turnaround?.avg_days} />
       </div>
 
-      <MonthlyVelocityChart />
+      <MonthlyVelocityChart data={analytics.monthlyVelocity} />
     </div>
   );
 }
