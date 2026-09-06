@@ -4,6 +4,7 @@ import { useNotifications } from "../../context/NotificationContext.jsx";
 import NotificationBell from "../../features/notifications/components/NotificationBell.jsx";
 import ToastStack from "../../features/notifications/components/ToastStack.jsx";
 import {
+  CircleCheckBig,
   LayoutDashboard,
   FileCheck,
   Receipt,
@@ -29,6 +30,12 @@ const NAV_ITEMS = [
     label: "Approval Rules",
     icon: ShieldCheck,
     roles: ["admin"],
+  },
+  {
+    path: "/my-approvals",
+    label: "My Approvals",
+    icon: CircleCheckBig,
+    roles: ["employee"],
   },
 ];
 

@@ -11,6 +11,7 @@ import AnalyticsPage from "../pages/AnalyticsPage.jsx";
 import AdminPanelPage from "../pages/AdminPanelPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 import UnauthorizedPage from "../pages/UnauthorizedPage.jsx";
+import MyApprovalsPage from "../pages/MyApprovalsPage.jsx";
 
 function RoleHomeRedirect() {
   const { user } = useAuth();
@@ -72,6 +73,14 @@ export function AppRouter() {
             >
               <ApprovalQueuePage />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-approvals"
+          element={
+          <ProtectedRoute allowedRoles={["employee"]}>
+          <MyApprovalsPage />
+          </ProtectedRoute>
           }
         />
         <Route
