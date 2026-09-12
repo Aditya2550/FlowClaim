@@ -4,7 +4,7 @@ export const expensesModel = {
   async findCompanyBaseCurrency(companyId, client = pool) {
     const result = await client.query(
       "SELECT id, currency FROM companies WHERE id = $1",
-      [companyId]
+      [companyId],
     );
     return result.rows[0] || null;
   },
@@ -12,7 +12,7 @@ export const expensesModel = {
   async findUserById(userId, client = pool) {
     const result = await client.query(
       "SELECT id, company_id, role, manager_id FROM users WHERE id = $1",
-      [userId]
+      [userId],
     );
     return result.rows[0] || null;
   },
@@ -20,7 +20,7 @@ export const expensesModel = {
   async listCompanyUsersByRole(companyId, role, client = pool) {
     const result = await client.query(
       "SELECT id, role FROM users WHERE company_id = $1 AND role = $2 ORDER BY created_at ASC",
-      [companyId, role]
+      [companyId, role],
     );
     return result.rows;
   },
@@ -32,7 +32,7 @@ export const expensesModel = {
        WHERE company_id = $1 AND type = 'sequential'
        ORDER BY created_at DESC
        LIMIT 1`,
-      [companyId]
+      [companyId],
     );
     return result.rows[0] || null;
   },
@@ -40,9 +40,9 @@ export const expensesModel = {
   async insertExpense(payload, client = pool) {
     const result = await client.query(
       `INSERT INTO expenses
-       (user_id, company_id, amount, currency, converted_amount, base_currency, category, vendor, description, receipt_url, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending')
-       RETURNING *`,
+     (user_id, company_id, amount, currency, converted_amount, base_currency, category, vendor, description, receipt_url, status, gst, invoice_number, payment_method)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending', $11, $12, $13)
+     RETURNING *`,
       [
         payload.userId,
         payload.companyId,
@@ -53,8 +53,11 @@ export const expensesModel = {
         payload.category,
         payload.vendor,
         payload.description,
-        payload.receiptUrl
-      ]
+        payload.receiptUrl,
+        payload.gst ?? null,
+        payload.invoiceNumber ?? null,
+        payload.paymentMethod ?? null,
+      ],
     );
     return result.rows[0];
   },
@@ -64,7 +67,7 @@ export const expensesModel = {
       `INSERT INTO approval_steps (expense_id, approver_id, sequence, status)
        VALUES ($1, $2, $3, 'pending')
        RETURNING *`,
-      [expenseId, approverId, sequence]
+      [expenseId, approverId, sequence],
     );
     return result.rows[0];
   },
@@ -91,7 +94,7 @@ export const expensesModel = {
          WHERE s.expense_id = e.id
        ) steps ON TRUE
        WHERE e.id = $1`,
-      [expenseId]
+      [expenseId],
     );
     return result.rows[0] || null;
   },
@@ -135,7 +138,7 @@ export const expensesModel = {
        ) steps ON TRUE
        ${whereSql}
        ORDER BY e.submitted_at DESC`,
-      params
+      params,
     );
     return result.rows;
   },
@@ -175,7 +178,7 @@ export const expensesModel = {
              AND prev.status <> 'approved'
          )
        ORDER BY e.submitted_at ASC`,
-      [companyId, userId]
+      [companyId, userId],
     );
     return result.rows;
   },
@@ -196,7 +199,7 @@ export const expensesModel = {
          )
        ORDER BY s.sequence ASC
        LIMIT 1`,
-      [expenseId, approverId]
+      [expenseId, approverId],
     );
     return result.rows[0] || null;
   },
@@ -206,7 +209,7 @@ export const expensesModel = {
       `UPDATE approval_steps
        SET status = 'approved', comment = COALESCE($2, comment), acted_at = NOW()
        WHERE id = $1`,
-      [stepId, comment || null]
+      [stepId, comment || null],
     );
   },
 
@@ -215,27 +218,30 @@ export const expensesModel = {
       `UPDATE approval_steps
        SET status = 'rejected', comment = $2, acted_at = NOW()
        WHERE id = $1`,
-      [stepId, comment]
+      [stepId, comment],
     );
   },
 
   async countPendingSteps(expenseId, client = pool) {
     const result = await client.query(
       "SELECT COUNT(*)::int AS count FROM approval_steps WHERE expense_id = $1 AND status = 'pending'",
-      [expenseId]
+      [expenseId],
     );
     return result.rows[0].count;
   },
 
   async updateExpenseStatus(expenseId, status, client = pool) {
-    await client.query("UPDATE expenses SET status = $2 WHERE id = $1", [expenseId, status]);
+    await client.query("UPDATE expenses SET status = $2 WHERE id = $1", [
+      expenseId,
+      status,
+    ]);
   },
 
   async findExpenseForCompany(expenseId, companyId, client = pool) {
     const result = await client.query(
       "SELECT * FROM expenses WHERE id = $1 AND company_id = $2",
-      [expenseId, companyId]
+      [expenseId, companyId],
     );
     return result.rows[0] || null;
-  }
+  },
 };
