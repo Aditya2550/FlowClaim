@@ -9,10 +9,6 @@ export default function ExpensePage() {
 
   function handleSubmitted() {
     setRefreshKey((prev) => prev + 1);
-    push({
-      title: "Expense submitted",
-      body: "Your expense was submitted for approval.",
-    });
   }
 
   return (
