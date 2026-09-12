@@ -1,4 +1,7 @@
-﻿import { pool } from "../../config/db.js";
+﻿import multer from "multer";
+import { extractReceiptData } from "./ocr.service.js";
+import { ocrResponseSchema } from "./expenses.validator.js";
+import { pool } from "../../config/db.js";
 import { notificationsModel } from "../notifications/notifications.model.js";
 import { notifyUser } from "../../services/notification.service.js";
 import {
@@ -39,10 +42,36 @@ async function convertUsingExchangeRateApi(amount, fromCurrency, toCurrency) {
   };
 }
 
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    const allowedExtensions = /\.(jpg|jpeg|png|webp)$/i;
+
+    const mimeOk = allowedMimes.includes(file.mimetype);
+    const extOk = allowedExtensions.test(file.originalname);
+
+    if (!mimeOk && !extOk) {
+      return cb(new Error("Only JPEG, PNG, or WEBP images are allowed"));
+    }
+    cb(null, true);
+  },
+});
+
+export const uploadReceiptMiddleware = upload.single("receipt");
+
 export async function createExpense(req, res) {
   try {
-    if (String(req.user.role).toLowerCase() !== "employee") {
-      return fail(res, 403, "Only employees can submit expenses");
+    const allowedRoles = [
+      "employee",
+      "manager",
+      "admin",
+      "director",
+      "finance",
+    ];
+    if (!allowedRoles.includes(String(req.user.role).toLowerCase())) {
+      return fail(res, 403, "Not authorized to submit expenses");
     }
 
     const { amount, currency, category, vendor, description, receipt_url } =
@@ -331,7 +360,31 @@ export async function rejectExpense(req, res) {
 }
 
 export async function parseReceipt(req, res) {
-  return fail(res, 501, "OCR feature not implemented");
+  try {
+    if (!req.file) {
+      return fail(res, 400, "No receipt image uploaded");
+    }
+
+    console.log(
+      "File being processed:",
+      req.file.originalname,
+      req.file.size,
+      "bytes",
+    );
+    const extracted = await extractReceiptData(
+      req.file.buffer,
+      req.file.mimetype,
+    );
+
+    const validated = ocrResponseSchema.safeParse(extracted);
+    if (!validated.success) {
+      return fail(res, 502, "OCR returned unexpected data format");
+    }
+
+    return ok(res, 200, validated.data);
+  } catch (error) {
+    return fail(res, 500, error.message || "Failed to process receipt");
+  }
 }
 
 export async function getExpenseApprovalStatus(req, res) {
