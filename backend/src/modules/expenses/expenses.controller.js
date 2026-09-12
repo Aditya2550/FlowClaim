@@ -74,8 +74,17 @@ export async function createExpense(req, res) {
       return fail(res, 403, "Not authorized to submit expenses");
     }
 
-    const { amount, currency, category, vendor, description, receipt_url } =
-      req.body;
+    const {
+      amount,
+      currency,
+      category,
+      vendor,
+      description,
+      receipt_url,
+      gst,
+      invoice_number,
+      payment_method,
+    } = req.body;
 
     const client = await pool.connect();
     try {
@@ -117,6 +126,9 @@ export async function createExpense(req, res) {
           vendor: vendor || null,
           description: description || null,
           receiptUrl: receipt_url || null,
+          gst: gst ?? null,
+          invoiceNumber: invoice_number ?? null,
+          paymentMethod: payment_method ?? null,
         },
         client,
       );
