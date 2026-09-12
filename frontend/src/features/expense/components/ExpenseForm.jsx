@@ -4,6 +4,7 @@ import { getCurrencies, getRates } from "../../../api/currencyService.js";
 import { scanReceipt } from "../../../api/ocrService.js";
 import { Upload, CalendarDays, FileSearch } from "lucide-react";
 import Button from "../../../components/ui/Button.jsx";
+import { useNotifications } from "../../../context/NotificationContext.jsx";
 
 const CATEGORIES = [
   { id: "Travel", label: "Travel" },
@@ -41,6 +42,7 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
   const [currencies, setCurrencies] = useState(DEFAULT_CURRENCIES);
   const [fxRates, setFxRates] = useState({});
   const fileInputRef = useRef(null);
+  const { push } = useNotifications();
 
   useEffect(() => {
     let active = true;
@@ -161,7 +163,10 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
       if (typeof onSubmitted === "function") {
         onSubmitted(created);
       }
-
+      push({
+        type: "expense_success",
+        title: "Expense submitted successfully",
+      });
       setForm((prev) => ({
         ...prev,
         title: "",
