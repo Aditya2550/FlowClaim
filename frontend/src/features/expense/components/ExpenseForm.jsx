@@ -20,20 +20,20 @@ const DEFAULT_CURRENCIES = [
   { code: "GBP", name: "British Pound", symbol: "GBP" },
 ];
 
-export default function ExpenseForm({ onClose, onSubmitted }) {
+export default function ExpenseForm({ onClose, onSubmitted, initialData }) {
   const [form, setForm] = useState({
-    title: "",
-    category: "Travel",
-    amount: "",
-    currency: "USD",
+    title: initialData?.title || "",
+    category: initialData?.category || "Travel",
+    amount: initialData?.amount || "",
+    currency: initialData?.currency || "USD",
     companyCurrency: "INR",
-    vendor: "",
+    vendor: initialData?.vendor || "",
     description: "",
-    date: new Date().toISOString().split("T")[0],
+    date: initialData?.date || new Date().toISOString().split("T")[0],
     receipt_url: "",
-    gst: "",
-    invoice_number: "",
-    payment_method: "",
+    gst: initialData?.gst || "",
+    invoice_number: initialData?.invoice_number || "",
+    payment_method: initialData?.payment_method || "",
   });
   const [scanner, setScanner] = useState(false);
   const [loading, setLoading] = useState(false);
