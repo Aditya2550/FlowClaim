@@ -30,6 +30,9 @@ export const createExpenseSchema = z.object({
     vendor: z.string().optional(),
     description: z.string().optional(),
     receipt_url: z.string().url().nullable().optional(),
+    gst: z.number().nullable().optional(),
+    invoice_number: z.string().nullable().optional(),
+    payment_method: z.string().nullable().optional(),
   }),
 });
 

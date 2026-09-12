@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import { createExpense } from "../../../api/expenseService.js";
 import { getCurrencies, getRates } from "../../../api/currencyService.js";
 import { scanReceipt } from "../../../api/ocrService.js";
@@ -30,6 +30,9 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
     description: "",
     date: new Date().toISOString().split("T")[0],
     receipt_url: "",
+    gst: "",
+    invoice_number: "",
+    payment_method: "",
   });
   const [scanner, setScanner] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,6 +40,7 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
   const [error, setError] = useState("");
   const [currencies, setCurrencies] = useState(DEFAULT_CURRENCIES);
   const [fxRates, setFxRates] = useState({});
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     let active = true;
@@ -50,9 +54,7 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
         }));
         setCurrencies(mapped);
       })
-      .catch(() => {
-        // Keep defaults when API is unavailable.
-      });
+      .catch(() => {});
     return () => {
       active = false;
     };
@@ -92,35 +94,47 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  async function onDrop(e) {
-    e.preventDefault();
-    const file = e.dataTransfer?.files?.[0];
+  async function processFile(file) {
     if (!file) return;
-
     setOcrError("");
     setScanner(true);
     try {
       const extracted = await scanReceipt(file);
-
       setScanner(false);
       if (extracted?.amount) update("amount", String(extracted.amount));
       if (extracted?.currency)
         update("currency", String(extracted.currency).toUpperCase());
-      if (extracted?.merchant) {
-        update("vendor", extracted.merchant);
-        update("title", `${extracted.merchant} receipt`);
+      if (extracted?.vendor) {
+        update("vendor", extracted.vendor);
+        update("title", `${extracted.vendor} receipt`);
       }
-      if (extracted?.expenseDate) update("date", extracted.expenseDate);
+      if (extracted?.date) update("date", extracted.date);
       if (
         extracted?.category &&
         CATEGORIES.find((x) => x.id === extracted.category)
       ) {
         update("category", extracted.category);
       }
+      if (extracted?.gst) update("gst", String(extracted.gst));
+      if (extracted?.invoiceNumber)
+        update("invoice_number", extracted.invoiceNumber);
+      if (extracted?.paymentMethod)
+        update("payment_method", extracted.paymentMethod);
     } catch {
       setScanner(false);
       setOcrError("Receipt scan failed. You can still fill the form manually.");
     }
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    processFile(file);
+  }
+
+  function onFileSelect(e) {
+    const file = e.target.files?.[0];
+    processFile(file);
   }
 
   async function onSubmit(e) {
@@ -139,6 +153,9 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
         vendor: form.vendor || form.title,
         description: form.description,
         receipt_url: form.receipt_url || null,
+        gst: form.gst ? Number(form.gst) : null,
+        invoice_number: form.invoice_number || null,
+        payment_method: form.payment_method || null,
       });
 
       if (typeof onSubmitted === "function") {
@@ -152,6 +169,9 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
         vendor: "",
         description: "",
         receipt_url: "",
+        gst: "",
+        invoice_number: "",
+        payment_method: "",
       }));
 
       if (onClose) onClose();
@@ -172,11 +192,19 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
-        className={`relative rounded-xl p-6 text-center transition-all ${
+        onClick={() => fileInputRef.current?.click()}
+        className={`relative rounded-xl p-6 text-center transition-all cursor-pointer ${
           scanner ? "bg-neon/5" : "bg-surface-50"
         }`}
         style={{ border: "2px dashed rgba(26, 77, 46, 0.12)" }}
       >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={onFileSelect}
+        />
         {scanner && (
           <div className="absolute inset-0 rounded-xl overflow-hidden">
             <div className="scanner-line" />
@@ -191,7 +219,7 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
           <p className="text-sm text-surface-500">
             {scanner
               ? "Scanning receipt..."
-              : "Drag receipt here for AI extraction"}
+              : "Drag receipt here for AI extraction, or click to browse"}
           </p>
         </div>
       </div>
@@ -318,6 +346,45 @@ export default function ExpenseForm({ onClose, onSubmitted }) {
           value={form.vendor}
           onChange={(e) => update("vendor", e.target.value)}
           placeholder="Merchant or vendor"
+          className="w-full bg-surface-50 rounded-xl px-4 py-3 text-sm text-forest-900 placeholder:text-surface-400 outline-none focus:ring-2 focus:ring-neon/30 transition-all font-inter"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-2">
+            GST (optional)
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            value={form.gst}
+            onChange={(e) => update("gst", e.target.value)}
+            placeholder="0.00"
+            className="w-full bg-surface-50 rounded-xl px-4 py-3 text-sm text-forest-900 placeholder:text-surface-400 outline-none focus:ring-2 focus:ring-neon/30 transition-all font-inter"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-2">
+            Invoice Number (optional)
+          </label>
+          <input
+            value={form.invoice_number}
+            onChange={(e) => update("invoice_number", e.target.value)}
+            placeholder="INV-12345"
+            className="w-full bg-surface-50 rounded-xl px-4 py-3 text-sm text-forest-900 placeholder:text-surface-400 outline-none focus:ring-2 focus:ring-neon/30 transition-all font-inter"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-2">
+          Payment Method (optional)
+        </label>
+        <input
+          value={form.payment_method}
+          onChange={(e) => update("payment_method", e.target.value)}
+          placeholder="Credit Card, UPI, Cash..."
           className="w-full bg-surface-50 rounded-xl px-4 py-3 text-sm text-forest-900 placeholder:text-surface-400 outline-none focus:ring-2 focus:ring-neon/30 transition-all font-inter"
         />
       </div>
