@@ -15,14 +15,24 @@ import {
   listPendingForApprover,
   parseReceipt,
   rejectExpense,
+  uploadReceiptMiddleware,
 } from "./expenses.controller.js";
+
+function handleUpload(req, res, next) {
+  uploadReceiptMiddleware(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ success: false, error: err.message });
+    }
+    next();
+  });
+}
 
 const router = Router();
 router.use(authenticate);
 
 router.post(
   "/",
-  authorize("employee"),
+  authorize("employee", "manager", "admin", "director", "finance"),
   validateRequest(createExpenseSchema),
   createExpense,
 );
@@ -54,6 +64,11 @@ router.patch(
   validateRequest(approveRejectSchema),
   rejectExpense,
 );
-router.post("/ocr", parseReceipt);
+router.post(
+  "/ocr",
+  authorize("employee", "manager", "admin", "director", "finance"),
+  handleUpload,
+  parseReceipt,
+);
 
 export default router;
