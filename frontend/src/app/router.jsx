@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "../components/layout/AppLayout.jsx";
 import ProtectedRoute from "../components/layout/ProtectedRoute.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import LandingPage from "../pages/LandingPage.jsx";
 import LoginPage from "../pages/LoginPage.jsx";
 import SignupPage from "../pages/SignupPage.jsx";
 import DashboardPage from "../pages/DashboardPage.jsx";
@@ -28,9 +29,15 @@ function RoleHomeRedirect() {
 export function AppRouter() {
   return (
     <Routes>
+      {/* Public Marketing Landing Page at root / */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* Auth Routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
+      {/* Protected App Routes */}
       <Route
         element={
           <ProtectedRoute>
@@ -38,7 +45,7 @@ export function AppRouter() {
           </ProtectedRoute>
         }
       >
-        <Route path="/" element={<RoleHomeRedirect />} />
+        <Route path="/app" element={<RoleHomeRedirect />} />
         <Route
           path="/admin"
           element={
@@ -78,9 +85,9 @@ export function AppRouter() {
         <Route
           path="/my-approvals"
           element={
-          <ProtectedRoute allowedRoles={["employee"]}>
-          <MyApprovalsPage />
-          </ProtectedRoute>
+            <ProtectedRoute allowedRoles={["employee"]}>
+              <MyApprovalsPage />
+            </ProtectedRoute>
           }
         />
         <Route
