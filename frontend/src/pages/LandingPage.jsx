@@ -24,7 +24,8 @@ import {
   Lock,
   TrendingUp,
   FileCheck,
-  Maximize2
+  Maximize2,
+  Monitor
 } from "lucide-react";
 
 function GithubIcon({ className = "w-4 h-4" }) {
@@ -60,7 +61,7 @@ export default function LandingPage() {
         : "bg-[#F7F4EF] text-forest-950 selection:bg-forest-600 selection:text-white"
     }`}>
 
-      {/* TOP FLOATING NAV (Refined Dark Capsule Navbar) */}
+      {/* TOP FLOATING NAV (Refined Dark Pill Capsule Navbar) */}
       <header className="sticky top-4 z-50 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className={`h-16 px-6 rounded-full flex items-center justify-between transition-all duration-300 ${
           darkMode 
@@ -69,7 +70,7 @@ export default function LandingPage() {
         }`}>
           
           {/* BRAND WITH MUTED REFINED LOGO */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
             <div className="w-8 h-8 rounded-lg bg-forest-600 text-white flex items-center justify-center shadow-sm border border-forest-500/30 group-hover:scale-105 transition-transform">
               <img 
                 src="/favicon-32x32.png" 
@@ -87,20 +88,20 @@ export default function LandingPage() {
             </span>
           </Link>
 
-          {/* NAV LINKS */}
-          <nav className="hidden md:flex items-center space-x-8 text-xs font-semibold tracking-wide text-surface-300">
-            <a href="#hero-showcase" className="hover:text-emerald-300 transition-colors">Product Showcase</a>
-            <a href="#features" className="hover:text-emerald-300 transition-colors">Features</a>
-            <a href="#roles" className="hover:text-emerald-300 transition-colors">Role OS</a>
-            <a href="#how-it-works" className="hover:text-emerald-300 transition-colors">Workflow</a>
-            <a href="#tools-guide" className="hover:text-emerald-300 transition-colors">Video Kit Guide</a>
+          {/* NAV LINKS (Pill-styled hover capsule items) */}
+          <nav className="hidden md:flex items-center space-x-1.5 text-xs font-semibold tracking-wide text-surface-300">
+            <a href="#hero-showcase" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Product Showcase</a>
+            <a href="#features" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Features</a>
+            <a href="#roles" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Role OS</a>
+            <a href="#how-it-works" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Workflow</a>
+            <a href="#tools-guide" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Video Kit Guide</a>
           </nav>
 
-          {/* RIGHT ACTIONS: LIGHT/DARK TOGGLE & AUTH ONLY */}
-          <div className="flex items-center space-x-3">
+          {/* RIGHT ACTIONS: LIGHT/DARK TOGGLE & AUTH PILLS */}
+          <div className="flex items-center space-x-2 shrink-0">
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-forest-800/70 hover:bg-forest-700 text-emerald-300 transition-colors flex items-center justify-center"
+              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-emerald-300 transition-colors flex items-center justify-center"
               title={darkMode ? "Switch to Soft Cream Light Mode" : "Switch to Dark Mode"}
             >
               {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -108,14 +109,14 @@ export default function LandingPage() {
 
             <Link
               to="/login"
-              className="px-3.5 py-1.5 text-xs font-semibold text-surface-300 hover:text-white transition-colors"
+              className="px-4 py-1.5 rounded-full text-xs font-bold text-surface-200 hover:text-white hover:bg-white/10 transition-all"
             >
               Log In
             </Link>
 
             <Link
               to="/signup"
-              className="px-4.5 py-2 rounded-full bg-forest-600 hover:bg-forest-500 text-white font-extrabold text-xs shadow-sm active:scale-95 transition-all flex items-center gap-1.5 border border-forest-400/30"
+              className="px-5 py-2 rounded-full bg-forest-600 hover:bg-forest-500 text-white font-extrabold text-xs shadow-md shadow-forest-950/40 border border-forest-400/30 flex items-center gap-1.5 active:scale-95 transition-all"
             >
               Sign Up
               <ArrowRight className="w-3.5 h-3.5" />
@@ -186,28 +187,38 @@ export default function LandingPage() {
           {/* REAL PRODUCT SHOWCASE CONTAINER (HERO LAPTOP & STACKED DEPT) */}
           <div id="hero-showcase" className="mt-14 relative max-w-6xl mx-auto">
             
-            {/* VIEW MODE TOGGLE (Laptop Mockup vs Stacked Depth Artifacts) */}
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <button
-                onClick={() => setHeroViewMode("laptop")}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                  heroViewMode === "laptop"
-                    ? "bg-forest-700 text-white shadow-xs"
-                    : darkMode ? "bg-forest-900 text-surface-300" : "bg-white text-forest-800 border border-[#E2DAD0]"
-                }`}
-              >
-                Laptop Showcase Frame
-              </button>
-              <button
-                onClick={() => setHeroViewMode("stacked")}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                  heroViewMode === "stacked"
-                    ? "bg-forest-700 text-white shadow-xs"
-                    : darkMode ? "bg-forest-900 text-surface-300" : "bg-white text-forest-800 border border-[#E2DAD0]"
-                }`}
-              >
-                Stacked Artifact Composition
-              </button>
+            {/* VIEW MODE TOGGLE CAPSULE CONTAINER */}
+            <div className="flex justify-center mb-8">
+              <div className={`p-1.5 rounded-full border inline-flex items-center gap-1.5 shadow-xs ${
+                darkMode ? "bg-forest-950/90 border-forest-800" : "bg-[#EAE4DA] border-[#DCD3C5]"
+              }`}>
+                <button
+                  onClick={() => setHeroViewMode("laptop")}
+                  className={`px-5 py-2 rounded-full text-xs font-bold leading-none transition-all duration-200 flex items-center gap-1.5 active:scale-95 ${
+                    heroViewMode === "laptop"
+                      ? "bg-forest-700 text-white shadow-sm ring-1 ring-forest-600/40"
+                      : darkMode 
+                        ? "text-surface-300 hover:text-white hover:bg-white/10" 
+                        : "text-forest-950 hover:text-black hover:bg-white/40 font-semibold"
+                  }`}
+                >
+                  <Monitor className="w-3.5 h-3.5" />
+                  <span>Laptop Showcase Frame</span>
+                </button>
+                <button
+                  onClick={() => setHeroViewMode("stacked")}
+                  className={`px-5 py-2 rounded-full text-xs font-bold leading-none transition-all duration-200 flex items-center gap-1.5 active:scale-95 ${
+                    heroViewMode === "stacked"
+                      ? "bg-forest-700 text-white shadow-sm ring-1 ring-forest-600/40"
+                      : darkMode 
+                        ? "text-surface-300 hover:text-white hover:bg-white/10" 
+                        : "text-forest-950 hover:text-black hover:bg-white/40 font-semibold"
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>Stacked Artifact Composition</span>
+                </button>
+              </div>
             </div>
 
             {/* VIEW 1: LAPTOP MOCKUP SHOWCASE */}
@@ -219,7 +230,6 @@ export default function LandingPage() {
                     alt="FlowClaim Product Showcase on Laptop"
                     className="w-full h-auto object-cover rounded-2xl"
                     onError={(e) => {
-                      // Fallback to laptop dashboard screenshot if frame image fails
                       e.target.src = "/assets/screenshots/hero-laptop-dashboard.png";
                     }}
                   />
@@ -244,7 +254,7 @@ export default function LandingPage() {
                 >
                   <div className="p-2 border-b border-[#EFEBE4] dark:border-forest-800 flex justify-between items-center text-xs font-mono">
                     <span className="font-bold text-forest-700 dark:text-surface-300">LAYER 01: AI Vision Receipt OCR</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#E8F4EC] dark:bg-forest-900 text-[#0F5A33] dark:text-emerald-300 font-bold">Zoom</span>
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#E8F4EC] dark:bg-forest-900 text-[#0F5A33] dark:text-emerald-300 font-bold">Zoom</span>
                   </div>
                   <img 
                     src="/assets/screenshots/ocr-receipt-scanner.png" 
@@ -263,7 +273,7 @@ export default function LandingPage() {
                 >
                   <div className="p-2 border-b border-[#EFEBE4] dark:border-forest-800 flex justify-between items-center text-xs font-mono">
                     <span className="font-bold text-forest-700 dark:text-surface-300">LAYER 02: Real-time Manager Queue</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-forest-700 text-white font-bold">Zoom</span>
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-forest-700 text-white font-bold">Zoom</span>
                   </div>
                   <img 
                     src="/assets/screenshots/manager-approval-queue.png" 
@@ -286,7 +296,7 @@ export default function LandingPage() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest px-3.5 py-1 rounded-full bg-[#E8F4EC] text-[#0F5A33] dark:bg-forest-900 dark:text-emerald-300 border border-[#C2E2CE] dark:border-forest-700 inline-block mb-3">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-[#E8F4EC] text-[#0F5A33] dark:bg-forest-900 dark:text-emerald-300 border border-[#C2E2CE] dark:border-forest-700 inline-block mb-3">
               Platform Features
             </span>
             <h2 className={`font-manrope text-3xl sm:text-5xl font-extrabold tracking-tight ${
@@ -398,7 +408,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ROLE OS WORKSPACE SWITCHER WITH REAL APP SCREENSHOT PREVIEWS */}
+      {/* ROLE OS WORKSPACE SWITCHER WITH PILL SEGMENT TABS */}
       <section id="roles" className={`py-20 border-t ${
         darkMode ? "bg-forest-950 border-forest-800/40" : "bg-[#F7F4EF] border-[#E2DAD0]"
       }`}>
@@ -409,28 +419,32 @@ export default function LandingPage() {
             </h2>
           </div>
 
-          {/* ROLE SWITCHER TABS */}
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            {[
-              { id: "employee", label: "Employee", img: "/assets/screenshots/ocr-receipt-scanner.png" },
-              { id: "manager", label: "Manager", img: "/assets/screenshots/manager-approval-queue.png" },
-              { id: "analytics", label: "Analytics View", img: "/assets/screenshots/analytics-overview.png" },
-              { id: "admin", label: "Admin & Rules", img: "/assets/screenshots/admin-approval-rules.png" }
-            ].map((role) => (
-              <button
-                key={role.id}
-                onClick={() => setActiveRoleTab(role.id)}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all active:scale-95 ${
-                  activeRoleTab === role.id
-                    ? "bg-forest-700 text-white shadow-sm"
-                    : darkMode
-                      ? "bg-forest-900 text-surface-300 hover:bg-forest-800"
-                      : "bg-white text-forest-900 border border-[#E2DAD0] hover:bg-[#EFEBE4]"
-                }`}
-              >
-                {role.label}
-              </button>
-            ))}
+          {/* REFINED ROLE SWITCHER PILL CONTAINER */}
+          <div className="flex justify-center mb-10">
+            <div className={`p-1.5 rounded-full border flex flex-wrap items-center justify-center gap-1.5 ${
+              darkMode ? "bg-forest-950/80 border-forest-800" : "bg-[#EAE4DA] border-[#DCD3C5]"
+            }`}>
+              {[
+                { id: "employee", label: "Employee", img: "/assets/screenshots/ocr-receipt-scanner.png" },
+                { id: "manager", label: "Manager", img: "/assets/screenshots/manager-approval-queue.png" },
+                { id: "analytics", label: "Analytics View", img: "/assets/screenshots/analytics-overview.png" },
+                { id: "admin", label: "Admin & Rules", img: "/assets/screenshots/admin-approval-rules.png" }
+              ].map((role) => (
+                <button
+                  key={role.id}
+                  onClick={() => setActiveRoleTab(role.id)}
+                  className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 active:scale-95 ${
+                    activeRoleTab === role.id
+                      ? "bg-forest-700 text-white shadow-sm"
+                      : darkMode
+                        ? "text-surface-300 hover:text-white"
+                        : "text-forest-900 hover:text-black font-semibold"
+                  }`}
+                >
+                  {role.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* ACTIVE ROLE SCREENSHOT DISPLAY */}
@@ -503,7 +517,7 @@ export default function LandingPage() {
             <div className={`p-7 rounded-2xl border ${
               darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0]"
             }`}>
-              <div className="w-9 h-9 rounded-xl bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
+              <div className="w-9 h-9 rounded-full bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
                 01
               </div>
               <h3 className={`font-manrope text-lg font-bold mb-2 ${darkMode ? "text-white" : "text-forest-950"}`}>
@@ -517,7 +531,7 @@ export default function LandingPage() {
             <div className={`p-7 rounded-2xl border ${
               darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0]"
             }`}>
-              <div className="w-9 h-9 rounded-xl bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
+              <div className="w-9 h-9 rounded-full bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
                 02
               </div>
               <h3 className={`font-manrope text-lg font-bold mb-2 ${darkMode ? "text-white" : "text-forest-950"}`}>
@@ -531,7 +545,7 @@ export default function LandingPage() {
             <div className={`p-7 rounded-2xl border ${
               darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0]"
             }`}>
-              <div className="w-9 h-9 rounded-xl bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
+              <div className="w-9 h-9 rounded-full bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
                 03
               </div>
               <h3 className={`font-manrope text-lg font-bold mb-2 ${darkMode ? "text-white" : "text-forest-950"}`}>
@@ -551,7 +565,7 @@ export default function LandingPage() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-[#E8F4EC] text-[#0F5A33] dark:bg-forest-900 dark:text-emerald-300 border border-[#C2E2CE] dark:border-forest-700 inline-block mb-3">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-[#E8F4EC] text-[#0F5A33] dark:bg-forest-900 dark:text-emerald-300 border border-[#C2E2CE] dark:border-forest-700 inline-block mb-3">
               Developer Kit Guide
             </span>
             <h2 className={`font-manrope text-3xl sm:text-4xl font-extrabold ${darkMode ? "text-white" : "text-forest-950"}`}>
@@ -654,7 +668,7 @@ export default function LandingPage() {
             />
             <button 
               onClick={() => setActiveModalImage(null)}
-              className="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-black/80 text-white text-xs font-mono font-bold hover:bg-black"
+              className="absolute top-4 right-4 px-3.5 py-1.5 rounded-full bg-black/80 text-white text-xs font-mono font-bold hover:bg-black border border-white/20"
             >
               Close [ESC]
             </button>
@@ -688,7 +702,7 @@ export default function LandingPage() {
                 href="https://github.com/Aditya2550" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-forest-700 text-white font-bold hover:bg-forest-800 active:scale-95 transition-all shadow-xs"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-forest-700 text-white font-bold hover:bg-forest-800 active:scale-95 transition-all shadow-xs"
               >
                 <GithubIcon className="w-4 h-4" />
                 GitHub Profile
