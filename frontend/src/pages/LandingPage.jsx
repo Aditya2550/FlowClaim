@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Scan,
   ShieldCheck,
@@ -45,19 +46,76 @@ function GithubIcon({ className = "w-4 h-4" }) {
   );
 }
 
+// Letter stagger animation variants for "ENTERPRISE TEAMS"
+const letterContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.045,
+      delayChildren: 0.25,
+    },
+  },
+};
+
+const letterVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.45,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+// Navbar pills entrance animation variants
+const navContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const navItemVariants = {
+  hidden: { opacity: 0, y: -8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: "easeOut",
+    },
+  },
+};
+
+const navLinks = [
+  { id: "showcase", label: "Product Showcase", href: "#hero-showcase" },
+  { id: "features", label: "Features", href: "#features" },
+  { id: "roles", label: "Role OS", href: "#roles" },
+  { id: "how-it-works", label: "Workflow", href: "#how-it-works" },
+  { id: "tools-guide", label: "Video Kit Guide", href: "#tools-guide" },
+];
+
 export default function LandingPage() {
   // Theme state: default soft cream light mode
   const [darkMode, setDarkMode] = useState(false);
 
   // Interactive demo states
-  const [activeRoleTab, setActiveRoleTab] = useState("employee");
+  const [activeRoleTab, setActiveRoleTab] = useState("analytics");
   const [heroViewMode, setHeroViewMode] = useState("laptop"); // "laptop" | "stacked"
   const [activeModalImage, setActiveModalImage] = useState(null);
+  const [hoveredNav, setHoveredNav] = useState(null);
 
   return (
     <div className={`min-h-screen font-inter transition-colors duration-300 ${
       darkMode 
-        ? "bg-[#06140c] text-surface-50 selection:bg-emerald-600 selection:text-white" 
+        ? "bg-[#05130A] text-[#F0FDF4] selection:bg-emerald-600 selection:text-white" 
         : "bg-[#F7F4EF] text-forest-950 selection:bg-forest-600 selection:text-white"
     }`}>
 
@@ -65,7 +123,7 @@ export default function LandingPage() {
       <header className="sticky top-4 z-50 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className={`h-16 px-6 rounded-full flex items-center justify-between transition-all duration-300 ${
           darkMode 
-            ? "bg-forest-950/95 border border-forest-800/80 shadow-2xl backdrop-blur-xl" 
+            ? "bg-[#071C10]/95 border border-emerald-800/80 shadow-2xl backdrop-blur-xl" 
             : "bg-forest-900 text-white border border-forest-800/60 shadow-xl backdrop-blur-xl"
         }`}>
           
@@ -88,23 +146,46 @@ export default function LandingPage() {
             </span>
           </Link>
 
-          {/* NAV LINKS (Pill-styled hover capsule items) */}
-          <nav className="hidden md:flex items-center space-x-1.5 text-xs font-semibold tracking-wide text-surface-300">
-            <a href="#hero-showcase" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Product Showcase</a>
-            <a href="#features" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Features</a>
-            <a href="#roles" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Role OS</a>
-            <a href="#how-it-works" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Workflow</a>
-            <a href="#tools-guide" className="px-3.5 py-1.5 rounded-full hover:bg-white/10 hover:text-white transition-all">Video Kit Guide</a>
-          </nav>
+          {/* NAV LINKS (Staggered load-in & smooth morphing hover background) */}
+          <motion.nav 
+            className="hidden md:flex items-center space-x-1.5 text-xs font-semibold tracking-wide text-surface-300"
+            variants={navContainerVariants}
+            initial="hidden"
+            animate="visible"
+            onMouseLeave={() => setHoveredNav(null)}
+          >
+            {navLinks.map((item) => (
+              <motion.a
+                key={item.id}
+                href={item.href}
+                variants={navItemVariants}
+                onMouseEnter={() => setHoveredNav(item.id)}
+                className="relative px-3.5 py-1.5 rounded-full text-surface-200 hover:text-white transition-colors duration-200"
+              >
+                {hoveredNav === item.id && (
+                  <motion.div
+                    layoutId="navHoverPill"
+                    className="absolute inset-0 rounded-full bg-white/15 dark:bg-emerald-500/20 border border-white/20 dark:border-emerald-500/30"
+                    transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10">{item.label}</span>
+              </motion.a>
+            ))}
+          </motion.nav>
 
           {/* RIGHT ACTIONS: LIGHT/DARK TOGGLE & AUTH PILLS */}
           <div className="flex items-center space-x-2 shrink-0">
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-emerald-300 transition-colors flex items-center justify-center"
+              className={`w-9 h-9 rounded-full transition-colors flex items-center justify-center ${
+                darkMode
+                  ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 shadow-xs"
+                  : "bg-white/10 hover:bg-white/20 text-emerald-300"
+              }`}
               title={darkMode ? "Switch to Soft Cream Light Mode" : "Switch to Dark Mode"}
             >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {darkMode ? <Sun className="w-4 h-4 text-emerald-300" /> : <Moon className="w-4 h-4 text-emerald-300" />}
             </button>
 
             <Link
@@ -125,182 +206,219 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* HERO SECTION WITH REAL PRODUCT SHOWCASE */}
-      <section className="pt-14 pb-16 md:pt-20 md:pb-24">
+      {/* HERO SECTION WITH REAL PRODUCT SHOWCASE (ASYMMETRIC SPLIT LAYOUT) */}
+      <section className="pt-10 pb-16 md:pt-16 md:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* ODOO HACKATHON PILL BADGE */}
-          <div className="flex justify-center mb-6">
-            <div className={`inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-colors ${
-              darkMode 
-                ? "bg-forest-900/90 text-emerald-300 border border-emerald-500/30 shadow-lg" 
-                : "bg-[#EAE4DA] text-forest-900 border border-[#DCD3C5] shadow-xs"
-            }`}>
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              Originally prototyped at Odoo Hackathon 2026 — rebuilt & expanded solo
-            </div>
-          </div>
-
-          {/* BOLD HEADLINE */}
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className={`font-manrope text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] ${
-              darkMode ? "text-white" : "text-forest-950"
-            }`}>
-              SMARTER EXPENSE REIMBURSEMENTS FOR {" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981]">
-                ENTERPRISE TEAMS
-              </span>
-            </h1>
-
-            {/* SUBTITLE */}
-            <p className={`mt-6 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed ${
-              darkMode ? "text-surface-200" : "text-forest-900/85 font-medium"
-            }`}>
-              Eliminate friction-heavy expense forms with <span className="text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981] font-extrabold">AI Vision OCR</span>, 
-              configurable multi-tier approvals, and real-time Socket.io dispatch — from receipt snap to payout in seconds.
-            </p>
-
-            {/* AUTH CTAS */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/signup"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-sm shadow-md shadow-forest-800/15 active:scale-98 transition-all flex items-center justify-center gap-2 group"
-              >
-                <span>Get Started Free</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-
-              <Link
-                to="/login"
-                className={`w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-sm border active:scale-98 transition-all flex items-center justify-center gap-2 ${
-                  darkMode 
-                    ? "bg-forest-900/60 border-forest-800 text-white hover:bg-forest-800" 
-                    : "bg-white border-[#E2DAD0] text-forest-950 hover:bg-[#F2ECE3] shadow-xs"
-                }`}
-              >
-                <span>Log In to Portal</span>
-                <ChevronRight className="w-4 h-4 text-forest-700 dark:text-surface-400" />
-              </Link>
-            </div>
-          </div>
-
-          {/* REAL PRODUCT SHOWCASE CONTAINER (HERO LAPTOP & STACKED DEPT) */}
-          <div id="hero-showcase" className="mt-14 relative max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             
-            {/* VIEW MODE TOGGLE CAPSULE CONTAINER */}
-            <div className="flex justify-center mb-8">
-              <div className={`p-1.5 rounded-full border inline-flex items-center gap-1.5 shadow-xs ${
-                darkMode ? "bg-forest-950/90 border-forest-800" : "bg-[#EAE4DA] border-[#DCD3C5]"
+            {/* LEFT COLUMN (~55% width: lg:col-span-7) */}
+            <div className="lg:col-span-7 text-left space-y-6">
+
+              {/* BOLD LEFT-ALIGNED HEADLINE WITH LETTER-BY-LETTER ANIMATION ON ENTERPRISE TEAMS */}
+              <h1 className={`font-manrope text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] ${
+                darkMode ? "text-[#F0FDF4]" : "text-forest-950"
               }`}>
-                <button
-                  onClick={() => setHeroViewMode("laptop")}
-                  className={`px-5 py-2 rounded-full text-xs font-bold leading-none transition-all duration-200 flex items-center gap-1.5 active:scale-95 ${
-                    heroViewMode === "laptop"
-                      ? "bg-forest-700 text-white shadow-sm ring-1 ring-forest-600/40"
-                      : darkMode 
-                        ? "text-surface-300 hover:text-white hover:bg-white/10" 
-                        : "text-forest-950 hover:text-black hover:bg-white/40 font-semibold"
+                SMARTER EXPENSE REIMBURSEMENTS FOR{" "}
+                <motion.span
+                  className="inline-flex flex-wrap"
+                  variants={letterContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {Array.from("ENTERPRISE TEAMS").map((char, index) => (
+                    <motion.span
+                      key={index}
+                      variants={letterVariants}
+                      className={
+                        char === " "
+                          ? "inline-block w-[0.25em]"
+                          : "inline-block text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981]"
+                      }
+                    >
+                      {char === " " ? "\u00A0" : char}
+                    </motion.span>
+                  ))}
+                </motion.span>
+              </h1>
+
+              {/* LEFT-ALIGNED SUBTITLE */}
+              <p className={`text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl ${
+                darkMode ? "text-[#B6E3C6]" : "text-forest-900/85 font-medium"
+              }`}>
+                Eliminate friction-heavy expense forms with{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981] font-extrabold">
+                  AI Vision OCR
+                </span>
+                , configurable multi-tier approvals, and real-time Socket.io dispatch — from receipt snap to payout in seconds.
+              </p>
+
+              {/* AUTH CTAS LEFT-ALIGNED */}
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4">
+                <Link
+                  to="/signup"
+                  className="px-7 py-3.5 sm:py-4 rounded-xl bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-sm shadow-md shadow-forest-800/15 active:scale-98 transition-all flex items-center justify-center gap-2 group"
+                >
+                  <span>Get Started Free</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+
+                <Link
+                  to="/login"
+                  className={`px-7 py-3.5 sm:py-4 rounded-xl font-bold text-sm border active:scale-98 transition-all flex items-center justify-center gap-2 ${
+                    darkMode 
+                      ? "bg-[#0B2317] border-[#18492C] text-emerald-100 hover:bg-[#103321]" 
+                      : "bg-white border-[#E2DAD0] text-forest-950 hover:bg-[#F2ECE3] shadow-xs"
                   }`}
                 >
-                  <Monitor className="w-3.5 h-3.5" />
-                  <span>Laptop Showcase Frame</span>
-                </button>
-                <button
-                  onClick={() => setHeroViewMode("stacked")}
-                  className={`px-5 py-2 rounded-full text-xs font-bold leading-none transition-all duration-200 flex items-center gap-1.5 active:scale-95 ${
-                    heroViewMode === "stacked"
-                      ? "bg-forest-700 text-white shadow-sm ring-1 ring-forest-600/40"
-                      : darkMode 
-                        ? "text-surface-300 hover:text-white hover:bg-white/10" 
-                        : "text-forest-950 hover:text-black hover:bg-white/40 font-semibold"
-                  }`}
-                >
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>Stacked Artifact Composition</span>
-                </button>
+                  <span>Log In to Portal</span>
+                  <ChevronRight className="w-4 h-4 text-forest-700 dark:text-emerald-400" />
+                </Link>
               </div>
+
             </div>
 
-            {/* VIEW 1: LAPTOP MOCKUP SHOWCASE */}
-            {heroViewMode === "laptop" && (
-              <div className="relative group cursor-pointer" onClick={() => setActiveModalImage("/assets/screenshots/hero-laptop-frame.png")}>
-                <div className="relative mx-auto max-w-5xl overflow-hidden rounded-2xl shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
-                  <img
-                    src="/assets/screenshots/hero-laptop-frame.png"
-                    alt="FlowClaim Product Showcase on Laptop"
-                    className="w-full h-auto object-cover rounded-2xl"
-                    onError={(e) => {
-                      e.target.src = "/assets/screenshots/hero-laptop-dashboard.png";
-                    }}
-                  />
-                </div>
-                <div className="absolute top-4 right-6 opacity-0 group-hover:opacity-100 transition-opacity bg-forest-950/80 text-white px-3 py-1.5 rounded-lg text-xs font-mono flex items-center gap-1.5 backdrop-blur-md">
-                  <Maximize2 className="w-3.5 h-3.5" /> Click to Expand Full View
-                </div>
-              </div>
-            )}
-
-            {/* VIEW 2: STACKED ARTIFACT DEPTH COMPOSITION */}
-            {heroViewMode === "stacked" && (
-              <div className="relative min-h-[520px] flex items-center justify-center">
+            {/* RIGHT COLUMN (~45% width: lg:col-span-5) */}
+            <div className="lg:col-span-5 relative mt-6 lg:mt-0">
+              <div id="hero-showcase" className="relative w-full max-w-lg mx-auto">
                 
-                {/* BACK LAYER: OCR RECEIPT SCANNER */}
-                <div 
-                  onClick={() => setActiveModalImage("/assets/screenshots/ocr-receipt-scanner.png")}
-                  className={`absolute left-2 sm:left-6 top-4 w-[90%] sm:w-[500px] rounded-2xl p-2 border cursor-pointer transition-all duration-500 transform -rotate-6 hover:rotate-0 hover:z-30 hover:scale-105 shadow-2xl ${
-                    darkMode ? "bg-forest-950/95 border-forest-700" : "bg-white border-[#E2DAD0] shadow-forest-900/10"
-                  }`}
-                  style={{ zIndex: 10 }}
-                >
-                  <div className="p-2 border-b border-[#EFEBE4] dark:border-forest-800 flex justify-between items-center text-xs font-mono">
-                    <span className="font-bold text-forest-700 dark:text-surface-300">LAYER 01: AI Vision Receipt OCR</span>
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#E8F4EC] dark:bg-forest-900 text-[#0F5A33] dark:text-emerald-300 font-bold">Zoom</span>
+                {/* VIEW MODE TOGGLE CAPSULE */}
+                <div className="flex justify-end mb-3">
+                  <div className={`p-1 rounded-full border inline-flex items-center gap-1 shadow-xs ${
+                    darkMode ? "bg-[#071B10] border-[#174B2C]" : "bg-[#EAE4DA] border-[#DCD3C5]"
+                  }`}>
+                    <button
+                      onClick={() => setHeroViewMode("stacked")}
+                      className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 flex items-center gap-1 ${
+                        heroViewMode === "stacked"
+                          ? "bg-forest-700 text-white shadow-sm"
+                          : darkMode ? "text-emerald-200/80 hover:text-white" : "text-forest-950 hover:text-black font-semibold"
+                      }`}
+                    >
+                      <Layers className="w-3 h-3" />
+                      Stacked
+                    </button>
+                    <button
+                      onClick={() => setHeroViewMode("laptop")}
+                      className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 flex items-center gap-1 ${
+                        heroViewMode === "laptop"
+                          ? "bg-forest-700 text-white shadow-sm"
+                          : darkMode ? "text-emerald-200/80 hover:text-white" : "text-forest-950 hover:text-black font-semibold"
+                      }`}
+                    >
+                      <Monitor className="w-3 h-3" />
+                      Laptop
+                    </button>
                   </div>
-                  <img 
-                    src="/assets/screenshots/ocr-receipt-scanner.png" 
-                    alt="OCR Receipt Scanner" 
-                    className="w-full h-auto rounded-xl object-cover"
-                  />
                 </div>
 
-                {/* FRONT LAYER: MANAGER APPROVAL QUEUE */}
-                <div 
-                  onClick={() => setActiveModalImage("/assets/screenshots/manager-approval-queue.png")}
-                  className={`absolute right-2 sm:right-6 top-16 w-[90%] sm:w-[520px] rounded-2xl p-2 border cursor-pointer transition-all duration-500 transform rotate-3 hover:rotate-0 hover:z-30 hover:scale-105 shadow-2xl ${
-                    darkMode ? "bg-forest-950/95 border-forest-700" : "bg-white border-[#E2DAD0] shadow-forest-900/15"
-                  }`}
-                  style={{ zIndex: 20 }}
-                >
-                  <div className="p-2 border-b border-[#EFEBE4] dark:border-forest-800 flex justify-between items-center text-xs font-mono">
-                    <span className="font-bold text-forest-700 dark:text-surface-300">LAYER 02: Real-time Manager Queue</span>
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-forest-700 text-white font-bold">Zoom</span>
+                {/* STACKED ARTIFACT COMPOSITION */}
+                {heroViewMode === "stacked" ? (
+                  <div className="relative min-h-[380px] sm:min-h-[420px] flex items-center justify-center p-2">
+                    
+                    {/* BACK LAYER: OCR RECEIPT SCANNER */}
+                    <div 
+                      onClick={() => setActiveModalImage("/assets/screenshots/ocr-receipt-scanner.png")}
+                      className={`absolute left-0 top-2 w-[82%] sm:w-[340px] rounded-2xl p-2 border cursor-pointer transition-all duration-500 transform -rotate-6 hover:rotate-0 hover:z-30 hover:scale-105 shadow-xl ${
+                        darkMode ? "bg-[#0A2617]/95 border-emerald-600/50 shadow-2xl shadow-emerald-950/80" : "bg-white border-[#E2DAD0] shadow-forest-900/10"
+                      }`}
+                      style={{ zIndex: 10 }}
+                    >
+                      <div className="p-1.5 border-b border-[#EFEBE4] dark:border-[#154628] flex justify-between items-center text-[10px] font-mono">
+                        <span className="font-bold text-forest-700 dark:text-emerald-200">LAYER 01: AI Vision Receipt OCR</span>
+                        <span className="px-2 py-0.5 rounded-full bg-[#E8F4EC] dark:bg-emerald-950 dark:border dark:border-emerald-700/40 text-[#0F5A33] dark:text-emerald-300 font-bold">Scanning</span>
+                      </div>
+                      <img 
+                        src="/assets/screenshots/ocr-receipt-scanner.png" 
+                        alt="OCR Receipt Scanner" 
+                        className="w-full h-auto rounded-xl object-cover"
+                      />
+                    </div>
+
+                    {/* FRONT LAYER: MANAGER APPROVAL QUEUE */}
+                    <div 
+                      onClick={() => setActiveModalImage("/assets/screenshots/manager-approval-queue.png")}
+                      className={`absolute right-0 top-12 sm:top-14 w-[86%] sm:w-[360px] rounded-2xl p-2 border cursor-pointer transition-all duration-500 transform rotate-2 hover:rotate-0 hover:z-30 hover:scale-105 shadow-2xl ${
+                        darkMode ? "bg-[#0A2617]/95 border-emerald-600/50 shadow-2xl shadow-emerald-950/80" : "bg-white border-[#E2DAD0] shadow-forest-900/15"
+                      }`}
+                      style={{ zIndex: 20 }}
+                    >
+                      <div className="p-1.5 border-b border-[#EFEBE4] dark:border-[#154628] flex justify-between items-center text-[10px] font-mono">
+                        <span className="font-bold text-forest-700 dark:text-emerald-200">LAYER 02: Expense Verification UI</span>
+                        <span className="px-2 py-0.5 rounded-full bg-forest-700 text-white font-bold">Live</span>
+                      </div>
+                      <img 
+                        src="/assets/screenshots/manager-approval-queue.png" 
+                        alt="Manager Approval Queue" 
+                        className="w-full h-auto rounded-xl object-cover"
+                      />
+                    </div>
+
                   </div>
-                  <img 
-                    src="/assets/screenshots/manager-approval-queue.png" 
-                    alt="Manager Approval Queue" 
-                    className="w-full h-auto rounded-xl object-cover"
-                  />
+                ) : (
+                  <div className="relative group cursor-pointer my-4" onClick={() => setActiveModalImage("/assets/screenshots/hero-laptop-frame.png")}>
+                    <div className="relative mx-auto overflow-hidden rounded-2xl shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
+                      <img
+                        src="/assets/screenshots/hero-laptop-frame.png"
+                        alt="FlowClaim Product Showcase on Laptop"
+                        className="w-full h-auto object-cover rounded-2xl"
+                        onError={(e) => {
+                          e.target.src = "/assets/screenshots/hero-laptop-dashboard.png";
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* FLOATING FINTECH CONFIRMATION CALLOUT CARD WITH REAL FINTECH GRAPHIC */}
+                <div 
+                  className={`absolute -bottom-4 -left-2 sm:-left-6 z-30 p-3.5 sm:p-4 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-105 flex items-center gap-3.5 ${
+                    darkMode 
+                      ? "bg-[#0A2617]/95 border-emerald-500/50 text-white shadow-2xl shadow-emerald-950/80 ring-1 ring-emerald-500/30" 
+                      : "bg-white/95 border-emerald-200/90 text-forest-950 shadow-forest-900/15 ring-1 ring-emerald-500/10"
+                  }`}
+                >
+                  <div className="relative shrink-0">
+                    <img 
+                      src="/assets/landing/hero-claim-paid.png" 
+                      alt="Claim Paid Receipt" 
+                      className="w-11 h-11 sm:w-12 sm:h-12 object-contain filter drop-shadow-md"
+                    />
+                  </div>
+
+                  <div className="space-y-0.5 pr-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-manrope font-extrabold text-xs sm:text-sm tracking-tight">
+                        Claim Verified
+                      </span>
+                    </div>
+                    <div className="text-[11px] font-medium flex items-center gap-1.5">
+                      <span className="font-bold font-mono text-forest-700 dark:text-emerald-400">$1,240.00</span>
+                      <span className="text-surface-400">•</span>
+                      <span className={darkMode ? "text-emerald-300" : "text-forest-800/90"}>Payout Confirmed</span>
+                    </div>
+                  </div>
                 </div>
 
               </div>
-            )}
+            </div>
 
           </div>
 
         </div>
       </section>
 
-      {/* CORE FEATURES GRID WITH REAL PRODUCT SCREENSHOTS */}
+      {/* CORE FEATURES GRID WITH REAL PRODUCT SCREENSHOTS & SAAS GRAPHICS */}
       <section id="features" className={`py-20 border-t transition-colors ${
-        darkMode ? "bg-forest-950/80 border-forest-800/40" : "bg-white border-[#E2DAD0]"
+        darkMode ? "bg-[#07190E] border-emerald-900/40" : "bg-white border-[#E2DAD0]"
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-[#E8F4EC] text-[#0F5A33] dark:bg-forest-900 dark:text-emerald-300 border border-[#C2E2CE] dark:border-forest-700 inline-block mb-3">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 dark:bg-[#103D26] dark:text-[#34D399] border border-forest-600/20 dark:border-[#22663F] inline-block mb-3 shadow-xs">
               Platform Features
             </span>
             <h2 className={`font-manrope text-3xl sm:text-5xl font-extrabold tracking-tight ${
-              darkMode ? "text-white" : "text-forest-950"
+              darkMode ? "text-[#F0FDF4]" : "text-forest-950"
             }`}>
               Engineered for absolute reimbursement clarity
             </h2>
@@ -308,98 +426,128 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            {/* FEATURE 1 WITH REAL OCR SCREENSHOT */}
-            <div className={`p-6 sm:p-7 rounded-2xl border transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-xs"
+            {/* FEATURE 1: AI VISION OCR EXTRACTION */}
+            <div className={`p-7 sm:p-8 rounded-2xl border transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between group ${
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/50 shadow-lg shadow-emerald-950/40" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-sm hover:shadow-md"
             }`}>
               <div>
-                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-5 shadow-xs ${
-                  darkMode ? "bg-forest-900 border border-forest-700 text-emerald-300" : "bg-[#E8F4EC] border border-[#C2E2CE] text-[#0F5A33]"
-                }`}>
-                  <Scan className="w-5.5 h-5.5" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 p-2 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden ${
+                    darkMode ? "bg-[#06180D] border-[#154628] text-emerald-300" : "bg-white border-[#C2E2CE] text-[#0F5A33]"
+                  }`}>
+                    <img 
+                      src="/assets/landing/feature-ocr-extract.png" 
+                      alt="AI OCR Extract Icon" 
+                      className="w-full h-full object-contain filter drop-shadow-sm"
+                      style={{ transform: "scale(1.45)" }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 dark:bg-[#103D26] dark:text-[#34D399] border border-forest-600/30 dark:border-[#22663F]">
+                    AI Vision v2.0
+                  </span>
                 </div>
-                <h3 className={`font-manrope text-xl font-bold mb-2.5 ${darkMode ? "text-white" : "text-forest-950"}`}>
+                <h3 className={`font-manrope text-2xl font-extrabold mb-3 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                   AI Vision OCR Extraction
                 </h3>
-                <p className={`text-sm leading-relaxed font-normal mb-5 ${darkMode ? "text-surface-200" : "text-forest-900/85"}`}>
+                <p className={`text-sm leading-relaxed font-normal mb-6 ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/85"}`}>
                   Automatically parses uploaded receipt images and PDFs into structured fields — Vendor name, Total Amount, GST split, Category, Invoice ID, and Date — in under 2 seconds.
                 </p>
               </div>
               <div 
                 onClick={() => setActiveModalImage("/assets/screenshots/ocr-receipt-scanner.png")}
-                className="relative rounded-xl overflow-hidden border border-[#E2DAD0] dark:border-forest-800 group cursor-pointer"
+                className="relative rounded-xl overflow-hidden border border-[#E2DAD0] dark:border-[#154628] cursor-pointer shadow-sm"
               >
                 <img 
                   src="/assets/screenshots/ocr-receipt-scanner.png" 
                   alt="OCR Scanner Preview" 
-                  className="w-full h-36 object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-44 sm:h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-forest-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-mono font-bold">
-                  Expand Screenshot
+                <div className="absolute inset-0 bg-forest-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-mono font-bold backdrop-blur-xs">
+                  Click to Expand Full View
                 </div>
               </div>
             </div>
 
-            {/* FEATURE 2 WITH REAL RBAC RULES SCREENSHOT */}
-            <div className={`p-6 sm:p-7 rounded-2xl border transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-xs"
+            {/* FEATURE 2: 5-LEVEL GRANULAR RBAC */}
+            <div className={`p-7 sm:p-8 rounded-2xl border transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between group ${
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/50 shadow-lg shadow-emerald-950/40" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-sm hover:shadow-md"
             }`}>
               <div>
-                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-5 shadow-xs ${
-                  darkMode ? "bg-forest-900 border border-forest-700 text-emerald-300" : "bg-[#E8F4EC] border border-[#C2E2CE] text-[#0F5A33]"
-                }`}>
-                  <ShieldCheck className="w-5.5 h-5.5" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 p-2.5 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden ${
+                    darkMode ? "bg-[#06180D] border-[#154628] text-emerald-300" : "bg-white border-[#C2E2CE] text-[#0F5A33]"
+                  }`}>
+                    <img 
+                      src="/assets/landing/feature-rbac-governance.png" 
+                      alt="RBAC Governance Seal" 
+                      className="w-full h-full object-contain filter drop-shadow-sm"
+                      style={{ transform: "scale(1.3)" }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 dark:bg-[#103D26] dark:text-[#34D399] border border-forest-600/30 dark:border-[#22663F]">
+                    Audit Certified
+                  </span>
                 </div>
-                <h3 className={`font-manrope text-xl font-bold mb-2.5 ${darkMode ? "text-white" : "text-forest-950"}`}>
+                <h3 className={`font-manrope text-2xl font-extrabold mb-3 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                   5-Level Granular RBAC
                 </h3>
-                <p className={`text-sm leading-relaxed font-normal mb-5 ${darkMode ? "text-surface-200" : "text-forest-900/85"}`}>
+                <p className={`text-sm leading-relaxed font-normal mb-6 ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/85"}`}>
                   Strict scope isolation and permission matrices across 5 dedicated roles: Employee, Manager, Admin, Director, and Finance teams.
                 </p>
               </div>
               <div 
                 onClick={() => setActiveModalImage("/assets/screenshots/admin-approval-rules.png")}
-                className="relative rounded-xl overflow-hidden border border-[#E2DAD0] dark:border-forest-800 group cursor-pointer"
+                className="relative rounded-xl overflow-hidden border border-[#E2DAD0] dark:border-[#154628] cursor-pointer shadow-sm"
               >
                 <img 
                   src="/assets/screenshots/admin-approval-rules.png" 
                   alt="Admin Approval Rules Preview" 
-                  className="w-full h-36 object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-44 sm:h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-forest-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-mono font-bold">
-                  Expand Screenshot
+                <div className="absolute inset-0 bg-forest-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-mono font-bold backdrop-blur-xs">
+                  Click to Expand Full View
                 </div>
               </div>
             </div>
 
-            {/* FEATURE 3 WITH REAL MANAGER QUEUE SCREENSHOT */}
-            <div className={`p-6 sm:p-7 rounded-2xl border transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-xs"
+            {/* FEATURE 3: SOCKET.IO REAL-TIME PUSH */}
+            <div className={`p-7 sm:p-8 rounded-2xl border transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between group ${
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/50 shadow-lg shadow-emerald-950/40" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-sm hover:shadow-md"
             }`}>
               <div>
-                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center mb-5 shadow-xs ${
-                  darkMode ? "bg-forest-900 border border-forest-700 text-emerald-300" : "bg-[#E8F4EC] border border-[#C2E2CE] text-[#0F5A33]"
-                }`}>
-                  <Radio className="w-5.5 h-5.5" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 p-2 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden ${
+                    darkMode ? "bg-[#06180D] border-[#154628] text-emerald-300" : "bg-white border-[#C2E2CE] text-[#0F5A33]"
+                  }`}>
+                    <img 
+                      src="/assets/landing/feature-socket-push.png" 
+                      alt="Socket Push Diagram" 
+                      className="w-full h-full object-contain filter drop-shadow-sm"
+                      style={{ transform: "scale(1.45)" }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 dark:bg-[#103D26] dark:text-[#34D399] border border-forest-600/30 dark:border-[#22663F]">
+                    Real-time Sync
+                  </span>
                 </div>
-                <h3 className={`font-manrope text-xl font-bold mb-2.5 ${darkMode ? "text-white" : "text-forest-950"}`}>
+                <h3 className={`font-manrope text-2xl font-extrabold mb-3 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                   Socket.io Real-time Push
                 </h3>
-                <p className={`text-sm leading-relaxed font-normal mb-5 ${darkMode ? "text-surface-200" : "text-forest-900/85"}`}>
+                <p className={`text-sm leading-relaxed font-normal mb-6 ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/85"}`}>
                   Zero polling overhead. Approvers receive instant push notifications and live badge count updates the moment a claim is filed or processed.
                 </p>
               </div>
               <div 
                 onClick={() => setActiveModalImage("/assets/screenshots/manager-approval-queue.png")}
-                className="relative rounded-xl overflow-hidden border border-[#E2DAD0] dark:border-forest-800 group cursor-pointer"
+                className="relative rounded-xl overflow-hidden border border-[#E2DAD0] dark:border-[#154628] cursor-pointer shadow-sm"
               >
                 <img 
                   src="/assets/screenshots/manager-approval-queue.png" 
                   alt="Manager Queue Preview" 
-                  className="w-full h-36 object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-44 sm:h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-forest-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-mono font-bold">
-                  Expand Screenshot
+                <div className="absolute inset-0 bg-forest-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-mono font-bold backdrop-blur-xs">
+                  Click to Expand Full View
                 </div>
               </div>
             </div>
@@ -410,11 +558,11 @@ export default function LandingPage() {
 
       {/* ROLE OS WORKSPACE SWITCHER WITH PILL SEGMENT TABS */}
       <section id="roles" className={`py-20 border-t ${
-        darkMode ? "bg-forest-950 border-forest-800/40" : "bg-[#F7F4EF] border-[#E2DAD0]"
+        darkMode ? "bg-[#05130A] border-emerald-900/40" : "bg-[#F7F4EF] border-[#E2DAD0]"
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
-            <h2 className={`font-manrope text-3xl font-extrabold ${darkMode ? "text-white" : "text-forest-950"}`}>
+            <h2 className={`font-manrope text-3xl font-extrabold ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
               Explore Role Workspaces
             </h2>
           </div>
@@ -422,12 +570,12 @@ export default function LandingPage() {
           {/* REFINED ROLE SWITCHER PILL CONTAINER */}
           <div className="flex justify-center mb-10">
             <div className={`p-1.5 rounded-full border flex flex-wrap items-center justify-center gap-1.5 ${
-              darkMode ? "bg-forest-950/80 border-forest-800" : "bg-[#EAE4DA] border-[#DCD3C5]"
+              darkMode ? "bg-[#071B10] border-[#174B2C]" : "bg-[#EAE4DA] border-[#DCD3C5]"
             }`}>
               {[
-                { id: "employee", label: "Employee", img: "/assets/screenshots/ocr-receipt-scanner.png" },
-                { id: "manager", label: "Manager", img: "/assets/screenshots/manager-approval-queue.png" },
                 { id: "analytics", label: "Analytics View", img: "/assets/screenshots/analytics-overview.png" },
+                { id: "employee", label: "Employee View", img: "/assets/screenshots/ocr-receipt-scanner.png" },
+                { id: "manager", label: "Manager View", img: "/assets/screenshots/manager-approval-queue.png" },
                 { id: "admin", label: "Admin & Rules", img: "/assets/screenshots/admin-approval-rules.png" }
               ].map((role) => (
                 <button
@@ -437,7 +585,7 @@ export default function LandingPage() {
                     activeRoleTab === role.id
                       ? "bg-forest-700 text-white shadow-sm"
                       : darkMode
-                        ? "text-surface-300 hover:text-white"
+                        ? "text-emerald-200/80 hover:text-white"
                         : "text-forest-900 hover:text-black font-semibold"
                   }`}
                 >
@@ -449,21 +597,21 @@ export default function LandingPage() {
 
           {/* ACTIVE ROLE SCREENSHOT DISPLAY */}
           <div className={`max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl border ${
-            darkMode ? "bg-forest-900/50 border-forest-800" : "bg-white border-[#E2DAD0] shadow-md"
+            darkMode ? "bg-[#0B2317] border-[#18492C] shadow-xl shadow-emerald-950/50" : "bg-white border-[#E2DAD0] shadow-md"
           }`}>
-            <div className="text-xs font-mono text-[#0F5A33] dark:text-emerald-300 font-bold uppercase mb-1.5">
+            <div className="text-xs font-mono text-forest-700 dark:text-emerald-400 font-bold uppercase mb-1.5">
               Active Workspace: {activeRoleTab.toUpperCase()}
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-5">
-                <h3 className={`font-manrope text-2xl font-bold mb-3 ${darkMode ? "text-white" : "text-forest-950"}`}>
+                <h3 className={`font-manrope text-2xl font-bold mb-3 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                   {activeRoleTab === "employee" && "Employee Receipt Upload & Claim Verification"}
                   {activeRoleTab === "manager" && "Manager Queue & Side-by-Side Verification"}
                   {activeRoleTab === "analytics" && "Spend Velocity & Turnaround Visual Analytics"}
                   {activeRoleTab === "admin" && "System Permission Rules & Threshold Setup"}
                 </h3>
-                <p className={`text-sm leading-relaxed mb-4 ${darkMode ? "text-surface-200" : "text-forest-900/85"}`}>
+                <p className={`text-sm leading-relaxed mb-4 ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/85"}`}>
                   FlowClaim isolates data access strictly according to user roles, ensuring governance compliance, rapid turnaround times, and audit reliability across every department.
                 </p>
               </div>
@@ -479,7 +627,7 @@ export default function LandingPage() {
                     };
                     setActiveModalImage(imgMap[activeRoleTab] || "/assets/screenshots/hero-laptop-dashboard.png");
                   }}
-                  className="relative rounded-xl overflow-hidden border border-[#E2DAD0] dark:border-forest-800 group cursor-pointer shadow-lg"
+                  className="relative rounded-xl overflow-hidden border border-[#E2DAD0] dark:border-[#154628] group cursor-pointer shadow-lg"
                 >
                   <img 
                     src={
@@ -504,56 +652,167 @@ export default function LandingPage() {
 
       {/* HOW IT WORKS (3 STEPS) */}
       <section id="how-it-works" className={`py-20 border-t ${
-        darkMode ? "bg-forest-950/90 border-forest-800/40" : "bg-white border-[#E2DAD0]"
+        darkMode ? "bg-[#07190E] border-emerald-900/40" : "bg-white border-[#E2DAD0]"
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className={`font-manrope text-3xl sm:text-4xl font-extrabold ${darkMode ? "text-white" : "text-forest-950"}`}>
+            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 dark:bg-emerald-950 dark:text-emerald-300 border border-forest-600/20 dark:border-emerald-700/50 inline-block mb-3">
+              Automated Process
+            </span>
+            <h2 className={`font-manrope text-3xl sm:text-4xl font-extrabold tracking-tight ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
               Three Simple Steps to Reimbursement
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className={`p-7 rounded-2xl border ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0]"
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            
+            {/* STEP 1 */}
+            <div className={`p-6 sm:p-7 rounded-2xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 group ${
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/50 shadow-lg shadow-emerald-950/40" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-sm hover:shadow-md"
             }`}>
-              <div className="w-9 h-9 rounded-full bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
-                01
+              <div>
+                {/* STEP CARD HEADER */}
+                <div className="flex items-center justify-between">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-mono font-extrabold bg-forest-700 text-white shadow-xs">
+                    Step 01
+                  </span>
+                  <span className="text-[11px] font-mono font-bold text-forest-700 dark:text-emerald-400 uppercase tracking-wider">
+                    AI OCR Scan
+                  </span>
+                </div>
+
+                {/* GRAPHIC CONTAINER */}
+                <div className={`my-5 h-44 sm:h-48 w-full rounded-2xl border flex items-center justify-center p-4 overflow-hidden relative transition-colors ${
+                  darkMode ? "bg-[#06180D] border-[#154628]" : "bg-white border-[#E2DAD0] shadow-xs"
+                }`}>
+                  <img 
+                    src="/assets/landing/hero-ocr-visual.png" 
+                    alt="Snap & OCR Scan" 
+                    className="h-32 w-auto object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+
+                {/* CONTENT */}
+                <h3 className={`font-manrope text-xl sm:text-2xl font-extrabold mb-2.5 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
+                  Snap & OCR Scan
+                </h3>
+                <p className={`text-sm leading-relaxed ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/85"}`}>
+                  Drop receipt photo or PDF. Gemini vision auto-extracts merchant, date, total amount, and GST split in under 2 seconds.
+                </p>
               </div>
-              <h3 className={`font-manrope text-lg font-bold mb-2 ${darkMode ? "text-white" : "text-forest-950"}`}>
-                Snap & OCR Scan
-              </h3>
-              <p className={`text-sm leading-relaxed ${darkMode ? "text-surface-200" : "text-forest-900/85"}`}>
-                Drop receipt photo or PDF. Gemini vision auto-extracts merchant, date, total amount, and GST split.
-              </p>
             </div>
 
-            <div className={`p-7 rounded-2xl border ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0]"
+            {/* STEP 2 */}
+            <div className={`p-6 sm:p-7 rounded-2xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 group ${
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/50 shadow-lg shadow-emerald-950/40" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-sm hover:shadow-md"
             }`}>
-              <div className="w-9 h-9 rounded-full bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
-                02
+              <div>
+                {/* STEP CARD HEADER */}
+                <div className="flex items-center justify-between">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-mono font-extrabold bg-forest-700 text-white shadow-xs">
+                    Step 02
+                  </span>
+                  <span className="text-[11px] font-mono font-bold text-forest-700 dark:text-emerald-400 uppercase tracking-wider">
+                    Smart Routing
+                  </span>
+                </div>
+
+                {/* GRAPHIC CONTAINER */}
+                <div className={`my-5 h-44 sm:h-48 w-full rounded-2xl border flex items-center justify-center p-4 overflow-hidden relative transition-colors ${
+                  darkMode ? "bg-[#06180D] border-[#154628]" : "bg-white border-[#E2DAD0] shadow-xs"
+                }`}>
+                  <img 
+                    src="/assets/landing/workflow-step2-approval.png" 
+                    alt="Smart Approval Routing" 
+                    className="h-36 w-auto object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+
+                {/* CONTENT */}
+                <h3 className={`font-manrope text-xl sm:text-2xl font-extrabold mb-2.5 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
+                  Smart Approval Routing
+                </h3>
+                <p className={`text-sm leading-relaxed ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/85"}`}>
+                  Claim routes automatically to direct manager or director based on configured organizational threshold rules.
+                </p>
               </div>
-              <h3 className={`font-manrope text-lg font-bold mb-2 ${darkMode ? "text-white" : "text-forest-950"}`}>
-                Smart Approval Routing
-              </h3>
-              <p className={`text-sm leading-relaxed ${darkMode ? "text-surface-200" : "text-forest-900/85"}`}>
-                Claim routes automatically to direct manager or director based on configured organizational rules.
-              </p>
             </div>
 
-            <div className={`p-7 rounded-2xl border ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-[#FAF8F5] border-[#E2DAD0]"
+            {/* STEP 3 */}
+            <div className={`p-6 sm:p-7 rounded-2xl border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 group ${
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/50 shadow-lg shadow-emerald-950/40" : "bg-[#FAF8F5] border-[#E2DAD0] shadow-sm hover:shadow-md"
             }`}>
-              <div className="w-9 h-9 rounded-full bg-forest-700 text-white font-extrabold font-mono flex items-center justify-center mb-4 text-xs shadow-xs">
-                03
+              <div>
+                {/* STEP CARD HEADER */}
+                <div className="flex items-center justify-between">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-mono font-extrabold bg-forest-700 text-white shadow-xs">
+                    Step 03
+                  </span>
+                  <span className="text-[11px] font-mono font-bold text-forest-700 dark:text-emerald-400 uppercase tracking-wider">
+                    Direct Payout
+                  </span>
+                </div>
+
+                {/* GRAPHIC CONTAINER */}
+                <div className={`my-5 h-44 sm:h-48 w-full rounded-2xl border flex items-center justify-center p-4 overflow-hidden relative transition-colors ${
+                  darkMode ? "bg-[#06180D] border-[#154628]" : "bg-white border-[#E2DAD0] shadow-xs"
+                }`}>
+                  <img 
+                    src="/assets/landing/workflow-step3-payout.png" 
+                    alt="Finance Audit & Payout" 
+                    className="h-32 w-auto object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+
+                {/* CONTENT */}
+                <h3 className={`font-manrope text-xl sm:text-2xl font-extrabold mb-2.5 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
+                  Finance Audit & Payout
+                </h3>
+                <p className={`text-sm leading-relaxed ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/85"}`}>
+                  Finance verifies tax credit eligibility and completes reimbursement disbursement seamlessly with full audit trail logs.
+                </p>
               </div>
-              <h3 className={`font-manrope text-lg font-bold mb-2 ${darkMode ? "text-white" : "text-forest-950"}`}>
-                Finance Audit & Payout
-              </h3>
-              <p className={`text-sm leading-relaxed ${darkMode ? "text-surface-200" : "text-forest-900/85"}`}>
-                Finance verifies tax credit eligibility and completes reimbursement disbursement seamlessly.
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* HIGH-CONVERTING EMPLOYEE SUCCESS CTA BANNER */}
+      <section className={`py-16 border-t ${
+        darkMode ? "bg-[#05130A] border-emerald-900/40" : "bg-[#F3EEE6] border-[#E2DAD0]"
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className={`p-8 sm:p-12 rounded-3xl border shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 ${
+            darkMode ? "bg-gradient-to-r from-[#061C10] via-[#0C321E] to-[#061C10] border-emerald-500/40 shadow-2xl shadow-emerald-950/60" : "bg-white border-[#E2DAD0]"
+          }`}>
+            <div className="space-y-4 max-w-xl text-left z-10">
+              <span className="text-xs font-mono font-bold uppercase tracking-widest px-3.5 py-1 rounded-full bg-[#E8F4EC] text-[#0F5A33] dark:bg-emerald-950 dark:text-emerald-300 border border-[#C2E2CE] dark:border-emerald-700/50 inline-block">
+                Instant Employee Satisfaction
+              </span>
+              <h2 className={`font-manrope text-3xl sm:text-4xl font-extrabold tracking-tight ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
+                Transform corporate reimbursements from hours to seconds
+              </h2>
+              <p className={`text-sm leading-relaxed ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/85 font-medium"}`}>
+                Empower your financial team with automated OCR verification, audit logging, and direct payout routing.
               </p>
+              <div className="pt-2 flex flex-col sm:flex-row items-center gap-4">
+                <Link
+                  to="/signup"
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 group"
+                >
+                  <span>Get Started Free Now</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+
+            <div className="relative shrink-0 z-10">
+              <img 
+                src="/assets/landing/cta-employee-success.png" 
+                alt="Employee Reimbursement Success" 
+                className="w-56 sm:w-64 h-auto object-contain filter drop-shadow-xl hover:scale-105 transition-transform duration-300"
+              />
             </div>
           </div>
         </div>
@@ -561,17 +820,17 @@ export default function LandingPage() {
 
       {/* RECOMMENDED VIDEO EDITING & RECORDING TOOLS GUIDE */}
       <section id="tools-guide" className={`py-20 border-t ${
-        darkMode ? "bg-forest-950 border-forest-800/40" : "bg-[#F7F4EF] border-[#E2DAD0]"
+        darkMode ? "bg-[#07190E] border-emerald-900/40" : "bg-[#F7F4EF] border-[#E2DAD0]"
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-[#E8F4EC] text-[#0F5A33] dark:bg-forest-900 dark:text-emerald-300 border border-[#C2E2CE] dark:border-forest-700 inline-block mb-3">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-[#E8F4EC] text-[#0F5A33] dark:bg-emerald-950 dark:text-emerald-300 border border-[#C2E2CE] dark:border-emerald-700/50 inline-block mb-3">
               Developer Kit Guide
             </span>
-            <h2 className={`font-manrope text-3xl sm:text-4xl font-extrabold ${darkMode ? "text-white" : "text-forest-950"}`}>
+            <h2 className={`font-manrope text-3xl sm:text-4xl font-extrabold ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
               Recommended Screen Recording & Demo Video Tools
             </h2>
-            <p className={`mt-3 text-sm font-medium ${darkMode ? "text-surface-200" : "text-forest-900/80"}`}>
+            <p className={`mt-3 text-sm font-medium ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80"}`}>
               Curated tools to record, edit, zoom, and produce polished SaaS product launch clips.
             </p>
           </div>
@@ -580,15 +839,15 @@ export default function LandingPage() {
             
             {/* TOOL 1 */}
             <div className={`p-6 rounded-2xl border ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-white border-[#E2DAD0] shadow-xs"
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/40 shadow-md shadow-emerald-950/30" : "bg-white border-[#E2DAD0] shadow-xs"
             }`}>
               <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-800 dark:text-purple-400 flex items-center justify-center mb-4">
                 <Video className="w-5 h-5" />
               </div>
-              <h3 className={`font-manrope text-base font-bold mb-1.5 ${darkMode ? "text-white" : "text-forest-950"}`}>
+              <h3 className={`font-manrope text-base font-bold mb-1.5 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                 Screen Studio / Loom
               </h3>
-              <p className={`text-xs leading-relaxed mb-3 ${darkMode ? "text-surface-200" : "text-forest-900/80"}`}>
+              <p className={`text-xs leading-relaxed mb-3 ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80"}`}>
                 <strong>Best for:</strong> Automatic 4K zooms & smooth cursor movements whenever you click on input forms or approval buttons.
               </p>
               <div className="text-[11px] font-mono text-purple-800 dark:text-purple-400 font-bold">
@@ -598,15 +857,15 @@ export default function LandingPage() {
 
             {/* TOOL 2 */}
             <div className={`p-6 rounded-2xl border ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-white border-[#E2DAD0] shadow-xs"
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/40 shadow-md shadow-emerald-950/30" : "bg-white border-[#E2DAD0] shadow-xs"
             }`}>
-              <div className="w-10 h-10 rounded-xl bg-[#E8F4EC] text-[#0F5A33] dark:bg-forest-900 dark:text-emerald-400 flex items-center justify-center mb-4 border border-[#C2E2CE] dark:border-forest-700">
+              <div className="w-10 h-10 rounded-xl bg-[#E8F4EC] text-[#0F5A33] dark:bg-emerald-950 dark:text-emerald-400 flex items-center justify-center mb-4 border border-[#C2E2CE] dark:border-emerald-700/50">
                 <Scissors className="w-5 h-5" />
               </div>
-              <h3 className={`font-manrope text-base font-bold mb-1.5 ${darkMode ? "text-white" : "text-forest-950"}`}>
+              <h3 className={`font-manrope text-base font-bold mb-1.5 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                 CapCut Desktop
               </h3>
-              <p className={`text-xs leading-relaxed mb-3 ${darkMode ? "text-surface-200" : "text-forest-900/80"}`}>
+              <p className={`text-xs leading-relaxed mb-3 ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80"}`}>
                 <strong>Best for:</strong> Rapid clip trimming, text callout FX, background beat sync, and auto-captioning for product demo clips.
               </p>
               <div className="text-[11px] font-mono text-[#0F5A33] dark:text-emerald-400 font-bold">
@@ -616,15 +875,15 @@ export default function LandingPage() {
 
             {/* TOOL 3 */}
             <div className={`p-6 rounded-2xl border ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-white border-[#E2DAD0] shadow-xs"
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/40 shadow-md shadow-emerald-950/30" : "bg-white border-[#E2DAD0] shadow-xs"
             }`}>
               <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-800 dark:text-blue-400 flex items-center justify-center mb-4">
                 <Sliders className="w-5 h-5" />
               </div>
-              <h3 className={`font-manrope text-base font-bold mb-1.5 ${darkMode ? "text-white" : "text-forest-950"}`}>
+              <h3 className={`font-manrope text-base font-bold mb-1.5 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                 OBS Studio + ZoomIt
               </h3>
-              <p className={`text-xs leading-relaxed mb-3 ${darkMode ? "text-surface-200" : "text-forest-900/80"}`}>
+              <p className={`text-xs leading-relaxed mb-3 ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80"}`}>
                 <strong>Best for:</strong> Smooth 60fps raw recording. Sysinternals ZoomIt lets you draw live shapes on receipt OCR fields during capture.
               </p>
               <div className="text-[11px] font-mono text-blue-800 dark:text-blue-400 font-bold">
@@ -634,15 +893,15 @@ export default function LandingPage() {
 
             {/* TOOL 4 */}
             <div className={`p-6 rounded-2xl border ${
-              darkMode ? "bg-forest-900/40 border-forest-800" : "bg-white border-[#E2DAD0] shadow-xs"
+              darkMode ? "bg-[#0B2317] border-[#18492C] hover:border-emerald-500/40 shadow-md shadow-emerald-950/30" : "bg-white border-[#E2DAD0] shadow-xs"
             }`}>
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-800 dark:text-amber-400 flex items-center justify-center mb-4">
                 <Eye className="w-5 h-5" />
               </div>
-              <h3 className={`font-manrope text-base font-bold mb-1.5 ${darkMode ? "text-white" : "text-forest-950"}`}>
+              <h3 className={`font-manrope text-base font-bold mb-1.5 ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                 DaVinci Resolve
               </h3>
-              <p className={`text-xs leading-relaxed mb-3 ${darkMode ? "text-surface-200" : "text-forest-900/80"}`}>
+              <p className={`text-xs leading-relaxed mb-3 ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80"}`}>
                 <strong>Best for:</strong> Professional keyframe zooms, speed ramping, color grading, and high-fidelity sound design.
               </p>
               <div className="text-[11px] font-mono text-amber-800 dark:text-amber-400 font-bold">
@@ -676,47 +935,121 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* FOOTER */}
-      <footer className={`py-12 border-t ${
-        darkMode ? "bg-forest-950 border-forest-800/60" : "bg-white border-[#E2DAD0]"
+      {/* ENTERPRISE SAAS MULTI-COLUMN FOOTER */}
+      <footer className={`pt-16 pb-12 border-t transition-colors ${
+        darkMode ? "bg-[#040F08] border-t border-[#133A22]" : "bg-white border-[#E2DAD0]"
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          
+          {/* MAIN 4-COLUMN FOOTER GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-[#EFEBE4] dark:border-[#133A22]">
             
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-lg bg-forest-700 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                FC
-              </div>
-              <div>
-                <span className={`font-manrope text-base font-bold ${darkMode ? "text-white" : "text-forest-950"}`}>
+            {/* COL 1: BRAND & LIVE STATUS */}
+            <div className="lg:col-span-4 space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-lg bg-forest-600 text-white flex items-center justify-center font-bold text-xs shadow-xs border border-forest-500/30">
+                  <img 
+                    src="/favicon-32x32.png" 
+                    alt="FlowClaim" 
+                    className="w-5 h-5 object-contain"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                  <Check className="w-4 h-4 text-white stroke-[3] hidden" />
+                </div>
+                <span className={`font-manrope text-xl font-extrabold tracking-tight ${darkMode ? "text-[#F0FDF4]" : "text-forest-950"}`}>
                   FlowClaim
                 </span>
-                <p className="text-xs text-forest-700 dark:text-surface-400">Enterprise Expense Reimbursement Platform</p>
+              </div>
+
+              <p className={`text-xs leading-relaxed max-w-sm ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80 font-medium"}`}>
+                Enterprise expense reimbursement platform engineered with AI vision OCR, 5-tier role access controls, multi-tier approval routing, and real-time Socket.io dispatch.
+              </p>
+
+              {/* LIVE SYSTEM STATUS BADGE */}
+              <div className="pt-2">
+                <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold border transition-colors ${
+                  darkMode 
+                    ? "bg-[#0B2416] text-emerald-300 border-emerald-500/40 shadow-md" 
+                    : "bg-forest-600/10 text-forest-700 border-forest-600/20 shadow-xs"
+                }`}>
+                  System Operational • v2.0 Production
+                </div>
+              </div>
+
+              <div className="text-[11px] font-mono text-forest-700 dark:text-emerald-300/90">
+                Built & Designed by <strong>Aditya Valsangkar</strong>
               </div>
             </div>
 
-            <div className="flex items-center space-x-6 text-xs text-forest-800 dark:text-surface-300 font-semibold">
-              <Link to="/login" className="hover:text-forest-600 transition-colors">Login</Link>
-              <Link to="/signup" className="hover:text-forest-600 transition-colors">Sign Up</Link>
-              <a 
-                href="https://github.com/Aditya2550" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-forest-700 text-white font-bold hover:bg-forest-800 active:scale-95 transition-all shadow-xs"
-              >
-                <GithubIcon className="w-4 h-4" />
-                GitHub Profile
-                <ExternalLink className="w-3 h-3" />
-              </a>
+            {/* COL 2: PLATFORM FEATURES */}
+            <div className="lg:col-span-3 space-y-3">
+              <h4 className={`text-xs font-mono font-bold uppercase tracking-wider ${darkMode ? "text-emerald-300" : "text-forest-700"}`}>
+                Platform Core
+              </h4>
+              <ul className={`space-y-2 text-xs font-medium ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80"}`}>
+                <li className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors cursor-pointer hover:underline font-medium">AI Vision OCR Extraction</li>
+                <li className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors cursor-pointer hover:underline font-medium">5-Level Granular RBAC Matrix</li>
+                <li className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors cursor-pointer hover:underline font-medium">Configurable Threshold Rules</li>
+                <li className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors cursor-pointer hover:underline font-medium">Socket.io Real-Time Push</li>
+                <li className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors cursor-pointer hover:underline font-medium">Spend Velocity & Analytics</li>
+                <li className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors cursor-pointer hover:underline font-medium">Finance GST Audit & Payout</li>
+              </ul>
+            </div>
+
+            {/* COL 3: ROLE PORTALS */}
+            <div className="lg:col-span-2 space-y-3">
+              <h4 className={`text-xs font-mono font-bold uppercase tracking-wider ${darkMode ? "text-emerald-300" : "text-forest-700"}`}>
+                Role Portals
+              </h4>
+              <ul className={`space-y-2 text-xs font-medium ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80"}`}>
+                <li><Link to="/login" className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors hover:underline font-medium">Employee Portal</Link></li>
+                <li><Link to="/login" className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors hover:underline font-medium">Manager Queue</Link></li>
+                <li><Link to="/login" className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors hover:underline font-medium">Director Clearance</Link></li>
+                <li><Link to="/login" className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors hover:underline font-medium">Finance Audit</Link></li>
+                <li><Link to="/login" className="hover:text-forest-600 dark:hover:text-emerald-300 transition-colors hover:underline font-medium">Admin Governance</Link></li>
+              </ul>
+            </div>
+
+            {/* COL 4: ARCHITECTURE & GITHUB */}
+            <div className="lg:col-span-3 space-y-3">
+              <h4 className={`text-xs font-mono font-bold uppercase tracking-wider ${darkMode ? "text-emerald-300" : "text-forest-700"}`}>
+                Architecture & Code
+              </h4>
+              <p className={`text-xs ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80"}`}>
+                Built with React, Vite, Node.js, Express, PostgreSQL, Redis, Socket.io & Tailwind CSS.
+              </p>
+              <div className="pt-2">
+                <a 
+                  href="https://github.com/Aditya2550" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-forest-700 hover:bg-forest-800 text-white font-bold text-xs transition-all shadow-xs active:scale-95"
+                >
+                  <GithubIcon className="w-4 h-4" />
+                  GitHub: Aditya2550
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
 
           </div>
 
-          <div className="mt-8 pt-6 border-t border-[#EFEBE4] dark:border-forest-900 text-center text-xs text-forest-700 dark:text-surface-400">
-            <p>
-              Designed & Built Solo by <strong className={darkMode ? "text-white" : "text-forest-950"}>Aditya Valsangkar</strong>. Originally prototyped at Odoo Hackathon 2026.
-            </p>
+          {/* BOTTOM COPYRIGHT & LEGAL BAR */}
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-forest-700 dark:text-emerald-300/80">
+            <div>
+              © 2026 <strong>FlowClaim</strong>. Designed & Developed by <strong>Aditya Valsangkar</strong>.
+            </div>
+            
+            <div className="flex items-center space-x-6 text-xs font-semibold">
+              <span className="hover:text-forest-600 dark:hover:text-emerald-200 hover:underline transition-colors cursor-pointer">Security Protocol</span>
+              <span className="hover:text-forest-600 dark:hover:text-emerald-200 hover:underline transition-colors cursor-pointer">Audit Logging</span>
+              <span className="hover:text-forest-600 dark:hover:text-emerald-200 hover:underline transition-colors cursor-pointer">Enterprise Compliance</span>
+            </div>
           </div>
+
         </div>
       </footer>
 
