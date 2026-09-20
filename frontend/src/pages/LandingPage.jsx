@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -106,11 +106,91 @@ export default function LandingPage() {
   // Theme state: default soft cream light mode
   const [darkMode, setDarkMode] = useState(false);
 
+  // Active navigation section state & hover state (null when in top Hero section)
+  const [activeNavSection, setActiveNavSection] = useState(null);
+  const [hoveredNav, setHoveredNav] = useState(null);
+  const isManualScrollingRef = React.useRef(false);
+
   // Interactive demo states
   const [activeRoleTab, setActiveRoleTab] = useState("analytics");
   const [heroViewMode, setHeroViewMode] = useState("laptop"); // "laptop" | "stacked"
   const [activeModalImage, setActiveModalImage] = useState(null);
-  const [hoveredNav, setHoveredNav] = useState(null);
+
+  // Smooth scroll handler to target section
+  const scrollToSection = (sectionId, e) => {
+    if (e) e.preventDefault();
+    setHoveredNav(null);
+    setActiveNavSection(sectionId);
+    isManualScrollingRef.current = true;
+
+    const targetMap = {
+      "showcase": "hero-showcase",
+      "features": "features",
+      "roles": "roles",
+      "how-it-works": "how-it-works",
+      "tools-guide": "tools-guide"
+    };
+
+    const targetElemId = targetMap[sectionId] || sectionId;
+    const element = document.getElementById(targetElemId);
+    if (element) {
+      const targetTop = element.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({
+        top: targetTop,
+        behavior: "smooth"
+      });
+    }
+
+    setTimeout(() => {
+      isManualScrollingRef.current = false;
+    }, 850);
+  };
+
+  // Scroll listener to update active navbar section automatically as user scrolls
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isManualScrollingRef.current) return;
+
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const heroShowcaseElem = document.getElementById("hero-showcase");
+
+      // When in top Hero section (before Product Showcase), no navbar pill should be active!
+      if (heroShowcaseElem && scrollY < heroShowcaseElem.offsetTop - 160) {
+        setActiveNavSection(null);
+        return;
+      }
+
+      // At bottom of page, activate last section
+      if (scrollY + windowHeight >= documentHeight - 80) {
+        setActiveNavSection("tools-guide");
+        return;
+      }
+
+      const targetSections = [
+        { id: "showcase", element: heroShowcaseElem },
+        { id: "features", element: document.getElementById("features") },
+        { id: "roles", element: document.getElementById("roles") },
+        { id: "how-it-works", element: document.getElementById("how-it-works") },
+        { id: "tools-guide", element: document.getElementById("tools-guide") },
+      ];
+
+      let currentActive = null;
+      for (let i = targetSections.length - 1; i >= 0; i--) {
+        const item = targetSections[i];
+        if (item.element && scrollY >= item.element.offsetTop - 160) {
+          currentActive = item.id;
+          break;
+        }
+      }
+      setActiveNavSection(currentActive);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className={`min-h-screen font-inter transition-colors duration-300 ${
@@ -119,12 +199,12 @@ export default function LandingPage() {
         : "bg-[#F7F4EF] text-forest-950 selection:bg-forest-600 selection:text-white"
     }`}>
 
-      {/* TOP FLOATING NAV (Refined Dark Pill Capsule Navbar) */}
+      {/* TOP FLOATING NAV (Refined Glassmorphism Pill Capsule Navbar) */}
       <header className="sticky top-4 z-50 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className={`h-16 px-6 rounded-full flex items-center justify-between transition-all duration-300 ${
           darkMode 
-            ? "bg-[#071C10]/95 border border-emerald-800/80 shadow-2xl backdrop-blur-xl" 
-            : "bg-forest-900 text-white border border-forest-800/60 shadow-xl backdrop-blur-xl"
+            ? "bg-[#071C10]/90 border border-emerald-800/80 shadow-2xl backdrop-blur-xl" 
+            : "bg-white/85 text-forest-950 border border-white/80 shadow-xl backdrop-blur-xl"
         }`}>
           
           {/* BRAND WITH MUTED REFINED LOGO */}
@@ -141,37 +221,70 @@ export default function LandingPage() {
               />
               <Check className="w-4.5 h-4.5 text-white stroke-[3] hidden" />
             </div>
-            <span className="font-manrope font-extrabold text-lg text-white tracking-tight">
+            <span className={`font-manrope font-extrabold text-lg tracking-tight ${darkMode ? "text-white" : "text-forest-950"}`}>
               FlowClaim
             </span>
           </Link>
 
-          {/* NAV LINKS (Staggered load-in & smooth morphing hover background) */}
+          {/* NAV LINKS (Staggered load-in & active section indicator pill) */}
           <motion.nav 
-            className="hidden md:flex items-center space-x-1.5 text-xs font-semibold tracking-wide text-surface-300"
+            className="hidden md:flex items-center space-x-1.5 text-xs font-semibold tracking-wide"
             variants={navContainerVariants}
             initial="hidden"
             animate="visible"
             onMouseLeave={() => setHoveredNav(null)}
           >
-            {navLinks.map((item) => (
-              <motion.a
-                key={item.id}
-                href={item.href}
-                variants={navItemVariants}
-                onMouseEnter={() => setHoveredNav(item.id)}
-                className="relative px-3.5 py-1.5 rounded-full text-surface-200 hover:text-white transition-colors duration-200"
-              >
-                {hoveredNav === item.id && (
-                  <motion.div
-                    layoutId="navHoverPill"
-                    className="absolute inset-0 rounded-full bg-white/15 dark:bg-emerald-500/20 border border-white/20 dark:border-emerald-500/30"
-                    transition={{ type: "spring", stiffness: 450, damping: 32 }}
-                  />
-                )}
-                <span className="relative z-10">{item.label}</span>
-              </motion.a>
-            ))}
+            {navLinks.map((item) => {
+              const isActive = activeNavSection === item.id;
+              const isHovered = hoveredNav === item.id;
+
+              return (
+                <motion.a
+                  key={item.id}
+                  href={item.href}
+                  variants={navItemVariants}
+                  onMouseEnter={() => setHoveredNav(item.id)}
+                  onClick={(e) => scrollToSection(item.id, e)}
+                  className={`relative px-3.5 py-1.5 rounded-full transition-colors duration-200 ${
+                    isActive 
+                      ? darkMode 
+                        ? "text-white font-extrabold" 
+                        : "text-forest-950 font-extrabold"
+                      : darkMode 
+                        ? "text-emerald-200/80 hover:text-white" 
+                        : "text-forest-900/80 hover:text-forest-950 font-semibold"
+                  }`}
+                >
+                  {/* PERSISTENT ACTIVE GREEN OUTLINE PILL */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="navActivePill"
+                      className={`absolute inset-0 rounded-full transition-all pointer-events-none ${
+                        darkMode 
+                          ? "bg-emerald-500/25 border-2 border-emerald-400 shadow-sm shadow-emerald-950/50" 
+                          : "bg-forest-600/15 border-2 border-forest-600 shadow-xs"
+                      }`}
+                      transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                    />
+                  )}
+
+                  {/* HOVER INDICATOR FOR NON-ACTIVE TABS */}
+                  {isHovered && !isActive && (
+                    <motion.div
+                      layoutId="navHoverPill"
+                      className={`absolute inset-0 rounded-full transition-all pointer-events-none ${
+                        darkMode 
+                          ? "bg-emerald-500/15 border border-emerald-500/30" 
+                          : "bg-forest-600/10 border border-forest-600/20"
+                      }`}
+                      transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                    />
+                  )}
+
+                  <span className="relative z-10">{item.label}</span>
+                </motion.a>
+              );
+            })}
           </motion.nav>
 
           {/* RIGHT ACTIONS: LIGHT/DARK TOGGLE & AUTH PILLS */}
@@ -181,23 +294,25 @@ export default function LandingPage() {
               className={`w-9 h-9 rounded-full transition-colors flex items-center justify-center ${
                 darkMode
                   ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 shadow-xs"
-                  : "bg-white/10 hover:bg-white/20 text-emerald-300"
+                  : "bg-forest-600/10 hover:bg-forest-600/20 text-forest-700 border border-forest-600/20"
               }`}
               title={darkMode ? "Switch to Soft Cream Light Mode" : "Switch to Dark Mode"}
             >
-              {darkMode ? <Sun className="w-4 h-4 text-emerald-300" /> : <Moon className="w-4 h-4 text-emerald-300" />}
+              {darkMode ? <Sun className="w-4 h-4 text-emerald-300" /> : <Moon className="w-4 h-4 text-forest-700" />}
             </button>
 
             <Link
               to="/login"
-              className="px-4 py-1.5 rounded-full text-xs font-bold text-surface-200 hover:text-white hover:bg-white/10 transition-all"
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                darkMode ? "text-emerald-200 hover:text-white hover:bg-white/10" : "text-forest-900 hover:text-black hover:bg-forest-900/10"
+              }`}
             >
               Log In
             </Link>
 
             <Link
               to="/signup"
-              className="px-5 py-2 rounded-full bg-forest-600 hover:bg-forest-500 text-white font-extrabold text-xs shadow-md shadow-forest-950/40 border border-forest-400/30 flex items-center gap-1.5 active:scale-95 transition-all"
+              className="px-5 py-2 rounded-full bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-xs shadow-md shadow-forest-950/20 border border-forest-500/30 flex items-center gap-1.5 active:scale-95 transition-all"
             >
               Sign Up
               <ArrowRight className="w-3.5 h-3.5" />
@@ -206,173 +321,105 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* HERO SECTION WITH REAL PRODUCT SHOWCASE (ASYMMETRIC SPLIT LAYOUT) */}
-      <section className="pt-10 pb-16 md:pt-16 md:pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* HERO SECTION WITH CINEMATIC PORTRAIT BLUR BACKGROUND & ORGANIC ROUNDED FRAME */}
+      <section className="pt-6 pb-16 md:pt-8 md:pb-24">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            
-            {/* LEFT COLUMN (~55% width: lg:col-span-7) */}
-            <div className="lg:col-span-7 text-left space-y-6">
+          {/* ROUNDED HERO CANVAS FRAME */}
+          <div className={`relative overflow-hidden rounded-3xl sm:rounded-[40px] border shadow-2xl transition-all duration-300 p-6 sm:p-10 lg:p-14 ${
+            darkMode 
+              ? "bg-[#06170D] border-emerald-900/50 shadow-emerald-950/80" 
+              : "bg-[#FAF7F2] border-[#E5DDD2] shadow-forest-900/10"
+          }`}>
 
-              {/* BOLD LEFT-ALIGNED HEADLINE WITH LETTER-BY-LETTER ANIMATION ON ENTERPRISE TEAMS */}
-              <h1 className={`font-manrope text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] ${
-                darkMode ? "text-[#F0FDF4]" : "text-forest-950"
-              }`}>
-                SMARTER EXPENSE REIMBURSEMENTS FOR{" "}
-                <motion.span
-                  className="inline-flex flex-wrap"
-                  variants={letterContainerVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {Array.from("ENTERPRISE TEAMS").map((char, index) => (
-                    <motion.span
-                      key={index}
-                      variants={letterVariants}
-                      className={
-                        char === " "
-                          ? "inline-block w-[0.25em]"
-                          : "inline-block text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981]"
-                      }
-                    >
-                      {char === " " ? "\u00A0" : char}
-                    </motion.span>
-                  ))}
-                </motion.span>
-              </h1>
-
-              {/* LEFT-ALIGNED SUBTITLE */}
-              <p className={`text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl ${
-                darkMode ? "text-[#B6E3C6]" : "text-forest-900/85 font-medium"
-              }`}>
-                Eliminate friction-heavy expense forms with{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981] font-extrabold">
-                  AI Vision OCR
-                </span>
-                , configurable multi-tier approvals, and real-time Socket.io dispatch — from receipt snap to payout in seconds.
-              </p>
-
-              {/* AUTH CTAS LEFT-ALIGNED */}
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4">
-                <Link
-                  to="/signup"
-                  className="px-7 py-3.5 sm:py-4 rounded-xl bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-sm shadow-md shadow-forest-800/15 active:scale-98 transition-all flex items-center justify-center gap-2 group"
-                >
-                  <span>Get Started Free</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-
-                <Link
-                  to="/login"
-                  className={`px-7 py-3.5 sm:py-4 rounded-xl font-bold text-sm border active:scale-98 transition-all flex items-center justify-center gap-2 ${
-                    darkMode 
-                      ? "bg-[#0B2317] border-[#18492C] text-emerald-100 hover:bg-[#103321]" 
-                      : "bg-white border-[#E2DAD0] text-forest-950 hover:bg-[#F2ECE3] shadow-xs"
-                  }`}
-                >
-                  <span>Log In to Portal</span>
-                  <ChevronRight className="w-4 h-4 text-forest-700 dark:text-emerald-400" />
-                </Link>
-              </div>
-
+            {/* REAL-WORLD PORTRAIT BLUR BACKGROUND IMAGE WITH ADAPTIVE GRADIENT MASK */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+              <img 
+                src="/assets/landing/hero-cinematic-bg.png" 
+                alt="Executive Office Desk Bokeh Ambience" 
+                className="w-full h-full object-cover object-right-bottom filter scale-105 opacity-65 dark:opacity-55 transition-opacity duration-500"
+              />
+              {/* GRADIENT BACKDROP MASK FOR GUARANTEED 100% TEXT LEGIBILITY */}
+              <div className={`absolute inset-0 ${
+                darkMode 
+                  ? "bg-gradient-to-r from-[#05130A]/95 via-[#05130A]/75 to-transparent" 
+                  : "bg-gradient-to-r from-[#FAF7F2]/95 via-[#FAF7F2]/75 to-transparent"
+              }`} />
             </div>
 
-            {/* RIGHT COLUMN (~45% width: lg:col-span-5) */}
-            <div className="lg:col-span-5 relative mt-6 lg:mt-0">
-              <div id="hero-showcase" className="relative w-full max-w-lg mx-auto">
-                
-                {/* VIEW MODE TOGGLE CAPSULE */}
-                <div className="flex justify-end mb-3">
-                  <div className={`p-1 rounded-full border inline-flex items-center gap-1 shadow-xs ${
-                    darkMode ? "bg-[#071B10] border-[#174B2C]" : "bg-[#EAE4DA] border-[#DCD3C5]"
-                  }`}>
-                    <button
-                      onClick={() => setHeroViewMode("stacked")}
-                      className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 flex items-center gap-1 ${
-                        heroViewMode === "stacked"
-                          ? "bg-forest-700 text-white shadow-sm"
-                          : darkMode ? "text-emerald-200/80 hover:text-white" : "text-forest-950 hover:text-black font-semibold"
-                      }`}
-                    >
-                      <Layers className="w-3 h-3" />
-                      Stacked
-                    </button>
-                    <button
-                      onClick={() => setHeroViewMode("laptop")}
-                      className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all duration-200 flex items-center gap-1 ${
-                        heroViewMode === "laptop"
-                          ? "bg-forest-700 text-white shadow-sm"
-                          : darkMode ? "text-emerald-200/80 hover:text-white" : "text-forest-950 hover:text-black font-semibold"
-                      }`}
-                    >
-                      <Monitor className="w-3 h-3" />
-                      Laptop
-                    </button>
-                  </div>
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+              
+              {/* LEFT COLUMN (~55% width: lg:col-span-7) */}
+              <div className="lg:col-span-7 text-left space-y-6">
+
+                {/* BOLD LEFT-ALIGNED HEADLINE WITH LETTER-BY-LETTER ANIMATION ON ENTERPRISE TEAMS */}
+                <h1 className={`font-manrope text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] ${
+                  darkMode ? "text-[#F0FDF4]" : "text-forest-950"
+                }`}>
+                  SMARTER EXPENSE REIMBURSEMENTS FOR{" "}
+                  <motion.span
+                    className="inline-flex flex-wrap"
+                    variants={letterContainerVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    {Array.from("ENTERPRISE TEAMS").map((char, index) => (
+                      <motion.span
+                        key={index}
+                        variants={letterVariants}
+                        className={
+                          char === " "
+                            ? "inline-block w-[0.25em]"
+                            : "inline-block text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981]"
+                        }
+                      >
+                        {char === " " ? "\u00A0" : char}
+                      </motion.span>
+                    ))}
+                  </motion.span>
+                </h1>
+
+                {/* LEFT-ALIGNED SUBTITLE */}
+                <p className={`text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl ${
+                  darkMode ? "text-[#B6E3C6]" : "text-forest-900/90 font-medium"
+                }`}>
+                  Eliminate friction-heavy expense forms with{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981] font-extrabold">
+                    AI Vision OCR
+                  </span>
+                  , configurable multi-tier approvals, and real-time Socket.io dispatch — from receipt snap to payout in seconds.
+                </p>
+
+                {/* EDITORIAL PILL CTAS */}
+                <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4">
+                  <Link
+                    to="/signup"
+                    className="px-8 py-4 rounded-full bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-sm shadow-xl shadow-forest-900/20 active:scale-95 transition-all flex items-center justify-center gap-2.5 group"
+                  >
+                    <span>Get Started Free</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+
+                  <a
+                    href="#hero-showcase"
+                    onClick={(e) => scrollToSection("showcase", e)}
+                    className={`px-7 py-4 rounded-full font-bold text-sm border backdrop-blur-md active:scale-95 transition-all flex items-center justify-center gap-2 ${
+                      darkMode 
+                        ? "bg-[#0B2317]/80 border-[#18492C] text-emerald-100 hover:bg-[#103321]" 
+                        : "bg-white/80 border-[#E2DAD0] text-forest-950 hover:bg-white shadow-xs"
+                    }`}
+                  >
+                    <span>Take Product Tour</span>
+                    <ChevronRight className="w-4 h-4 text-forest-700 dark:text-emerald-400" />
+                  </a>
                 </div>
 
-                {/* STACKED ARTIFACT COMPOSITION */}
-                {heroViewMode === "stacked" ? (
-                  <div className="relative min-h-[380px] sm:min-h-[420px] flex items-center justify-center p-2">
-                    
-                    {/* BACK LAYER: OCR RECEIPT SCANNER */}
-                    <div 
-                      onClick={() => setActiveModalImage("/assets/screenshots/ocr-receipt-scanner.png")}
-                      className={`absolute left-0 top-2 w-[82%] sm:w-[340px] rounded-2xl p-2 border cursor-pointer transition-all duration-500 transform -rotate-6 hover:rotate-0 hover:z-30 hover:scale-105 shadow-xl ${
-                        darkMode ? "bg-[#0A2617]/95 border-emerald-600/50 shadow-2xl shadow-emerald-950/80" : "bg-white border-[#E2DAD0] shadow-forest-900/10"
-                      }`}
-                      style={{ zIndex: 10 }}
-                    >
-                      <div className="p-1.5 border-b border-[#EFEBE4] dark:border-[#154628] flex justify-between items-center text-[10px] font-mono">
-                        <span className="font-bold text-forest-700 dark:text-emerald-200">LAYER 01: AI Vision Receipt OCR</span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#E8F4EC] dark:bg-emerald-950 dark:border dark:border-emerald-700/40 text-[#0F5A33] dark:text-emerald-300 font-bold">Scanning</span>
-                      </div>
-                      <img 
-                        src="/assets/screenshots/ocr-receipt-scanner.png" 
-                        alt="OCR Receipt Scanner" 
-                        className="w-full h-auto rounded-xl object-cover"
-                      />
-                    </div>
+              </div>
 
-                    {/* FRONT LAYER: MANAGER APPROVAL QUEUE */}
-                    <div 
-                      onClick={() => setActiveModalImage("/assets/screenshots/manager-approval-queue.png")}
-                      className={`absolute right-0 top-12 sm:top-14 w-[86%] sm:w-[360px] rounded-2xl p-2 border cursor-pointer transition-all duration-500 transform rotate-2 hover:rotate-0 hover:z-30 hover:scale-105 shadow-2xl ${
-                        darkMode ? "bg-[#0A2617]/95 border-emerald-600/50 shadow-2xl shadow-emerald-950/80" : "bg-white border-[#E2DAD0] shadow-forest-900/15"
-                      }`}
-                      style={{ zIndex: 20 }}
-                    >
-                      <div className="p-1.5 border-b border-[#EFEBE4] dark:border-[#154628] flex justify-between items-center text-[10px] font-mono">
-                        <span className="font-bold text-forest-700 dark:text-emerald-200">LAYER 02: Expense Verification UI</span>
-                        <span className="px-2 py-0.5 rounded-full bg-forest-700 text-white font-bold">Live</span>
-                      </div>
-                      <img 
-                        src="/assets/screenshots/manager-approval-queue.png" 
-                        alt="Manager Approval Queue" 
-                        className="w-full h-auto rounded-xl object-cover"
-                      />
-                    </div>
-
-                  </div>
-                ) : (
-                  <div className="relative group cursor-pointer my-4" onClick={() => setActiveModalImage("/assets/screenshots/hero-laptop-frame.png")}>
-                    <div className="relative mx-auto overflow-hidden rounded-2xl shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
-                      <img
-                        src="/assets/screenshots/hero-laptop-frame.png"
-                        alt="FlowClaim Product Showcase on Laptop"
-                        className="w-full h-auto object-cover rounded-2xl"
-                        onError={(e) => {
-                          e.target.src = "/assets/screenshots/hero-laptop-dashboard.png";
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* FLOATING FINTECH CONFIRMATION CALLOUT CARD WITH REAL FINTECH GRAPHIC */}
+              {/* RIGHT COLUMN (~45% width: lg:col-span-5): CLEAN SLEEK FLOATING FINTECH CALLOUT CARD ONLY */}
+              <div className="lg:col-span-5 relative mt-6 lg:mt-0 flex items-center justify-center min-h-[220px]">
                 <div 
-                  className={`absolute -bottom-4 -left-2 sm:-left-6 z-30 p-3.5 sm:p-4 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-105 flex items-center gap-3.5 ${
+                  className={`p-5 sm:p-6 rounded-3xl border shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-105 flex items-center gap-4 ${
                     darkMode 
                       ? "bg-[#0A2617]/95 border-emerald-500/50 text-white shadow-2xl shadow-emerald-950/80 ring-1 ring-emerald-500/30" 
                       : "bg-white/95 border-emerald-200/90 text-forest-950 shadow-forest-900/15 ring-1 ring-emerald-500/10"
@@ -382,29 +429,140 @@ export default function LandingPage() {
                     <img 
                       src="/assets/landing/hero-claim-paid.png" 
                       alt="Claim Paid Receipt" 
-                      className="w-11 h-11 sm:w-12 sm:h-12 object-contain filter drop-shadow-md"
+                      className="w-14 h-14 sm:w-16 sm:h-16 object-contain filter drop-shadow-md"
                     />
                   </div>
 
-                  <div className="space-y-0.5 pr-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-manrope font-extrabold text-xs sm:text-sm tracking-tight">
+                  <div className="space-y-0.5 pr-2 text-left">
+                    <div className="flex items-center gap-2">
+                      <span className="font-manrope font-extrabold text-sm sm:text-base tracking-tight">
                         Claim Verified
                       </span>
                     </div>
-                    <div className="text-[11px] font-medium flex items-center gap-1.5">
-                      <span className="font-bold font-mono text-forest-700 dark:text-emerald-400">$1,240.00</span>
+                    <div className="text-xs font-medium flex items-center gap-2">
+                      <span className="font-bold font-mono text-forest-700 dark:text-emerald-400 text-sm">$1,240.00</span>
                       <span className="text-surface-400">•</span>
                       <span className={darkMode ? "text-emerald-300" : "text-forest-800/90"}>Payout Confirmed</span>
                     </div>
                   </div>
                 </div>
-
               </div>
+
             </div>
 
           </div>
 
+        </div>
+      </section>
+
+      {/* DEDICATED PRODUCT SHOWCASE SECTION DIRECTLY BELOW HERO */}
+      <section id="hero-showcase" className={`py-16 border-t ${
+        darkMode ? "bg-[#05130A] border-emerald-900/40" : "bg-[#F7F4EF] border-[#E2DAD0]"
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 dark:bg-[#103D26] dark:text-[#34D399] border border-forest-600/20 dark:border-[#22663F] inline-block mb-3 shadow-xs">
+              Live Interactive Workspace
+            </span>
+            <h2 className={`font-manrope text-3xl sm:text-4xl font-extrabold tracking-tight ${
+              darkMode ? "text-[#F0FDF4]" : "text-forest-950"
+            }`}>
+              Explore the FlowClaim Interface
+            </h2>
+            <p className={`mt-2 text-sm ${darkMode ? "text-[#B6E3C6]" : "text-forest-900/80 font-medium"}`}>
+              Switch between laptop and stacked layer views to preview AI Vision OCR scanning and manager verification in real time.
+            </p>
+          </div>
+
+          {/* VIEW MODE TOGGLE CAPSULE */}
+          <div className="flex justify-center mb-8">
+            <div className={`p-1.5 rounded-full border inline-flex items-center gap-1.5 shadow-sm ${
+              darkMode ? "bg-[#071B10] border-[#174B2C]" : "bg-[#EAE4DA] border-[#DCD3C5]"
+            }`}>
+              <button
+                onClick={() => setHeroViewMode("stacked")}
+                className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-2 ${
+                  heroViewMode === "stacked"
+                    ? "bg-forest-700 text-white shadow-sm"
+                    : darkMode ? "text-emerald-200/80 hover:text-white" : "text-forest-950 hover:text-black font-semibold"
+                }`}
+              >
+                <Layers className="w-4 h-4" />
+                Stacked Layer View
+              </button>
+              <button
+                onClick={() => setHeroViewMode("laptop")}
+                className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-2 ${
+                  heroViewMode === "laptop"
+                    ? "bg-forest-700 text-white shadow-sm"
+                    : darkMode ? "text-emerald-200/80 hover:text-white" : "text-forest-950 hover:text-black font-semibold"
+                }`}
+              >
+                <Monitor className="w-4 h-4" />
+                Laptop Dashboard
+              </button>
+            </div>
+          </div>
+
+          {/* SHOWCASE DISPLAY CONTAINER */}
+          <div className={`max-w-5xl mx-auto p-6 sm:p-10 rounded-3xl border shadow-xl ${
+            darkMode ? "bg-[#0B2317] border-[#18492C]" : "bg-white border-[#E2DAD0]"
+          }`}>
+            {heroViewMode === "stacked" ? (
+              <div className="relative min-h-[420px] sm:min-h-[460px] flex items-center justify-center p-4">
+                {/* BACK LAYER: OCR RECEIPT SCANNER */}
+                <div 
+                  onClick={() => setActiveModalImage("/assets/screenshots/ocr-receipt-scanner.png")}
+                  className={`absolute left-4 sm:left-12 top-4 w-[85%] sm:w-[420px] rounded-2xl p-2.5 border cursor-pointer transition-all duration-500 transform -rotate-3 hover:rotate-0 hover:z-30 hover:scale-105 shadow-xl ${
+                    darkMode ? "bg-[#0A2617]/95 border-emerald-600/50 shadow-2xl shadow-emerald-950/80" : "bg-white border-[#E2DAD0] shadow-forest-900/10"
+                  }`}
+                  style={{ zIndex: 10 }}
+                >
+                  <div className="p-2 border-b border-[#EFEBE4] dark:border-[#154628] flex justify-between items-center text-xs font-mono">
+                    <span className="font-bold text-forest-700 dark:text-emerald-200">LAYER 01: AI Vision Receipt OCR</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#E8F4EC] dark:bg-emerald-950 dark:border dark:border-emerald-700/40 text-[#0F5A33] dark:text-emerald-300 font-bold">Scanning</span>
+                  </div>
+                  <img 
+                    src="/assets/screenshots/ocr-receipt-scanner.png" 
+                    alt="OCR Receipt Scanner" 
+                    className="w-full h-auto rounded-xl object-cover"
+                  />
+                </div>
+
+                {/* FRONT LAYER: MANAGER APPROVAL QUEUE */}
+                <div 
+                  onClick={() => setActiveModalImage("/assets/screenshots/manager-approval-queue.png")}
+                  className={`absolute right-4 sm:right-12 top-16 sm:top-20 w-[88%] sm:w-[450px] rounded-2xl p-2.5 border cursor-pointer transition-all duration-500 transform rotate-2 hover:rotate-0 hover:z-30 hover:scale-105 shadow-2xl ${
+                    darkMode ? "bg-[#0A2617]/95 border-emerald-600/50 shadow-2xl shadow-emerald-950/80" : "bg-white border-[#E2DAD0] shadow-forest-900/15"
+                  }`}
+                  style={{ zIndex: 20 }}
+                >
+                  <div className="p-2 border-b border-[#EFEBE4] dark:border-[#154628] flex justify-between items-center text-xs font-mono">
+                    <span className="font-bold text-forest-700 dark:text-emerald-200">LAYER 02: Expense Verification UI</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-forest-700 text-white font-bold">Live</span>
+                  </div>
+                  <img 
+                    src="/assets/screenshots/manager-approval-queue.png" 
+                    alt="Manager Approval Queue" 
+                    className="w-full h-auto rounded-xl object-cover"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="relative group cursor-pointer" onClick={() => setActiveModalImage("/assets/screenshots/hero-laptop-frame.png")}>
+                <div className="relative mx-auto overflow-hidden rounded-2xl shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
+                  <img
+                    src="/assets/screenshots/hero-laptop-frame.png"
+                    alt="FlowClaim Product Showcase on Laptop"
+                    className="w-full h-auto object-cover rounded-2xl"
+                    onError={(e) => {
+                      e.target.src = "/assets/screenshots/hero-laptop-dashboard.png";
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
