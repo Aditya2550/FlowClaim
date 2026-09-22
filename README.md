@@ -2,6 +2,8 @@
 
 A production-grade expense reimbursement platform with a configurable, multi-strategy approval engine, strict role-based access control, and real-time notifications.
 
+![FlowClaim Product Landing Workspace](assets/product-landing.png)
+
 Originally built as an 8-hour hackathon prototype, this project has been rebuilt from the ground up: audited for architectural debt, migrated to a managed cloud stack, and hardened with proper authentication, validation, and authorization layers.
 
 ---
@@ -62,7 +64,9 @@ Socket.io pushes real-time updates on every approval-chain transition: the next 
 
 ## Screenshots
 
-_Coming soon_
+| Landing Page Workspace |
+| :---: |
+| ![FlowClaim Landing Page Workspace](assets/product-landing.png) |
 
 ## System Design
 
