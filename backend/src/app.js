@@ -1,4 +1,4 @@
-﻿import cors from "cors";
+import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import compression from "compression";
@@ -12,7 +12,7 @@ import { env } from "./config/env.js";
 const app = express();
 app.use(helmet());
 app.use(compression());
-app.use(cors({ origin: env.FRONTEND_URL }));
+app.use(cors({ origin: env.NODE_ENV === "development" ? true : env.FRONTEND_URL, credentials: true }));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(morgan("dev"));
 app.use(express.json({ limit: "5mb" }));

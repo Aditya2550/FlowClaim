@@ -1,4 +1,4 @@
-﻿import multer from "multer";
+import multer from "multer";
 import { extractReceiptData } from "./ocr.service.js";
 import { ocrResponseSchema } from "./expenses.validator.js";
 import { pool } from "../../config/db.js";
@@ -395,6 +395,7 @@ export async function parseReceipt(req, res) {
 
     return ok(res, 200, validated.data);
   } catch (error) {
+    console.error("OCR Error processing receipt:", error?.message || error);
     return fail(res, 500, error.message || "Failed to process receipt");
   }
 }
