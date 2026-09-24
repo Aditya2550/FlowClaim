@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
+import { Maximize2 } from 'lucide-react';
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
@@ -63,9 +64,13 @@ export default function ScrollExpand({
     const c = propsRef.current;
 
     const e = smoothstep(0, 1, p);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
-    const w = c.startWidth + (100 - c.startWidth) * e;
-    const h = c.startHeight + (100 - c.startHeight) * e;
+    const startW = isMobile ? Math.max(c.startWidth, 84) : c.startWidth;
+    const startH = isMobile ? Math.max(c.startHeight, 52) : c.startHeight;
+
+    const w = startW + (100 - startW) * e;
+    const h = startH + (100 - startH) * e;
     const ix = Math.max(0, (100 - w) / 2);
     const iy = Math.max(0, (100 - h) / 2);
     const r = c.startRadius + (c.endRadius - c.startRadius) * e;
@@ -222,9 +227,31 @@ export default function ScrollExpand({
         <div ref={stageRef} className="sticky top-0 w-full overflow-hidden [--se-title-size:4rem]">
           <div
             ref={frameRef}
-            className="absolute inset-0 [clip-path:inset(21%_29%_21%_29%_round_24px)] [will-change:clip-path]"
+            className="absolute inset-0 [clip-path:inset(21%_29%_21%_29%_round_24px)] [will-change:clip-path] shadow-2xl"
           >
-            {media}
+            {/* MAC BROWSER WINDOW CHROME HEADER */}
+            <div className={`absolute top-0 inset-x-0 h-9 sm:h-10 px-3 sm:px-4 z-30 flex items-center justify-between pointer-events-none backdrop-blur-md border-b transition-colors ${
+              darkMode 
+                ? "bg-[#071C10]/90 border-emerald-800/40 text-emerald-300" 
+                : "bg-white/95 border-[#E2DAD0] text-forest-900"
+            }`}>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FF5F56] inline-block shadow-xs" />
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FFBD2E] inline-block shadow-xs" />
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#27C93F] inline-block shadow-xs" />
+              </div>
+              <div className={`hidden sm:block px-3.5 py-0.5 rounded-full text-[11px] font-mono font-bold tracking-wide border shadow-xs ${
+                darkMode ? "bg-[#05130A] border-emerald-900/50 text-emerald-400" : "bg-[#F7F4EF] border-[#E2DAD0] text-forest-800"
+              }`}>
+                flowclaim.app/employee/expenses
+              </div>
+              <div className="w-6 sm:w-12" />
+            </div>
+
+            <div className="absolute inset-0 pt-10 overflow-hidden">
+              {media}
+            </div>
+
             <div
               ref={scrimRef}
               className={`absolute inset-0 opacity-0 pointer-events-none transition-colors ${
@@ -245,23 +272,35 @@ export default function ScrollExpand({
           {title ? (
             <div
               ref={titleRef}
-              className={`absolute inset-0 flex items-center justify-center m-0 px-[6%] text-center font-manrope font-extrabold leading-none tracking-tight pointer-events-none [will-change:opacity,transform] [font-size:var(--se-title-size)] ${
-                darkMode 
-                  ? "text-[#F0FDF4] [text-shadow:0_2px_24px_rgba(0,0,0,0.6)]" 
-                  : "text-forest-950 [text-shadow:0_2px_20px_rgba(255,255,255,0.9)]"
-              }`}
+              className="absolute inset-0 flex items-center justify-center m-0 px-6 text-center pointer-events-none z-20 [will-change:opacity,transform]"
             >
-              {title}
+              <div
+                className={`px-5 py-2.5 rounded-full backdrop-blur-xl border shadow-xl flex items-center gap-2.5 font-manrope font-extrabold text-sm sm:text-base tracking-tight transition-all duration-300 ${
+                  darkMode 
+                    ? "bg-[#071C10]/95 border-emerald-500/40 text-[#F0FDF4] shadow-emerald-950/70" 
+                    : "bg-white/95 border-[#E2DAD0] text-forest-950 shadow-forest-900/10"
+                }`}
+              >
+                <Maximize2 className="w-4 h-4 text-forest-700 dark:text-emerald-400 stroke-[2.2]" />
+                <span>{title}</span>
+              </div>
             </div>
           ) : null}
           {scrollHint ? (
             <div
               ref={hintRef}
-              className={`absolute inset-x-0 bottom-5 text-center text-[0.8125rem] tracking-[0.02em] font-mono font-bold pointer-events-none [will-change:opacity,transform] ${
-                darkMode ? "text-emerald-300/70" : "text-forest-800/80"
-              }`}
+              className="absolute inset-x-0 bottom-6 flex justify-center pointer-events-none z-20 [will-change:opacity,transform]"
             >
-              {scrollHint}
+              <div
+                className={`px-3.5 py-1.5 rounded-full backdrop-blur-md border text-xs font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-sm ${
+                  darkMode
+                    ? "bg-[#05130A]/90 border-emerald-800/60 text-emerald-300"
+                    : "bg-white/90 border-[#E2DAD0] text-forest-800"
+                }`}
+              >
+                <span>↓</span>
+                <span>{scrollHint}</span>
+              </div>
             </div>
           ) : null}
         </div>

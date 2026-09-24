@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import ScrollExpand from "../components/ui/ScrollExpand";
 import {
   Scan,
@@ -28,6 +28,8 @@ import {
   FileCheck,
   Maximize2,
   Monitor,
+  Menu,
+  X,
 } from "lucide-react";
 
 function GithubIcon({ className = "w-4 h-4" }) {
@@ -110,6 +112,7 @@ export default function LandingPage() {
   // Active navigation section state & hover state (null when in top Hero section)
   const [activeNavSection, setActiveNavSection] = useState(null);
   const [hoveredNav, setHoveredNav] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isManualScrollingRef = React.useRef(false);
 
   // Interactive demo states
@@ -308,7 +311,7 @@ export default function LandingPage() {
             })}
           </motion.nav>
 
-          {/* RIGHT ACTIONS: LIGHT/DARK TOGGLE & AUTH PILLS */}
+          {/* RIGHT ACTIONS: LIGHT/DARK TOGGLE, AUTH PILLS & MOBILE MENU BUTTON */}
           <div className="flex items-center space-x-2 shrink-0">
             <button
               onClick={() => setDarkMode(!darkMode)}
@@ -332,7 +335,7 @@ export default function LandingPage() {
 
             <Link
               to="/login"
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+              className={`hidden sm:inline-flex px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                 darkMode
                   ? "text-emerald-200 hover:text-white hover:bg-white/10"
                   : "text-forest-900 hover:text-black hover:bg-forest-900/10"
@@ -343,13 +346,89 @@ export default function LandingPage() {
 
             <Link
               to="/signup"
-              className="px-5 py-2 rounded-full bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-xs shadow-md shadow-forest-950/20 border border-forest-500/30 flex items-center gap-1.5 active:scale-95 transition-all"
+              className="hidden sm:inline-flex px-5 py-2 rounded-full bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-xs shadow-md shadow-forest-950/20 border border-forest-500/30 items-center gap-1.5 active:scale-95 transition-all"
             >
               Sign Up
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
+
+            {/* Mobile Burger Toggle Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`md:hidden p-2 rounded-full transition-colors ${
+                darkMode
+                  ? "text-emerald-300 hover:bg-emerald-500/20"
+                  : "text-forest-900 hover:bg-forest-600/10"
+              }`}
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className={`md:hidden mt-3 p-5 rounded-3xl border shadow-2xl backdrop-blur-2xl ${
+                darkMode
+                  ? "bg-[#071C10]/95 border-emerald-800/80 text-white"
+                  : "bg-white/95 border-[#E5DDD2] text-forest-950"
+              }`}
+            >
+              <div className="flex flex-col space-y-3 font-manrope font-semibold text-sm">
+                {navLinks.map((item) => (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    onClick={(e) => {
+                      setMobileMenuOpen(false);
+                      scrollToSection(item.id, e);
+                    }}
+                    className={`px-4 py-2.5 rounded-2xl transition-colors ${
+                      darkMode
+                        ? "hover:bg-emerald-500/20 text-emerald-100"
+                        : "hover:bg-forest-600/10 text-forest-900"
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+
+                <div className="pt-3 border-t border-emerald-900/40 flex flex-col gap-2.5">
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`w-full py-2.5 text-center rounded-full font-bold text-xs border ${
+                      darkMode
+                        ? "border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/20"
+                        : "border-forest-600/30 text-forest-900 hover:bg-forest-600/10"
+                    }`}
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full py-2.5 text-center rounded-full bg-forest-700 hover:bg-forest-800 text-white font-extrabold text-xs shadow-md flex items-center justify-center gap-1.5"
+                  >
+                    Sign Up
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* HERO SECTION WITH CINEMATIC PORTRAIT BLUR BACKGROUND & ORGANIC ROUNDED FRAME */}
@@ -517,11 +596,11 @@ export default function LandingPage() {
           alt="FlowClaim AI Receipt OCR Scanning"
           title="See it in action"
           scrollHint="Scroll to expand"
-          startWidth={42}
-          startHeight={58}
+          startWidth={48}
+          startHeight={62}
           startRadius={24}
           endRadius={0}
-          mediaZoom={1.35}
+          mediaZoom={1.0}
           scrollDistance={1.2}
           holdDistance={0.35}
           smoothing={0.1}
