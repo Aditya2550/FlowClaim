@@ -26,7 +26,6 @@ export default function ScrollExpand({
   overlayScrim = 0.45,
   useWindowScroll = true,
   enabled = true,
-  darkMode = false,
   children,
   className = '',
   style,
@@ -66,15 +65,15 @@ export default function ScrollExpand({
     const e = smoothstep(0, 1, p);
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
-    const startW = isMobile ? Math.max(c.startWidth, 84) : c.startWidth;
-    const startH = isMobile ? Math.max(c.startHeight, 52) : c.startHeight;
+    const startW = isMobile ? Math.max(c.startWidth, 88) : c.startWidth;
+    const startH = isMobile ? Math.max(c.startHeight, 56) : c.startHeight;
 
     const w = startW + (100 - startW) * e;
     const h = startH + (100 - startH) * e;
     const ix = Math.max(0, (100 - w) / 2);
     const iy = Math.max(0, (100 - h) / 2);
     const r = c.startRadius + (c.endRadius - c.startRadius) * e;
-    frame.style.clipPath = `inset(${iy}% ${ix}% ${iy}% ${ix}% round ${r}px)`;
+    frame.style.clipPath = `inset(${iy.toFixed(2)}% ${ix.toFixed(2)}% ${iy.toFixed(2)}% ${ix.toFixed(2)}% round ${r}px)`;
 
     media.style.transform = `scale(${c.mediaZoom + (1 - c.mediaZoom) * e})`;
 
@@ -193,7 +192,7 @@ export default function ScrollExpand({
     mediaType === 'video' ? (
       <video
         ref={mediaRef}
-        className="absolute inset-0 w-full h-full object-cover origin-center select-none [will-change:transform]"
+        className="w-full h-full object-cover object-top sm:object-center origin-center select-none [will-change:transform]"
         src={src}
         poster={poster}
         autoPlay
@@ -204,7 +203,7 @@ export default function ScrollExpand({
     ) : (
       <img
         ref={mediaRef}
-        className="absolute inset-0 w-full h-full object-cover origin-center select-none [will-change:transform]"
+        className="w-full h-full object-cover object-top sm:object-center origin-center select-none [will-change:transform]"
         src={src}
         alt={alt}
         draggable={false}
@@ -224,41 +223,31 @@ export default function ScrollExpand({
       {...rest}
     >
       <div ref={trackRef} className="relative w-full">
-        <div ref={stageRef} className="sticky top-0 w-full overflow-hidden [--se-title-size:4rem]">
+        <div ref={stageRef} className="sticky top-0 w-full overflow-hidden flex items-center justify-center [--se-title-size:4rem]">
           <div
             ref={frameRef}
-            className="absolute inset-0 [clip-path:inset(21%_29%_21%_29%_round_24px)] [will-change:clip-path] shadow-2xl"
+            className="absolute inset-0 [will-change:clip-path] shadow-2xl"
           >
             {/* MAC BROWSER WINDOW CHROME HEADER */}
-            <div className={`absolute top-0 inset-x-0 h-9 sm:h-10 px-3 sm:px-4 z-30 flex items-center justify-between pointer-events-none backdrop-blur-md border-b transition-colors ${
-              darkMode 
-                ? "bg-[#071C10]/90 border-emerald-800/40 text-emerald-300" 
-                : "bg-white/95 border-[#E2DAD0] text-forest-900"
-            }`}>
+            <div className="absolute top-0 inset-x-0 h-9 sm:h-10 px-3 sm:px-4 z-30 flex items-center justify-between pointer-events-none backdrop-blur-md border-b transition-colors bg-white/95 border-[#E2DAD0] text-forest-900">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FF5F56] inline-block shadow-xs" />
                 <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FFBD2E] inline-block shadow-xs" />
                 <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#27C93F] inline-block shadow-xs" />
               </div>
-              <div className={`hidden sm:block px-3.5 py-0.5 rounded-full text-[11px] font-mono font-bold tracking-wide border shadow-xs ${
-                darkMode ? "bg-[#05130A] border-emerald-900/50 text-emerald-400" : "bg-[#F7F4EF] border-[#E2DAD0] text-forest-800"
-              }`}>
+              <div className="hidden sm:block px-3.5 py-0.5 rounded-full text-[11px] font-mono font-bold tracking-wide border shadow-xs bg-[#F7F4EF] border-[#E2DAD0] text-forest-800">
                 flowclaim.app/employee/expenses
               </div>
               <div className="w-6 sm:w-12" />
             </div>
 
-            <div className="absolute inset-0 pt-10 overflow-hidden">
+            <div className="absolute inset-0 top-9 sm:top-10 overflow-hidden flex items-center justify-center">
               {media}
             </div>
 
             <div
               ref={scrimRef}
-              className={`absolute inset-0 opacity-0 pointer-events-none transition-colors ${
-                darkMode 
-                  ? "bg-[linear-gradient(to_top,rgba(5,19,10,0.85),rgba(5,19,10,0.3)_45%,rgba(5,19,10,0.5))]"
-                  : "bg-[linear-gradient(to_top,rgba(247,244,239,0.92),rgba(247,244,239,0.35)_45%,rgba(247,244,239,0.55))]"
-              }`}
+              className="absolute inset-0 opacity-0 pointer-events-none transition-colors bg-[linear-gradient(to_top,rgba(247,244,239,0.92),rgba(247,244,239,0.35)_45%,rgba(247,244,239,0.55))]"
             />
             {children ? (
               <div
@@ -274,14 +263,8 @@ export default function ScrollExpand({
               ref={titleRef}
               className="absolute inset-0 flex items-center justify-center m-0 px-6 text-center pointer-events-none z-20 [will-change:opacity,transform]"
             >
-              <div
-                className={`px-5 py-2.5 rounded-full backdrop-blur-xl border shadow-xl flex items-center gap-2.5 font-manrope font-extrabold text-sm sm:text-base tracking-tight transition-all duration-300 ${
-                  darkMode 
-                    ? "bg-[#071C10]/95 border-emerald-500/40 text-[#F0FDF4] shadow-emerald-950/70" 
-                    : "bg-white/95 border-[#E2DAD0] text-forest-950 shadow-forest-900/10"
-                }`}
-              >
-                <Maximize2 className="w-4 h-4 text-forest-700 dark:text-emerald-400 stroke-[2.2]" />
+              <div className="px-5 py-2.5 rounded-full backdrop-blur-xl border shadow-xl flex items-center gap-2.5 font-manrope font-extrabold text-sm sm:text-base tracking-tight transition-all duration-300 bg-white/95 border-[#E2DAD0] text-forest-950 shadow-forest-900/10">
+                <Maximize2 className="w-4 h-4 text-forest-700 stroke-[2.2]" />
                 <span>{title}</span>
               </div>
             </div>
@@ -291,13 +274,7 @@ export default function ScrollExpand({
               ref={hintRef}
               className="absolute inset-x-0 bottom-6 flex justify-center pointer-events-none z-20 [will-change:opacity,transform]"
             >
-              <div
-                className={`px-3.5 py-1.5 rounded-full backdrop-blur-md border text-xs font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-sm ${
-                  darkMode
-                    ? "bg-[#05130A]/90 border-emerald-800/60 text-emerald-300"
-                    : "bg-white/90 border-[#E2DAD0] text-forest-800"
-                }`}
-              >
+              <div className="px-3.5 py-1.5 rounded-full backdrop-blur-md border text-xs font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-sm bg-white/90 border-[#E2DAD0] text-forest-800">
                 <span>↓</span>
                 <span>{scrollHint}</span>
               </div>
