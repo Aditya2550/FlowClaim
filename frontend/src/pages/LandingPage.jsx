@@ -468,7 +468,7 @@ export default function LandingPage() {
                       </span>
                     </div>
                     <div className="text-xs font-medium flex items-center gap-2">
-                      <span className="font-bold font-mono text-forest-700 text-sm">
+                      <span className="font-bold text-forest-700 text-sm tracking-tight">
                         $1,240.00
                       </span>
                       <span className="text-surface-400">•</span>
@@ -490,24 +490,26 @@ export default function LandingPage() {
         className="relative w-full border-t transition-colors bg-[#F7F4EF] border-[#E2DAD0]"
       >
         <ScrollExpand
-          src="/assets/screenshots/ocr-scan-detail.png"
-          alt="FlowClaim AI Receipt OCR Scanning"
-          title="See it in action"
-          scrollHint="Scroll to expand"
+          src="/assets/landing/ocr-workflow-demo.mp4"
+          mediaType="video"
+          poster="/assets/screenshots/ocr-scan-detail.png"
+          alt="FlowClaim AI Receipt OCR Scanning & Reimbursement Workflow"
+          title="See OCR Workflow in Action"
+          scrollHint="Scroll to watch workflow"
           startWidth={48}
           startHeight={62}
           startRadius={24}
           endRadius={0}
           mediaZoom={1.0}
-          scrollDistance={1.2}
-          holdDistance={0.35}
+          scrollDistance={2.5}
+          holdDistance={0.4}
           smoothing={0.1}
           overlayScrim={0.35}
           useWindowScroll={true}
           enabled={true}
         >
           <div className="space-y-4 max-w-2xl mx-auto text-center px-6 py-8 rounded-3xl backdrop-blur-xl border shadow-2xl transition-colors bg-white/90 border-[#E2DAD0] text-forest-950 shadow-forest-900/10">
-            <span className="px-4 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-widest inline-block shadow-xs border bg-forest-600/10 text-forest-700 border-forest-600/20">
+            <span className="px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider inline-block shadow-xs border bg-forest-600/10 text-forest-700 border-forest-600/20">
               AI Vision Receipt OCR
             </span>
             <h2 className="font-manrope text-3xl sm:text-5xl font-extrabold tracking-tight text-forest-950">
@@ -528,7 +530,7 @@ export default function LandingPage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-block mb-3 shadow-xs">
+            <span className="text-xs font-semibold uppercase tracking-wider px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-block mb-3 shadow-xs">
               Live Interactive Workspace
             </span>
             <h2 className="font-manrope text-3xl sm:text-4xl font-extrabold tracking-tight text-forest-950">
@@ -582,7 +584,7 @@ export default function LandingPage() {
                   className="absolute left-4 sm:left-12 top-4 w-[85%] sm:w-[420px] rounded-2xl p-2.5 border cursor-pointer transition-all duration-500 transform -rotate-3 hover:rotate-0 hover:z-30 hover:scale-105 shadow-xl bg-white border-[#E2DAD0] shadow-forest-900/10"
                   style={{ zIndex: 10 }}
                 >
-                  <div className="p-2 border-b border-[#EFEBE4] flex justify-between items-center text-xs font-mono">
+                  <div className="p-2 border-b border-[#EFEBE4] flex justify-between items-center text-xs font-semibold tracking-wide">
                     <span className="font-bold text-forest-700">
                       LAYER 01: AI Vision Receipt OCR
                     </span>
@@ -607,7 +609,7 @@ export default function LandingPage() {
                   className="absolute right-4 sm:right-12 top-16 sm:top-20 w-[88%] sm:w-[450px] rounded-2xl p-2.5 border cursor-pointer transition-all duration-500 transform rotate-2 hover:rotate-0 hover:z-30 hover:scale-105 shadow-2xl bg-white border-[#E2DAD0] shadow-forest-900/15"
                   style={{ zIndex: 20 }}
                 >
-                  <div className="p-2 border-b border-[#EFEBE4] flex justify-between items-center text-xs font-mono">
+                  <div className="p-2 border-b border-[#EFEBE4] flex justify-between items-center text-xs font-semibold tracking-wide">
                     <span className="font-bold text-forest-700">
                       LAYER 02: Expense Verification UI
                     </span>
@@ -655,7 +657,7 @@ export default function LandingPage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-block mb-3 shadow-xs">
+            <span className="text-xs font-semibold uppercase tracking-wider px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-block mb-3 shadow-xs">
               Platform Features
             </span>
             <h2 className="font-manrope text-3xl sm:text-5xl font-extrabold tracking-tight text-forest-950">
@@ -678,7 +680,7 @@ export default function LandingPage() {
                           className="w-full h-full object-contain filter drop-shadow-sm scale-125"
                         />
                       </div>
-                      <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
+                      <span className="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
                         Automated OCR
                       </span>
                     </div>
@@ -697,7 +699,7 @@ export default function LandingPage() {
                         className="w-full h-28 object-cover object-top"
                       />
                     </div>
-                    <div className="flex items-center justify-between text-xs font-mono font-bold text-forest-700">
+                    <div className="flex items-center justify-between text-xs font-medium text-forest-700">
                       <span>Hover or tap to inspect card</span>
                       <RotateCw className="w-3.5 h-3.5 animate-spin-slow" />
                     </div>
@@ -708,7 +710,7 @@ export default function LandingPage() {
                 <div className="h-full flex flex-col justify-between text-left">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 border border-emerald-500/30">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 border border-emerald-500/30">
                         AI Vision Insights
                       </span>
                       <Sparkles className="w-4 h-4 text-emerald-500" />
@@ -762,7 +764,7 @@ export default function LandingPage() {
                           className="w-full h-full object-contain filter drop-shadow-sm scale-125"
                         />
                       </div>
-                      <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
+                      <span className="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
                         Role Security
                       </span>
                     </div>
@@ -781,7 +783,7 @@ export default function LandingPage() {
                         className="w-full h-28 object-cover object-top"
                       />
                     </div>
-                    <div className="flex items-center justify-between text-xs font-mono font-bold text-forest-700">
+                    <div className="flex items-center justify-between text-xs font-medium text-forest-700">
                       <span>Hover or tap to inspect card</span>
                       <RotateCw className="w-3.5 h-3.5 animate-spin-slow" />
                     </div>
@@ -792,7 +794,7 @@ export default function LandingPage() {
                 <div className="h-full flex flex-col justify-between text-left">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 border border-emerald-500/30">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 border border-emerald-500/30">
                         Governance Matrix
                       </span>
                       <ShieldCheck className="w-4 h-4 text-emerald-500" />
@@ -846,7 +848,7 @@ export default function LandingPage() {
                           className="w-full h-full object-contain filter drop-shadow-sm scale-125"
                         />
                       </div>
-                      <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
+                      <span className="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
                         Instant Alerts
                       </span>
                     </div>
@@ -865,7 +867,7 @@ export default function LandingPage() {
                         className="w-full h-28 object-cover object-top"
                       />
                     </div>
-                    <div className="flex items-center justify-between text-xs font-mono font-bold text-forest-700">
+                    <div className="flex items-center justify-between text-xs font-medium text-forest-700">
                       <span>Hover or tap to inspect card</span>
                       <RotateCw className="w-3.5 h-3.5 animate-spin-slow" />
                     </div>
@@ -876,7 +878,7 @@ export default function LandingPage() {
                 <div className="h-full flex flex-col justify-between text-left">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 border border-emerald-500/30">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 border border-emerald-500/30">
                         Socket.io Push Engine
                       </span>
                       <Radio className="w-4 h-4 text-emerald-500" />
@@ -973,7 +975,7 @@ export default function LandingPage() {
 
           {/* ACTIVE ROLE SCREENSHOT DISPLAY */}
           <div className="max-w-5xl mx-auto p-6 sm:p-8 rounded-2xl border bg-white border-[#E2DAD0] shadow-md">
-            <div className="text-xs font-mono text-forest-700 font-bold uppercase mb-1.5">
+            <div className="text-xs text-forest-700 font-bold uppercase tracking-wider mb-1.5">
               Active Workspace: {activeRoleTab.toUpperCase()}
             </div>
 
@@ -1025,7 +1027,7 @@ export default function LandingPage() {
                     alt="Workspace Preview"
                     className="w-full h-auto object-cover group-hover:scale-102 transition-transform duration-300"
                   />
-                  <div className="absolute inset-0 bg-forest-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-mono font-bold">
+                  <div className="absolute inset-0 bg-forest-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold tracking-wider uppercase">
                     Click to Expand Full Screenshot
                   </div>
                 </div>
@@ -1042,7 +1044,7 @@ export default function LandingPage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-block mb-3">
+            <span className="text-xs font-semibold uppercase tracking-wider px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-block mb-3">
               Automated Process
             </span>
             <h2 className="font-manrope text-3xl sm:text-4xl font-extrabold tracking-tight text-forest-950">
@@ -1056,10 +1058,10 @@ export default function LandingPage() {
               <div>
                 {/* STEP CARD HEADER */}
                 <div className="flex items-center justify-between">
-                  <span className="px-3.5 py-1 rounded-full text-xs font-mono font-extrabold bg-forest-700 text-white shadow-xs">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-forest-700 text-white shadow-xs">
                     Step 01
                   </span>
-                  <span className="text-[11px] font-mono font-bold text-forest-700 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-forest-700 uppercase tracking-wider">
                     AI OCR Scan
                   </span>
                 </div>
@@ -1090,10 +1092,10 @@ export default function LandingPage() {
               <div>
                 {/* STEP CARD HEADER */}
                 <div className="flex items-center justify-between">
-                  <span className="px-3.5 py-1 rounded-full text-xs font-mono font-extrabold bg-forest-700 text-white shadow-xs">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-forest-700 text-white shadow-xs">
                     Step 02
                   </span>
-                  <span className="text-[11px] font-mono font-bold text-forest-700 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-forest-700 uppercase tracking-wider">
                     Smart Routing
                   </span>
                 </div>
@@ -1123,10 +1125,10 @@ export default function LandingPage() {
               <div>
                 {/* STEP CARD HEADER */}
                 <div className="flex items-center justify-between">
-                  <span className="px-3.5 py-1 rounded-full text-xs font-mono font-extrabold bg-forest-700 text-white shadow-xs">
+                  <span className="px-3.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-forest-700 text-white shadow-xs">
                     Step 03
                   </span>
-                  <span className="text-[11px] font-mono font-bold text-forest-700 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-forest-700 uppercase tracking-wider">
                     Direct Payout
                   </span>
                 </div>
@@ -1160,7 +1162,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="p-8 sm:p-12 rounded-3xl border shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 bg-white border-[#E2DAD0]">
             <div className="space-y-4 max-w-xl text-left z-10">
-              <span className="text-xs font-mono font-bold uppercase tracking-widest px-3.5 py-1 rounded-full bg-[#E8F4EC] text-[#0F5A33] border border-[#C2E2CE] inline-block">
+              <span className="text-xs font-semibold uppercase tracking-wider px-3.5 py-1 rounded-full bg-[#E8F4EC] text-[#0F5A33] border border-[#C2E2CE] inline-block">
                 Instant Employee Satisfaction
               </span>
               <h2 className="font-manrope text-3xl sm:text-4xl font-extrabold tracking-tight text-forest-950">
@@ -1199,7 +1201,7 @@ export default function LandingPage() {
       >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-[#E8F4EC] text-[#0F5A33] border border-[#C2E2CE] inline-block mb-3">
+            <span className="text-xs font-semibold uppercase tracking-wider px-4 py-1.5 rounded-full bg-[#E8F4EC] text-[#0F5A33] border border-[#C2E2CE] inline-block mb-3">
               Frequently Asked Questions
             </span>
             <h2 className="font-manrope text-3xl sm:text-4xl font-extrabold text-forest-950">
@@ -1276,7 +1278,7 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
           {/* MAIN CTA CONTENT */}
           <div className="space-y-4 max-w-3xl mx-auto">
-            <span className="px-4 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-widest inline-block border shadow-xs bg-forest-600/10 text-forest-700 border-forest-600/20">
+            <span className="px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider inline-block border shadow-xs bg-forest-600/10 text-forest-700 border-forest-600/20">
               Get Started Free
             </span>
             <h2 className="font-manrope text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-forest-950">
@@ -1321,7 +1323,7 @@ export default function LandingPage() {
             />
             <button
               onClick={() => setActiveModalImage(null)}
-              className="absolute top-4 right-4 px-3.5 py-1.5 rounded-full bg-black/80 text-white text-xs font-mono font-bold hover:bg-black border border-white/20"
+              className="absolute top-4 right-4 px-3.5 py-1.5 rounded-full bg-black/80 text-white text-xs font-semibold tracking-wide hover:bg-black border border-white/20"
             >
               Close [ESC]
             </button>
@@ -1363,7 +1365,7 @@ export default function LandingPage() {
 
               {/* LIVE SYSTEM STATUS BADGE */}
               <div className="pt-1">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold border transition-colors bg-forest-600/10 text-forest-700 border-forest-600/20 shadow-xs">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-semibold tracking-wider border transition-colors bg-forest-600/10 text-forest-700 border-forest-600/20 shadow-xs">
                   System Operational • v2.0 Production
                 </div>
               </div>
@@ -1371,7 +1373,7 @@ export default function LandingPage() {
 
             {/* COL 2: PLATFORM FEATURES */}
             <div className="sm:col-span-1 lg:col-span-3 space-y-3">
-              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-forest-700">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-700">
                 Platform Core
               </h4>
               <ul className="space-y-2 text-xs font-medium text-forest-900/80">
@@ -1398,7 +1400,7 @@ export default function LandingPage() {
 
             {/* COL 3: ROLE PORTALS */}
             <div className="sm:col-span-1 lg:col-span-2 space-y-3">
-              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-forest-700">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-700">
                 Role Portals
               </h4>
               <ul className="space-y-2 text-xs font-medium text-forest-900/80">
@@ -1447,7 +1449,7 @@ export default function LandingPage() {
 
             {/* COL 4: ARCHITECTURE & GITHUB */}
             <div className="sm:col-span-2 lg:col-span-3 space-y-3">
-              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-forest-700">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-700">
                 Architecture & Code
               </h4>
               <p className="text-xs text-forest-900/80">
