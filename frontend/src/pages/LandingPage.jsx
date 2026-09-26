@@ -673,11 +673,11 @@ export default function LandingPage() {
                 <div className="h-full flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-5">
-                      <div className="w-16 h-16 sm:w-18 sm:h-18 p-2 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden bg-white border-[#C2E2CE] text-[#0F5A33]">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 p-2 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden bg-white border-[#C2E2CE] text-[#0F5A33]">
                         <img
                           src="/assets/landing/feature-ocr-extract.png"
                           alt="AI OCR Extract Icon"
-                          className="w-full h-full object-contain filter drop-shadow-sm scale-125"
+                          className="w-full h-full object-contain filter drop-shadow-sm scale-135 sm:scale-150"
                         />
                       </div>
                       <span className="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
@@ -757,11 +757,11 @@ export default function LandingPage() {
                 <div className="h-full flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-5">
-                      <div className="w-16 h-16 sm:w-18 sm:h-18 p-2.5 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden bg-white border-[#C2E2CE] text-[#0F5A33]">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 p-2.5 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden bg-white border-[#C2E2CE] text-[#0F5A33]">
                         <img
                           src="/assets/landing/feature-rbac-governance.png"
                           alt="RBAC Governance Seal"
-                          className="w-full h-full object-contain filter drop-shadow-sm scale-125"
+                          className="w-full h-full object-contain filter drop-shadow-sm scale-135 sm:scale-150"
                         />
                       </div>
                       <span className="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
@@ -841,11 +841,11 @@ export default function LandingPage() {
                 <div className="h-full flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-5">
-                      <div className="w-16 h-16 sm:w-18 sm:h-18 p-2 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden bg-white border-[#C2E2CE] text-[#0F5A33]">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 p-2 rounded-2xl flex items-center justify-center shadow-md border transition-transform duration-300 group-hover:scale-105 overflow-hidden bg-white border-[#C2E2CE] text-[#0F5A33]">
                         <img
                           src="/assets/landing/feature-socket-push.png"
                           alt="Socket Push Diagram"
-                          className="w-full h-full object-contain filter drop-shadow-sm scale-125"
+                          className="w-full h-full object-contain filter drop-shadow-sm scale-135 sm:scale-150"
                         />
                       </div>
                       <span className="text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-forest-600/15 text-forest-700 border border-forest-600/30">
