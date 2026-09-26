@@ -40,6 +40,7 @@ export default function ScrollExpand({
   const overlayRef = useRef(null);
   const scrimRef = useRef(null);
   const hintRef = useRef(null);
+  const lastProgressRef = useRef(0);
 
   const propsRef = useRef({});
   propsRef.current = {
@@ -53,10 +54,12 @@ export default function ScrollExpand({
     smoothing,
     overlayScrim,
     useWindowScroll,
-    enabled
+    enabled,
+    mediaType
   };
 
   const applyProgress = useCallback(p => {
+    lastProgressRef.current = p;
     const frame = frameRef.current;
     const media = mediaRef.current;
     if (!frame || !media) return;
@@ -76,6 +79,13 @@ export default function ScrollExpand({
     frame.style.clipPath = `inset(${iy.toFixed(2)}% ${ix.toFixed(2)}% ${iy.toFixed(2)}% ${ix.toFixed(2)}% round ${r}px)`;
 
     media.style.transform = `scale(${c.mediaZoom + (1 - c.mediaZoom) * e})`;
+
+    if (c.mediaType === 'video' && media.duration && !isNaN(media.duration)) {
+      const targetTime = p * media.duration;
+      if (Math.abs(media.currentTime - targetTime) > 0.015) {
+        media.currentTime = targetTime;
+      }
+    }
 
     if (scrimRef.current) scrimRef.current.style.opacity = `${c.overlayScrim * e}`;
 
@@ -195,10 +205,14 @@ export default function ScrollExpand({
         className="w-full h-full object-cover object-top sm:object-center origin-center select-none [will-change:transform]"
         src={src}
         poster={poster}
-        autoPlay
         muted
-        loop
         playsInline
+        preload="auto"
+        onLoadedMetadata={() => {
+          if (mediaRef.current && mediaRef.current.duration) {
+            applyProgress(lastProgressRef.current || 0);
+          }
+        }}
       />
     ) : (
       <img
@@ -235,7 +249,7 @@ export default function ScrollExpand({
                 <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FFBD2E] inline-block shadow-xs" />
                 <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#27C93F] inline-block shadow-xs" />
               </div>
-              <div className="hidden sm:block px-3.5 py-0.5 rounded-full text-[11px] font-mono font-bold tracking-wide border shadow-xs bg-[#F7F4EF] border-[#E2DAD0] text-forest-800">
+              <div className="hidden sm:block px-3.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide border shadow-xs bg-[#F7F4EF] border-[#E2DAD0] text-forest-800">
                 flowclaim.app/employee/expenses
               </div>
               <div className="w-6 sm:w-12" />
@@ -274,7 +288,7 @@ export default function ScrollExpand({
               ref={hintRef}
               className="absolute inset-x-0 bottom-6 flex justify-center pointer-events-none z-20 [will-change:opacity,transform]"
             >
-              <div className="px-3.5 py-1.5 rounded-full backdrop-blur-md border text-xs font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-sm bg-white/90 border-[#E2DAD0] text-forest-800">
+              <div className="px-3.5 py-1.5 rounded-full backdrop-blur-md border text-xs font-semibold tracking-wider flex items-center gap-1.5 shadow-sm bg-white/90 border-[#E2DAD0] text-forest-800">
                 <span>↓</span>
                 <span>{scrollHint}</span>
               </div>

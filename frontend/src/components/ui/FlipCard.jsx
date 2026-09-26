@@ -6,8 +6,8 @@ export default function FlipCard({
   back,
   className = "",
   perspective = 1000,
-  stiffness = 350,
-  damping = 25,
+  stiffness = 160,
+  damping = 22,
   height = "h-72",
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
