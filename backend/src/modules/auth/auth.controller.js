@@ -16,9 +16,39 @@ function signAuthToken(user) {
       jti: randomUUID(),
     },
     env.JWT_SECRET,
-    { expiresIn: "24h" },
+    { expiresIn: "15m" },
   );
 }
+
+function signRefreshToken(user) {
+  const jti = randomUUID();
+  const token = jwt.sign({ userId: user.id, jti }, env.JWT_REFRESH_SECRET, {
+    expiresIn: "7d",
+  });
+  return { token, jti };
+}
+
+const REFRESH_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: env.NODE_ENV !== "development",
+  sameSite: "lax",
+  path: "/api/auth",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
+async function issueTokens(res, user) {
+  const accessToken = signAuthToken(user);
+  const { token: refreshToken, jti } = signRefreshToken(user);
+
+  await redis.set(`refresh:${user.id}:${jti}`, "valid", {
+    ex: 7 * 24 * 60 * 60,
+  });
+  res.cookie("refreshToken", refreshToken, REFRESH_COOKIE_OPTIONS);
+
+  return accessToken;
+}
+
+// New code up here
 
 async function detectCountryCode(countryCodeFromRequest) {
   if (countryCodeFromRequest) return countryCodeFromRequest.toUpperCase();
@@ -88,7 +118,7 @@ export const register = asyncHandler(async (req, res) => {
 
     await query("COMMIT");
 
-    const token = signAuthToken(admin.rows[0]);
+    const token = await issueTokens(res, admin.rows[0]);
     return res.status(201).json({
       token,
       company: company.rows[0],
@@ -109,7 +139,7 @@ export const login = asyncHandler(async (req, res) => {
   const valid = await bcrypt.compare(password, user.password_hash);
   if (!valid) return res.status(401).json({ message: "Invalid credentials" });
 
-  const token = signAuthToken(user);
+  const token = await issueTokens(res, user);
   res.json({
     token,
     user: {
@@ -126,19 +156,52 @@ export const login = asyncHandler(async (req, res) => {
 export const logout = asyncHandler(async (req, res) => {
   const header = req.headers.authorization || "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
-  if (!token) return res.status(400).json({ message: "No token provided" });
-
-  const decoded = jwt.decode(token);
-  if (!decoded?.jti || !decoded?.exp) {
-    return res.status(400).json({ message: "Invalid token" });
+  if (token) {
+    const decoded = jwt.decode(token);
+    if (decoded?.jti && decoded?.exp) {
+      const ttlSeconds = decoded.exp - Math.floor(Date.now() / 1000);
+      if (ttlSeconds > 0) {
+        await redis.set(`blacklist:${decoded.jti}`, "true", { ex: ttlSeconds });
+      }
+    }
   }
 
-  const ttlSeconds = decoded.exp - Math.floor(Date.now() / 1000);
-  if (ttlSeconds > 0) {
-    await redis.set(`blacklist:${decoded.jti}`, "true", { ex: ttlSeconds });
+  const refreshToken = req.cookies?.refreshToken;
+  if (refreshToken) {
+    try {
+      const decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET);
+      await redis.del(`refresh:${decoded.userId}:${decoded.jti}`);
+    } catch {
+      // already invalid/expired — nothing to clean up
+    }
   }
+  res.clearCookie("refreshToken", { path: "/api/auth" });
 
   res.json({ message: "Logged out successfully" });
+});
+
+export const refresh = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+  if (!refreshToken)
+    return res.status(401).json({ message: "No refresh token" });
+
+  let decoded;
+  try {
+    decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET);
+  } catch {
+    return res.status(401).json({ message: "Invalid refresh token" });
+  }
+
+  const key = `refresh:${decoded.userId}:${decoded.jti}`;
+  const valid = await redis.get(key);
+  if (!valid) return res.status(401).json({ message: "Refresh token revoked" });
+
+  const profile = await authModel.findById(decoded.userId);
+  const user = profile.rows[0];
+  if (!user) return res.status(401).json({ message: "User not found" });
+
+  const accessToken = signAuthToken(user);
+  res.json({ token: accessToken });
 });
 
 export const me = asyncHandler(async (req, res) => {
