@@ -5,6 +5,7 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import routes from "./routes/index.js";
+import cookieParser from "cookie-parser";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFound } from "./middleware/notFound.js";
 import { env } from "./config/env.js";
@@ -12,10 +13,16 @@ import { env } from "./config/env.js";
 const app = express();
 app.use(helmet());
 app.use(compression());
-app.use(cors({ origin: env.NODE_ENV === "development" ? true : env.FRONTEND_URL, credentials: true }));
+app.use(
+  cors({
+    origin: env.NODE_ENV === "development" ? true : env.FRONTEND_URL,
+    credentials: true,
+  }),
+);
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(morgan("dev"));
 app.use(express.json({ limit: "5mb" }));
+app.use(cookieParser());
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 app.use("/api", routes);
@@ -23,5 +30,7 @@ app.use("/api/v1", routes);
 
 app.use(notFound);
 app.use(errorHandler);
+
+app.use(express.json({ limit: "5mb" }));
 
 export default app;
