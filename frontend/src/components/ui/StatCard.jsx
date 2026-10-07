@@ -23,8 +23,7 @@ export default function StatCard({
 
   return (
     <div
-      className={`rounded-2xl p-6 transition-all duration-300 ${variantClasses[variant]} ${className}`}
-      style={{ boxShadow: "0 1px 3px rgba(26, 77, 46, 0.04)" }}
+      className={`relative rounded-3xl p-6 transition-all duration-300 border border-surface-200 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-emerald-200 group overflow-hidden ${variantClasses[variant]} ${className}`}
     >
       <div className="flex items-start justify-between mb-4">
         <p
@@ -36,8 +35,8 @@ export default function StatCard({
         </p>
         {Icon && (
           <div
-            className={`p-2 rounded-xl ${
-              variant === "default" ? "bg-surface-100" : "bg-white/10"
+            className={`p-2.5 rounded-2xl transition-colors ${
+              variant === "default" ? "bg-surface-100 group-hover:bg-emerald-50 text-surface-500 group-hover:text-emerald-600" : "bg-white/10"
             }`}
           >
             <Icon className="w-5 h-5" />
