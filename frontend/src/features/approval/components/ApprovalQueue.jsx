@@ -147,11 +147,11 @@ export default function ApprovalQueue() {
                   : "text-red-500";
 
             return (
-              <div key={item.id} className="ethereal-card animate-slide-up">
+              <div key={item.id} className="relative bg-white rounded-3xl p-6 sm:p-8 border border-surface-200 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-200 transition-all duration-300 group animate-slide-up overflow-hidden">
                 {/* Top Row: Employee + ID */}
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-forest-500 flex items-center justify-center text-white font-manrope font-bold text-sm">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-forest-500 to-emerald-600 shadow-md flex items-center justify-center text-white font-manrope font-bold text-sm ring-2 ring-white">
                       {displayName(item)
                         .split(" ")
                         .map((w) => w[0])
@@ -166,7 +166,7 @@ export default function ApprovalQueue() {
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs text-surface-500 bg-surface-100 px-3 py-1.5 rounded-lg font-mono">
+                  <span className="text-xs text-forest-700 bg-emerald-50 px-3 py-1.5 rounded-lg font-mono font-medium border border-emerald-100">
                     ID: #{String(item.id).slice(0, 8)}
                   </span>
                 </div>
@@ -213,7 +213,7 @@ export default function ApprovalQueue() {
                 </div>
 
                 {/* AI Audit Note */}
-                <div className="bg-surface-50 rounded-xl p-4 mb-5">
+                <div className="bg-gradient-to-r from-surface-50 to-white border border-surface-100 rounded-2xl p-5 mb-6">
                   <div className="flex items-center gap-2 mb-1">
                     <Sparkles className="w-3.5 h-3.5 text-forest-500" />
                     <p className="text-[10px] font-bold uppercase tracking-wider text-surface-500">
@@ -228,10 +228,10 @@ export default function ApprovalQueue() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3">
+                <div className="flex gap-4 pt-2 border-t border-surface-100 mt-2">
                   <button
                     onClick={() => setRejectTarget(item)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-surface-100 text-forest-700 font-medium rounded-xl px-6 py-3 hover:bg-surface-200 transition-all text-sm"
+                    className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-600 font-semibold rounded-xl px-6 py-3.5 hover:bg-red-100 hover:shadow-md transition-all text-sm active:scale-95"
                   >
                     <X className="w-4 h-4" />
                     Reject
@@ -239,9 +239,9 @@ export default function ApprovalQueue() {
                   <Button
                     onClick={() => handleApprove(item.id)}
                     loading={actionLoadingId === item.id}
-                    className="flex-1"
+                    className="flex-1 !py-3.5 shadow-[0_4px_15px_rgba(0,255,102,0.25)] hover:shadow-[0_6px_20px_rgba(0,255,102,0.3)] hover:scale-[1.02] transition-all"
                   >
-                    <CheckCircle2 className="w-4 h-4" />
+                    <CheckCircle2 className="w-5 h-5" />
                     Approve
                   </Button>
                 </div>
