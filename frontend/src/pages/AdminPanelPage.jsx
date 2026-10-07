@@ -172,10 +172,14 @@ export default function AdminPanelPage() {
           <span className="text-neon-700">Expense Approvals</span>
         </p>
         <div className="flex items-center justify-between">
-          <h1 className="font-manrope font-bold text-2xl text-forest-900">
+          <h1 className="font-manrope font-bold text-3xl text-forest-900">
             Approval Logic
           </h1>
-          <Button loading={saveLoading} onClick={handleSave} size="sm">
+          <Button 
+            loading={saveLoading} 
+            onClick={handleSave} 
+            className="shadow-[0_4px_15px_rgba(0,255,102,0.25)] hover:shadow-[0_6px_20px_rgba(0,255,102,0.3)] hover:scale-[1.02] transition-all"
+          >
             Save Rule
           </Button>
         </div>
@@ -187,7 +191,7 @@ export default function AdminPanelPage() {
         {/* Left column */}
         <div className="space-y-6">
           {/* Rule type picker */}
-          <div className="ethereal-card">
+          <div className="relative bg-white rounded-3xl p-6 sm:p-8 border border-surface-200 shadow-sm transition-all duration-300">
             <h2 className="font-manrope font-bold text-lg text-forest-900 mb-1">
               Approval Rule Type
             </h2>
@@ -199,15 +203,15 @@ export default function AdminPanelPage() {
                 <button
                   key={type}
                   onClick={() => setRuleType(type)}
-                  className={`text-left p-4 rounded-xl border-2 transition-all ${
+                  className={`text-left p-5 rounded-2xl border-2 transition-all duration-300 hover:shadow-md ${
                     ruleType === type
-                      ? "border-neon bg-neon/5"
-                      : "border-surface-200 hover:border-surface-300"
+                      ? "border-emerald-500 bg-emerald-50/60 shadow-sm ring-4 ring-emerald-500/10 scale-[1.02]"
+                      : "border-surface-200 hover:border-emerald-300 hover:bg-emerald-50/20"
                   }`}
                 >
                   <Icon
-                    className={`w-5 h-5 mb-2 ${
-                      ruleType === type ? "text-neon-700" : "text-surface-400"
+                    className={`w-6 h-6 mb-3 ${
+                      ruleType === type ? "text-emerald-600" : "text-surface-400"
                     }`}
                   />
                   <p className="font-manrope font-semibold text-sm text-forest-900">
@@ -221,7 +225,7 @@ export default function AdminPanelPage() {
 
           {/* Sequential config */}
           {ruleType === "sequential" && (
-            <div className="ethereal-card">
+            <div className="relative bg-white rounded-3xl p-6 sm:p-8 border border-surface-200 shadow-sm transition-all duration-300">
               <h2 className="font-manrope font-bold text-lg text-forest-900 mb-1">
                 Approval Chain
               </h2>
@@ -271,7 +275,7 @@ export default function AdminPanelPage() {
 
           {/* Percentage config */}
           {ruleType === "percentage" && (
-            <div className="ethereal-card">
+            <div className="relative bg-white rounded-3xl p-6 sm:p-8 border border-surface-200 shadow-sm transition-all duration-300">
               <h2 className="font-manrope font-bold text-lg text-forest-900 mb-1">
                 Voting Rule
               </h2>
@@ -319,7 +323,7 @@ export default function AdminPanelPage() {
 
           {/* Hybrid config */}
           {ruleType === "hybrid" && (
-            <div className="ethereal-card">
+            <div className="relative bg-white rounded-3xl p-6 sm:p-8 border border-surface-200 shadow-sm transition-all duration-300">
               <h2 className="font-manrope font-bold text-lg text-forest-900 mb-1">
                 Hybrid Rule
               </h2>
