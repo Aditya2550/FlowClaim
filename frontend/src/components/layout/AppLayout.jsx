@@ -16,6 +16,9 @@ import {
   Search,
   Menu,
   X,
+  Plus,
+  BookOpen,
+  LifeBuoy
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -71,9 +74,11 @@ export default function AppLayout() {
           <h1 className="font-manrope font-bold text-xl text-white leading-tight">
             FlowClaim
           </h1>
-          <p className="text-xs text-white/50 uppercase tracking-widest mt-1 font-semibold">
-            Reimbursement App
-          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <span className="px-2 py-0.5 rounded-md bg-white/10 text-[10px] text-white/80 font-bold uppercase tracking-wider border border-white/5">
+              {user?.role || "Employee"} Workspace
+            </span>
+          </div>
         </div>
         <button
           onClick={() => setMobileMenuOpen(false)}
@@ -82,6 +87,17 @@ export default function AppLayout() {
         >
           <X className="w-6 h-6" />
         </button>
+      </div>
+
+      <div className="px-4 mb-6">
+        <Link
+          to="/expenses"
+          onClick={() => setMobileMenuOpen(false)}
+          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-neon text-forest-900 font-bold shadow-[0_4px_15px_rgba(0,255,102,0.25)] hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all"
+        >
+          <Plus className="w-5 h-5" />
+          New Claim
+        </Link>
       </div>
 
       <nav className="flex-1 px-4 space-y-1">
@@ -109,15 +125,60 @@ export default function AppLayout() {
             </Link>
           );
         })}
+
+        <div className="pt-8 pb-2">
+          <p className="px-4 text-[10px] font-bold uppercase tracking-wider text-white/40 mb-2">
+            Resources
+          </p>
+          <div className="space-y-1">
+            <Link
+              to="#"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <BookOpen className="w-4 h-4" />
+              Company Policy
+            </Link>
+            <Link
+              to="#"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <LifeBuoy className="w-4 h-4" />
+              Help Center
+            </Link>
+          </div>
+        </div>
       </nav>
 
-      <div className="px-4 pb-6 mt-auto">
+      {/* SaaS Feature: Fintech Limit Widget */}
+      <div className="px-4 mt-auto mb-4">
+        <div className="bg-[#0A1A10]/40 rounded-xl p-4 border border-white/5 shadow-inner">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-white/90">Monthly Limit</span>
+            <span className="text-[10px] font-bold text-emerald-400">82%</span>
+          </div>
+          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-2.5">
+            <div className="h-full bg-emerald-400 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.5)]" style={{ width: "82%" }} />
+          </div>
+          <p className="text-[10px] text-white/50 font-medium font-inter">
+            $4,100 of $5,000 used
+          </p>
+        </div>
+      </div>
+
+      <div className="px-4 pb-6 space-y-1">
+        <Link
+          to="#"
+          className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm text-white/70 hover:text-white hover:bg-white/10 transition-all"
+        >
+          <Settings className="w-5 h-5" />
+          Settings
+        </Link>
         <button
           onClick={() => {
             setMobileMenuOpen(false);
             logout();
           }}
-          className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm text-white/50 hover:text-white hover:bg-white/10 transition-all"
+          className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm text-red-300 hover:text-red-200 hover:bg-red-500/10 transition-all"
         >
           <LogOut className="w-5 h-5" />
           Sign Out
@@ -129,8 +190,14 @@ export default function AppLayout() {
   return (
     <div className="flex min-h-screen bg-surface-100">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[260px] bg-forest-500 flex-col flex-shrink-0">
-        {renderNavItems()}
+      <aside className="hidden md:flex w-[260px] bg-gradient-to-b from-forest-500 to-forest-700 flex-col flex-shrink-0 relative overflow-hidden">
+        {/* Sleek Background Patterns */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute bottom-20 left-0 w-48 h-48 bg-emerald-300/10 rounded-full blur-[80px] pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col h-full w-full">
+          {renderNavItems()}
+        </div>
       </aside>
 
       {/* Mobile Drawer Overlay */}
@@ -140,8 +207,14 @@ export default function AppLayout() {
             className="fixed inset-0 bg-forest-950/60 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <aside className="relative w-[280px] max-w-[80vw] bg-forest-500 flex flex-col h-full shadow-2xl z-10 animate-slide-in-left">
-            {renderNavItems()}
+          <aside className="relative w-[280px] max-w-[80vw] bg-gradient-to-b from-forest-500 to-forest-700 flex flex-col h-full shadow-2xl z-10 animate-slide-in-left overflow-hidden">
+            {/* Sleek Background Patterns */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-[80px] pointer-events-none" />
+            <div className="absolute bottom-20 left-0 w-48 h-48 bg-emerald-300/10 rounded-full blur-[80px] pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col h-full w-full">
+              {renderNavItems()}
+            </div>
           </aside>
         </div>
       )}
@@ -187,11 +260,11 @@ export default function AppLayout() {
                 <p className="text-sm font-semibold text-forest-900 font-manrope">
                   {user?.name || "User"}
                 </p>
-                <p className="text-[10px] text-surface-500 uppercase tracking-wider font-semibold">
+                <p className="text-[10px] text-surface-500 uppercase tracking-[0.15em] font-semibold">
                   {user?.title || user?.role || "Employee"}
                 </p>
               </div>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-forest-500 flex items-center justify-center text-white font-manrope font-bold text-xs sm:text-sm">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-forest-600 to-emerald-500 flex items-center justify-center text-white font-manrope font-bold text-xs sm:text-sm shadow-sm ring-2 ring-white">
                 {getInitials(user?.name)}
               </div>
             </div>

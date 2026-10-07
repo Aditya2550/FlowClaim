@@ -132,14 +132,14 @@ function DropZone({ onExtracted }) {
       }}
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
-      className={`relative rounded-2xl p-10 text-center transition-all duration-300 overflow-hidden ${
-        dragging ? "bg-neon/5 border-neon" : "bg-white"
+      className={`relative rounded-3xl p-12 text-center transition-all duration-300 overflow-hidden cursor-pointer group ${
+        dragging ? "bg-emerald-50/50 border-emerald-400 shadow-emerald-500/10" : "bg-white hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-500/5"
       }`}
       style={{
         border: dragging
-          ? "2px dashed #00FF66"
-          : "2px dashed rgba(26, 77, 46, 0.15)",
-        boxShadow: "0 1px 3px rgba(26, 77, 46, 0.04)",
+          ? "2px dashed #34D399"
+          : "2px dashed rgba(26, 77, 46, 0.2)",
+        boxShadow: dragging ? "0 8px 32px rgba(16, 185, 129, 0.1)" : "0 4px 20px rgba(26, 77, 46, 0.04)",
       }}
     >
       <input
@@ -153,14 +153,14 @@ function DropZone({ onExtracted }) {
 
       <div className="flex flex-col items-center gap-4">
         <div
-          className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
-            scanning ? "bg-neon/10 animate-float" : "bg-surface-100"
+          className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm ${
+            scanning ? "bg-emerald-100 animate-float" : "bg-forest-50 group-hover:bg-forest-100 group-hover:scale-110"
           }`}
         >
           {scanning ? (
-            <FileSearch className="w-7 h-7 text-neon-700 animate-pulse-slow" />
+            <FileSearch className="w-8 h-8 text-emerald-600 animate-pulse-slow" />
           ) : (
-            <ArrowUpCircle className="w-7 h-7 text-forest-400" />
+            <ArrowUpCircle className="w-8 h-8 text-forest-600 group-hover:text-forest-800 transition-colors" />
           )}
         </div>
 
@@ -182,7 +182,7 @@ function DropZone({ onExtracted }) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="btn-neon text-sm !px-5 !py-2.5 flex items-center gap-2"
+              className="px-6 py-3 rounded-xl font-semibold text-sm bg-forest-900 text-white hover:bg-forest-800 hover:shadow-xl hover:shadow-forest-900/20 active:scale-95 flex items-center gap-2 transition-all"
             >
               <Plus className="w-4 h-4" />
               Select Files
