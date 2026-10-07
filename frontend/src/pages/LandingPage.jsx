@@ -32,6 +32,21 @@ import {
   X,
   RotateCw,
 } from "lucide-react";
+function TwitterIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M13.6823 10.6218L20.2391 3H18.6854L12.9921 9.61788L8.44486 3H3.2002L10.0765 13.0074L3.2002 21H4.75404L10.7663 14.0113L15.5685 21H20.8131L13.6819 10.6218H13.6823ZM11.5541 13.0956L10.8574 12.0991L5.31391 4.16971H7.70053L12.1742 10.5689L12.8709 11.5655L18.6861 19.8835H16.2995L11.5541 13.096V13.0956Z"/>
+    </svg>
+  );
+}
+
+function LinkedinIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path fillRule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clipRule="evenodd" />
+    </svg>
+  );
+}
 
 function GithubIcon({ className = "w-4 h-4" }) {
   return (
@@ -373,7 +388,7 @@ export default function LandingPage() {
       <section className="pt-6 pb-16 md:pt-8 md:pb-24">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           {/* ROUNDED HERO CANVAS FRAME */}
-          <div className="relative overflow-hidden rounded-3xl sm:rounded-[40px] border shadow-2xl transition-all duration-300 p-6 sm:p-10 lg:p-14 bg-[#FAF7F2] border-[#E5DDD2] shadow-forest-900/10">
+          <div className="relative overflow-hidden rounded-3xl sm:rounded-[40px] border shadow-2xl transition-all duration-300 p-6 sm:p-10 lg:px-16 lg:py-24 min-h-[65vh] flex flex-col justify-center bg-[#FAF7F2] border-[#E5DDD2] shadow-forest-900/10">
             {/* REAL-WORLD PORTRAIT BLUR BACKGROUND IMAGE WITH ADAPTIVE GRADIENT MASK */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
               <img
@@ -389,15 +404,15 @@ export default function LandingPage() {
               {/* LEFT COLUMN (~55% width: lg:col-span-7) */}
               <div className="lg:col-span-7 text-left space-y-6">
                 {/* BOLD LEFT-ALIGNED HEADLINE WITH LETTER-BY-LETTER ANIMATION */}
-                <h1 className="font-manrope text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-forest-950">
-                  Smarter expense reimbursements for{" "}
+                <h1 className="font-manrope text-4xl sm:text-5xl lg:text-[56px] font-extrabold tracking-tight leading-[1.15] text-forest-950">
+                  Intelligent spend management for{" "}
                   <motion.span
                     className="inline-flex flex-wrap"
                     variants={letterContainerVariants}
                     initial="hidden"
                     animate="visible"
                   >
-                    {"Modern Finance Teams"
+                    {"Modern Enterprises"
                       .split(" ")
                       .map((word, wordIndex) => (
                         <span
@@ -418,15 +433,12 @@ export default function LandingPage() {
                   </motion.span>
                 </h1>
 
-                {/* LEFT-ALIGNED SUBTITLE */}
                 <p className="text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl text-forest-900/90 font-medium">
-                  Eliminate friction-heavy expense forms with{" "}
+                  Eliminate manual expense reporting with{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-forest-500 via-emerald-600 to-[#10B981] font-extrabold">
-                    AI Vision OCR
+                    AI-powered automation
                   </span>
-                  , configurable multi-tier approvals, and real-time Socket.io
-                  dispatch to move claims from receipt snap to payout in
-                  seconds.
+                  . Gain total visibility into corporate spend, accelerate multi-tier approvals, and reimburse employees in seconds.
                 </p>
 
                 {/* EDITORIAL PILL CTAS */}
@@ -451,8 +463,8 @@ export default function LandingPage() {
               </div>
 
               {/* RIGHT COLUMN (~45% width: lg:col-span-5): CLEAN SLEEK FLOATING FINTECH CALLOUT CARD ONLY */}
-              <div className="lg:col-span-5 relative mt-6 lg:mt-0 flex items-center justify-center min-h-[220px]">
-                <div className="p-5 sm:p-6 rounded-3xl border shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-105 flex items-center gap-4 bg-white/95 border-emerald-200/90 text-forest-950 shadow-forest-900/15 ring-1 ring-emerald-500/10">
+              <div className="lg:col-span-5 relative mt-6 lg:mt-0 flex items-center justify-center lg:justify-end min-h-[220px]">
+                <div className="w-full max-w-[340px] p-6 sm:p-7 rounded-3xl border shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-105 flex items-center gap-4 bg-white/95 border-emerald-200/90 text-forest-950 shadow-forest-900/15 ring-1 ring-emerald-500/10">
                   <div className="relative shrink-0">
                     <img
                       src="/assets/landing/hero-claim-paid.png"
@@ -508,17 +520,42 @@ export default function LandingPage() {
           useWindowScroll={true}
           enabled={true}
         >
-          <div className="space-y-4 max-w-2xl mx-auto text-center px-6 py-8 rounded-3xl backdrop-blur-xl border shadow-2xl transition-colors bg-white/90 border-[#E2DAD0] text-forest-950 shadow-forest-900/10">
-            <span className="px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider inline-block shadow-xs border bg-forest-600/10 text-forest-700 border-forest-600/20">
-              AI Vision Receipt OCR
-            </span>
-            <h2 className="font-manrope text-3xl sm:text-5xl font-extrabold tracking-tight text-forest-950">
-              From receipt to reimbursed in seconds
-            </h2>
-            <p className="text-sm sm:text-base leading-relaxed text-forest-900/85 font-medium">
-              Automated receipt scanning, intelligent approval routing, and
-              instant payout dispatch.
-            </p>
+          <div className="space-y-6 max-w-2xl mx-auto text-center px-8 py-10 rounded-3xl backdrop-blur-xl border shadow-2xl transition-colors bg-white/95 border-[#E2DAD0] text-forest-950 shadow-forest-900/15">
+            <div className="space-y-4">
+              <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 shadow-sm border bg-forest-600/10 text-forest-700 border-forest-600/20">
+                <Sparkles className="w-3.5 h-3.5" /> AI Vision Receipt OCR
+              </span>
+              <h2 className="font-manrope text-4xl sm:text-5xl font-extrabold tracking-tight text-forest-950">
+                From receipt to reimbursed in seconds
+              </h2>
+              <p className="text-base leading-relaxed text-forest-900/80 font-medium max-w-lg mx-auto">
+                Automated receipt scanning, intelligent approval routing, and
+                instant payout dispatch powered by multi-modal AI.
+              </p>
+            </div>
+            
+            {/* SAAS FEATURE BULLETS */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 pt-2">
+              <div className="flex items-center gap-2 text-sm font-semibold text-forest-900">
+                <CheckCircle2 className="w-4 h-4 text-forest-600" /> 100% Auto-categorization
+              </div>
+              <div className="flex items-center gap-2 text-sm font-semibold text-forest-900">
+                <CheckCircle2 className="w-4 h-4 text-forest-600" /> Fraud Detection
+              </div>
+              <div className="flex items-center gap-2 text-sm font-semibold text-forest-900">
+                <CheckCircle2 className="w-4 h-4 text-forest-600" /> Instant ERP Sync
+              </div>
+            </div>
+
+            {/* CTA BUTTON */}
+            <div className="pt-4">
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-forest-600 text-white font-bold text-sm hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95"
+              >
+                Start Scanning Free <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </ScrollExpand>
       </section>
@@ -529,43 +566,42 @@ export default function LandingPage() {
         className="py-16 border-t bg-[#F7F4EF] border-[#E2DAD0]"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-10">
-            <span className="text-xs font-semibold uppercase tracking-wider px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-block mb-3 shadow-xs">
-              Live Interactive Workspace
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-flex items-center gap-2 mb-4 shadow-sm">
+              <Monitor className="w-3.5 h-3.5" /> Platform Experience
             </span>
-            <h2 className="font-manrope text-3xl sm:text-4xl font-extrabold tracking-tight text-forest-950">
-              Explore the FlowClaim Interface
+            <h2 className="font-manrope text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-forest-950">
+              An interface designed for speed and control
             </h2>
-            <p className="mt-2 text-sm text-forest-900/80 font-medium">
-              Switch between laptop and stacked layer views to preview AI Vision
-              OCR scanning and manager verification in real time.
+            <p className="mt-4 text-base sm:text-lg text-forest-900/80 font-medium max-w-2xl mx-auto">
+              Experience our lightning-fast dashboard and powerful automation layers, seamlessly designed to give your finance team complete oversight.
             </p>
           </div>
 
           {/* VIEW MODE TOGGLE CAPSULE */}
-          <div className="flex justify-center mb-8">
-            <div className="p-1.5 rounded-full border inline-flex items-center gap-1.5 shadow-sm bg-[#EAE4DA] border-[#DCD3C5]">
+          <div className="flex justify-center mb-10">
+            <div className="p-1.5 rounded-full border inline-flex items-center gap-1.5 shadow-sm bg-white border-[#E2DAD0]">
               <button
                 onClick={() => setHeroViewMode("stacked")}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-2 ${
+                className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-2 ${
                   heroViewMode === "stacked"
-                    ? "bg-forest-700 text-white shadow-sm"
-                    : "text-forest-950 hover:text-black font-semibold"
+                    ? "bg-forest-950 text-white shadow-md transform scale-100"
+                    : "text-forest-900 hover:text-black font-semibold hover:bg-forest-50"
                 }`}
               >
                 <Layers className="w-4 h-4" />
-                Stacked Layer View
+                Automation Engine
               </button>
               <button
                 onClick={() => setHeroViewMode("laptop")}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-2 ${
+                className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 flex items-center gap-2 ${
                   heroViewMode === "laptop"
-                    ? "bg-forest-700 text-white shadow-sm"
-                    : "text-forest-950 hover:text-black font-semibold"
+                    ? "bg-forest-950 text-white shadow-md transform scale-100"
+                    : "text-forest-900 hover:text-black font-semibold hover:bg-forest-50"
                 }`}
               >
                 <Monitor className="w-4 h-4" />
-                Laptop Dashboard
+                Live Dashboard
               </button>
             </div>
           </div>
@@ -626,23 +662,33 @@ export default function LandingPage() {
               </div>
             ) : (
               <div
-                className="relative group cursor-pointer"
+                className="relative group cursor-pointer mx-auto max-w-4xl"
                 onClick={() =>
                   setActiveModalImage(
                     "/assets/screenshots/hero-laptop-frame.png",
                   )
                 }
               >
-                <div className="relative mx-auto overflow-hidden rounded-2xl shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
+                {/* PRESTIGE SAAS GLOW BEHIND LAPTOP */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-forest-400/20 via-emerald-400/10 to-forest-400/20 rounded-[40px] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                
+                <div className="relative mx-auto overflow-hidden rounded-2xl sm:rounded-[24px] shadow-2xl transition-all duration-500 group-hover:-translate-y-2 ring-1 ring-black/5 bg-white">
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent pointer-events-none rounded-2xl z-10"></div>
                   <img
                     src="/assets/screenshots/hero-laptop-frame.png"
                     alt="FlowClaim Product Showcase on Laptop"
-                    className="w-full h-auto object-cover rounded-2xl"
+                    className="w-full h-auto object-cover relative z-0"
                     onError={(e) => {
                       e.target.src =
                         "/assets/screenshots/hero-laptop-dashboard.png";
                     }}
                   />
+                  {/* HOVER OVERLAY BUTTON */}
+                  <div className="absolute inset-0 bg-forest-950/30 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 flex items-center justify-center">
+                    <span className="bg-white text-forest-950 font-extrabold px-6 py-3.5 rounded-full shadow-2xl flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                      <Maximize2 className="w-4 h-4" /> View Full Interface
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
@@ -879,15 +925,15 @@ export default function LandingPage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 border border-emerald-500/30">
-                        Socket.io Push Engine
+                        Real-Time Sync Engine
                       </span>
                       <Radio className="w-4 h-4 text-emerald-500" />
                     </div>
                     <h4 className="font-manrope text-xl font-extrabold text-forest-950">
-                      Instant Queue Refresh
+                      Instant Status Updates
                     </h4>
                     <p className="text-xs leading-relaxed text-forest-900/90">
-                      Approvers and employees receive instant real-time status updates without refreshing their page.
+                      Approvers and employees receive instant real-time status updates without ever refreshing the page.
                     </p>
                     <ul className="space-y-2 pt-1 text-xs font-medium">
                       <li className="flex items-center gap-2 text-forest-800">
@@ -900,7 +946,7 @@ export default function LandingPage() {
                       </li>
                       <li className="flex items-center gap-2 text-forest-800">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        Zero Page Reload Latency
+                        Always-in-Sync Interface
                       </li>
                     </ul>
                   </div>
@@ -928,14 +974,20 @@ export default function LandingPage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-10">
-            <h2 className="font-manrope text-3xl font-extrabold text-forest-950">
-              Explore Role Workspaces
+            <span className="text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full bg-forest-600/10 text-forest-700 border border-forest-600/20 inline-flex items-center gap-2 mb-4 shadow-sm">
+              <ShieldCheck className="w-3.5 h-3.5" /> Role-Based Access
+            </span>
+            <h2 className="font-manrope text-3xl sm:text-4xl font-extrabold text-forest-950">
+              Tailored experiences for every role
             </h2>
+            <p className="mt-4 text-base text-forest-900/80 font-medium max-w-2xl mx-auto">
+              Give your team exactly what they need—nothing more, nothing less. Specialized portals ensure focused execution across the entire company.
+            </p>
           </div>
 
           {/* REFINED ROLE SWITCHER PILL CONTAINER */}
           <div className="flex justify-center mb-10">
-            <div className="p-1.5 rounded-full border flex flex-wrap items-center justify-center gap-1.5 bg-[#EAE4DA] border-[#DCD3C5]">
+            <div className="p-1.5 rounded-full border flex flex-wrap items-center justify-center gap-1.5 bg-white border-[#E2DAD0] shadow-sm">
               {[
                 {
                   id: "analytics",
@@ -1332,12 +1384,12 @@ export default function LandingPage() {
       )}
 
       {/* ENTERPRISE SAAS MULTI-COLUMN FOOTER */}
-      <footer className="pt-16 pb-12 border-t transition-colors bg-white border-[#E2DAD0]">
+      <footer className="pt-20 pb-12 border-t transition-colors bg-white border-[#E2DAD0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* MAIN 4-COLUMN FOOTER GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-[#EFEBE4]">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-[#EFEBE4]">
             {/* COL 1: BRAND & LIVE STATUS */}
-            <div className="sm:col-span-2 lg:col-span-4 space-y-4">
+            <div className="col-span-2 md:col-span-4 lg:col-span-4 space-y-6">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 rounded-lg bg-forest-600 text-white flex items-center justify-center font-bold text-xs shadow-xs border border-forest-500/30">
                   <img
@@ -1357,146 +1409,131 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              <p className="text-xs leading-relaxed max-w-sm text-forest-900/80 font-medium">
-                Enterprise expense reimbursement platform engineered with AI
-                receipt intelligence, 5-tier role access controls, multi-tier
-                approval routing, and instant real-time status sync.
+              <p className="text-sm leading-relaxed max-w-sm text-forest-900/70 font-medium">
+                Enterprise expense reimbursement platform engineered with AI receipt intelligence, granular access controls, and real-time sync. Built for modern financial teams.
               </p>
 
+              {/* SOCIAL LINKS */}
+              <div className="flex items-center gap-4 pt-2">
+                <a href="#" className="w-9 h-9 rounded-full bg-forest-50 border border-[#E2DAD0] flex items-center justify-center text-forest-700 hover:bg-forest-100 hover:text-forest-950 transition-colors">
+                  <TwitterIcon className="w-4 h-4" />
+                </a>
+                <a href="https://www.linkedin.com/in/aditya-valsangkar/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-forest-50 border border-[#E2DAD0] flex items-center justify-center text-forest-700 hover:bg-forest-100 hover:text-forest-950 transition-colors">
+                  <LinkedinIcon className="w-4 h-4" />
+                </a>
+                <a href="https://github.com/Aditya2550" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-forest-50 border border-[#E2DAD0] flex items-center justify-center text-forest-700 hover:bg-forest-100 hover:text-forest-950 transition-colors">
+                  <GithubIcon className="w-4 h-4" />
+                </a>
+              </div>
+
               {/* LIVE SYSTEM STATUS BADGE */}
-              <div className="pt-1">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-semibold tracking-wider border transition-colors bg-forest-600/10 text-forest-700 border-forest-600/20 shadow-xs">
-                  System Operational • v2.0 Production
+              <div className="pt-2">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wider border transition-colors bg-green-50 text-green-700 border-green-200/60 shadow-xs">
+                  <span className="relative flex h-2 w-2">
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
+                  System Operational • v2.0
                 </div>
               </div>
             </div>
 
-            {/* COL 2: PLATFORM FEATURES */}
-            <div className="sm:col-span-1 lg:col-span-3 space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-700">
-                Platform Core
+            {/* COL 2: PRODUCT */}
+            <div className="col-span-1 lg:col-span-2 space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-950">
+                Product
               </h4>
-              <ul className="space-y-2 text-xs font-medium text-forest-900/80">
-                <li className="hover:text-forest-600 transition-colors cursor-pointer hover:underline font-medium">
-                  AI Vision OCR Extraction
+              <ul className="space-y-3 text-sm font-medium text-forest-900/70">
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">Features</a>
                 </li>
-                <li className="hover:text-forest-600 transition-colors cursor-pointer hover:underline font-medium">
-                  5-Level Granular RBAC Matrix
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">Integrations</a>
                 </li>
-                <li className="hover:text-forest-600 transition-colors cursor-pointer hover:underline font-medium">
-                  Configurable Threshold Rules
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">Pricing</a>
                 </li>
-                <li className="hover:text-forest-600 transition-colors cursor-pointer hover:underline font-medium">
-                  Socket.io Real-Time Push
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors flex items-center gap-2">
+                    Changelog
+                    <span className="px-1.5 py-0.5 rounded-md bg-forest-100 text-forest-700 text-[9px] font-bold uppercase tracking-wider">New</span>
+                  </a>
                 </li>
-                <li className="hover:text-forest-600 transition-colors cursor-pointer hover:underline font-medium">
-                  Spend Velocity & Analytics
-                </li>
-                <li className="hover:text-forest-600 transition-colors cursor-pointer hover:underline font-medium">
-                  Finance GST Audit & Payout
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">Documentation</a>
                 </li>
               </ul>
             </div>
 
             {/* COL 3: ROLE PORTALS */}
-            <div className="sm:col-span-1 lg:col-span-2 space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-700">
-                Role Portals
+            <div className="col-span-1 lg:col-span-3 space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-950">
+                Portals
               </h4>
-              <ul className="space-y-2 text-xs font-medium text-forest-900/80">
+              <ul className="space-y-3 text-sm font-medium text-forest-900/70">
                 <li>
-                  <Link
-                    to="/login"
-                    className="hover:text-forest-600 transition-colors hover:underline font-medium"
-                  >
-                    Employee Portal
-                  </Link>
+                  <Link to="/login" className="hover:text-forest-600 transition-colors">Employee Dashboard</Link>
                 </li>
                 <li>
-                  <Link
-                    to="/login"
-                    className="hover:text-forest-600 transition-colors hover:underline font-medium"
-                  >
-                    Manager Queue
-                  </Link>
+                  <Link to="/login" className="hover:text-forest-600 transition-colors">Manager Approval Queue</Link>
                 </li>
                 <li>
-                  <Link
-                    to="/login"
-                    className="hover:text-forest-600 transition-colors hover:underline font-medium"
-                  >
-                    Director Clearance
-                  </Link>
+                  <Link to="/login" className="hover:text-forest-600 transition-colors">Director Clearance</Link>
                 </li>
                 <li>
-                  <Link
-                    to="/login"
-                    className="hover:text-forest-600 transition-colors hover:underline font-medium"
-                  >
-                    Finance Audit
-                  </Link>
+                  <Link to="/login" className="hover:text-forest-600 transition-colors">Finance Audit & Payout</Link>
                 </li>
                 <li>
-                  <Link
-                    to="/login"
-                    className="hover:text-forest-600 transition-colors hover:underline font-medium"
-                  >
-                    Admin Governance
-                  </Link>
+                  <Link to="/login" className="hover:text-forest-600 transition-colors">Admin Governance</Link>
                 </li>
               </ul>
             </div>
 
-            {/* COL 4: ARCHITECTURE & GITHUB */}
-            <div className="sm:col-span-2 lg:col-span-3 space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-700">
-                Architecture & Code
+            {/* COL 4: RESOURCES & COMPANY */}
+            <div className="col-span-2 md:col-span-2 lg:col-span-3 space-y-4">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-forest-950">
+                Company & Legal
               </h4>
-              <p className="text-xs text-forest-900/80">
-                Built with React, Vite, Node.js, Express, PostgreSQL, Redis,
-                Socket.io & Tailwind CSS.
-              </p>
-              <div className="pt-2">
-                <a
-                  href="https://github.com/Aditya2550"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-forest-700 hover:bg-forest-800 text-white font-bold text-xs transition-all shadow-xs active:scale-95"
-                >
-                  <GithubIcon className="w-4 h-4" />
-                  GitHub: Aditya2550
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
+              <ul className="space-y-3 text-sm font-medium text-forest-900/70">
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">About Us</a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">Contact Support</a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">Security Protocol</a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">Terms of Service</a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-forest-600 transition-colors">Privacy Policy</a>
+                </li>
+              </ul>
             </div>
           </div>
 
-          {/* BOTTOM COPYRIGHT & LEGAL BAR WITH REFINED HIGHLIGHT COLORS */}
+          {/* BOTTOM COPYRIGHT BAR */}
           <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium text-center md:text-left">
-            <div className="text-forest-900/90">
-              © 2026{" "}
-              <strong className="text-forest-950 font-extrabold">
+            <div className="text-forest-900/70">
+              © {new Date().getFullYear()}{" "}
+              <strong className="text-forest-950 font-bold">
                 FlowClaim
               </strong>
               .{" "}
-              <span className="text-forest-800/80 font-medium">
-                Designed & Developed by{" "}
-              </span>
-              <strong className="text-forest-900 font-extrabold">
+              Designed & Developed by{" "}
+              <a href="https://github.com/Aditya2550" target="_blank" rel="noopener noreferrer" className="text-forest-900 font-bold hover:text-forest-600 transition-colors">
                 Aditya Valsangkar
-              </strong>
+              </a>
               .
             </div>
 
-            <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-6 gap-y-2 text-xs font-semibold">
-              <span className="transition-colors cursor-pointer hover:underline text-forest-700 hover:text-forest-950">
-                Security Protocol
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-6 gap-y-2 text-forest-900/70">
+              <span className="flex items-center gap-1.5 hover:text-forest-950 transition-colors cursor-pointer">
+                <ShieldCheck className="w-3.5 h-3.5" /> SOC2 Compliant
               </span>
-              <span className="transition-colors cursor-pointer hover:underline text-forest-700 hover:text-forest-950">
-                Audit Logging
-              </span>
-              <span className="transition-colors cursor-pointer hover:underline text-forest-700 hover:text-forest-950">
-                Enterprise Compliance
+              <span className="flex items-center gap-1.5 hover:text-forest-950 transition-colors cursor-pointer">
+                <Lock className="w-3.5 h-3.5" /> 256-bit Encryption
               </span>
             </div>
           </div>
