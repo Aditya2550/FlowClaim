@@ -211,17 +211,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Brand Panel */}
-      <div className="hidden lg:flex lg:w-[480px] bg-forest-500 flex-col justify-between p-12 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-[480px] bg-gradient-to-b from-forest-500 to-forest-700 flex-col justify-between p-12 relative overflow-hidden">
         {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-neon/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-20 left-0 w-48 h-48 bg-neon/5 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/20 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-20 left-0 w-48 h-48 bg-emerald-300/10 rounded-full blur-[80px] pointer-events-none" />
 
         <div className="relative z-10">
           <h1 className="font-manrope font-bold text-3xl text-white leading-tight">
             FlowClaim
           </h1>
-          <p className="text-xs text-white/40 uppercase tracking-[0.3em] mt-2 font-semibold">
-            Reimbursement Management App
+          <p className="text-xs text-white/40 uppercase tracking-[0.2em] mt-2 font-semibold">
+            Intelligent Spend Management
           </p>
         </div>
 
@@ -245,7 +245,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Form Panel */}
-      <div className="flex-1 flex items-center justify-center bg-surface-100 p-8">
+      <div className="flex-1 flex items-center justify-center bg-white p-8">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -254,11 +254,11 @@ export default function LoginPage() {
         >
           {/* Mobile Brand */}
           <div className="lg:hidden mb-10 text-center">
-            <h1 className="font-manrope font-bold text-2xl text-forest-500">
+            <h1 className="font-manrope font-extrabold text-3xl text-forest-950">
               FlowClaim
             </h1>
-            <p className="text-xs text-surface-500 uppercase tracking-widest mt-1">
-              Reimbursement Management App
+            <p className="text-xs text-forest-900/60 uppercase tracking-[0.2em] mt-1.5 font-bold">
+              Intelligent Spend Management
             </p>
           </div>
 
