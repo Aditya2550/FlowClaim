@@ -1,4 +1,4 @@
-﻿import { Router } from "express";
+import { Router } from "express";
 import authRoutes from "../modules/auth/auth.routes.js";
 import userRoutes from "../modules/users/users.routes.js";
 import companyRoutes from "../modules/companies/companies.routes.js";
@@ -6,6 +6,10 @@ import expenseRoutes from "../modules/expenses/expenses.routes.js";
 import analyticsRoutes from "../modules/analytics/analytics.routes.js";
 import notificationRoutes from "../modules/notifications/notifications.routes.js";
 import approvalRulesRoutes from "../modules/approvalRules/approvalRules.routes.js";
+import {
+  currenciesRouter,
+  exchangeRatesRouter,
+} from "../modules/currencies/currencies.routes.js";
 
 //these are routes
 
@@ -17,5 +21,7 @@ router.use("/companies", companyRoutes);
 router.use("/expenses", expenseRoutes);
 router.use("/analytics", analyticsRoutes);
 router.use("/notifications", notificationRoutes);
+router.use("/currencies", currenciesRouter);
+router.use("/exchange-rates", exchangeRatesRouter);
 
 export default router;
