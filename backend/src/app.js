@@ -31,6 +31,4 @@ app.use("/api/v1", routes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.use(express.json({ limit: "5mb" }));
-
 export default app;
