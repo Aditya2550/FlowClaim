@@ -30,4 +30,14 @@ export const approvalRulesModel = {
       [companyId, type, config],
     );
   },
+
+  async countActiveUsersByRole(companyId, role) {
+    const result = await query(
+      `SELECT COUNT(*)::int AS count
+       FROM users
+       WHERE company_id = $1 AND role = $2 AND is_active = TRUE`,
+      [companyId, role],
+    );
+    return Number(result.rows[0]?.count ?? 0);
+  },
 };
