@@ -33,6 +33,7 @@ async function getRoleApprover(companyId, sequenceRole, client) {
          FROM users
          WHERE company_id = $1
              AND role = $2
+             AND is_active = TRUE
          ORDER BY created_at ASC
          LIMIT 1`,
     [companyId, userRole],
@@ -52,6 +53,7 @@ async function getRoleApprovers(companyId, sequenceRole, client) {
          FROM users
          WHERE company_id = $1
              AND role = $2
+             AND is_active = TRUE
          ORDER BY created_at ASC`,
     [companyId, userRole],
   );
