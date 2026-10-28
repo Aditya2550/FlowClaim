@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { approveExpense, rejectExpense } from "../../../api/expenseService.js";
 import { getPending } from "../../../api/approvalService.js";
 import { useSocket } from "../../../hooks/useSocket.js";
@@ -23,11 +24,15 @@ const MERCHANT_ICONS = {
 };
 
 export default function ApprovalQueue() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionLoadingId, setActionLoadingId] = useState(null);
   const [rejectTarget, setRejectTarget] = useState(null);
+  const [highlightedId, setHighlightedId] = useState(null);
+  const [notice, setNotice] = useState("");
 
   const loadPending = useCallback(async () => {
     setLoading(true);
@@ -49,6 +54,40 @@ export default function ApprovalQueue() {
   useEffect(() => {
     loadPending();
   }, [loadPending]);
+
+  useEffect(() => {
+    if (loading) return;
+    const targetExpenseId = searchParams.get("expense");
+    if (!targetExpenseId) return;
+
+    const matched = items.some((item) => item.id === targetExpenseId);
+    if (matched) {
+      setHighlightedId(targetExpenseId);
+      setTimeout(() => {
+        const el = document.getElementById(`expense-card-${targetExpenseId}`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+      const timer = setTimeout(() => {
+        setHighlightedId(null);
+      }, 3000);
+
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.delete("expense");
+          return next;
+        },
+        { replace: true },
+      );
+      return () => clearTimeout(timer);
+    } else {
+      // Instead of leaving the approver on an empty queue, automatically navigate to Approved / Rejected history tab!
+      navigate(
+        `/approval-history?expense=${targetExpenseId}&notice=actioned`,
+        { replace: true },
+      );
+    }
+  }, [loading, items, searchParams, setSearchParams, navigate]);
 
   useSocket({
     onApprovalUpdate: () => {
@@ -120,6 +159,19 @@ export default function ApprovalQueue() {
         </button>
       </div>
 
+      {notice && (
+        <div className="mb-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-sm flex items-center justify-between animate-fade-in shadow-sm">
+          <span>{notice}</span>
+          <button
+            type="button"
+            onClick={() => setNotice("")}
+            className="text-amber-600 hover:text-amber-800 p-1 rounded-lg"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Queue Items */}
       <div className="space-y-4">
         {loading && (
@@ -146,8 +198,18 @@ export default function ApprovalQueue() {
                   ? "text-amber-500"
                   : "text-red-500";
 
+            const isHighlighted = highlightedId === item.id;
+
             return (
-              <div key={item.id} className="relative bg-white rounded-3xl p-6 sm:p-8 border border-surface-200 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-200 transition-all duration-300 group animate-slide-up overflow-hidden">
+              <div
+                key={item.id}
+                id={`expense-card-${item.id}`}
+                className={`relative bg-white rounded-3xl p-6 sm:p-8 border shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 hover:border-emerald-200 transition-all duration-300 group animate-slide-up overflow-hidden ${
+                  isHighlighted
+                    ? "ring-2 ring-forest-500 bg-forest-50/40 border-forest-300"
+                    : "border-surface-200"
+                }`}
+              >
                 {/* Top Row: Employee + ID */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-4">
