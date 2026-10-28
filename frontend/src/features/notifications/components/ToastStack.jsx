@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, Zap } from "lucide-react";
+import { useAuth } from "../../../context/AuthContext.jsx";
+import {
+  getNotificationLabel,
+  getNotificationLink,
+} from "../utils/notificationHelpers.js";
 
 export default function ToastStack({ items = [], onDismiss }) {
   if (!items || items.length === 0) return null;
@@ -17,6 +23,8 @@ function ToastItem({ toast, onDismiss }) {
   const [isExiting, setIsExiting] = useState(false);
   const dismissTimerRef = useRef(null);
   const exitTimerRef = useRef(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     // Start exit animation slightly before the 5s auto-dismiss threshold
@@ -34,7 +42,8 @@ function ToastItem({ toast, onDismiss }) {
     };
   }, [toast.id, onDismiss]);
 
-  const handleManualDismiss = () => {
+  const handleManualDismiss = (e) => {
+    e?.stopPropagation?.();
     if (isExiting) return;
     if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
     if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
@@ -46,12 +55,21 @@ function ToastItem({ toast, onDismiss }) {
   };
 
   const isExpenseSuccess = toast.type === "expense_success";
+  const link = !isExpenseSuccess ? getNotificationLink(toast, user?.role) : null;
+
+  const handleToastClick = () => {
+    if (link) {
+      navigate(link);
+      handleManualDismiss();
+    }
+  };
 
   return (
     <div
-      className={`pointer-events-auto bg-white/95 backdrop-blur-md rounded-2xl px-4.5 py-3.5 flex items-center gap-3.5 border border-forest-500/10 ${
-        isExiting ? "animate-toast-slide-out" : "animate-toast-slide-in"
-      }`}
+      onClick={handleToastClick}
+      className={`pointer-events-auto bg-white/95 backdrop-blur-md rounded-2xl p-4 flex items-center gap-3.5 border border-forest-500/10 ${
+        link ? "cursor-pointer hover:bg-white transition-colors" : ""
+      } ${isExiting ? "animate-toast-slide-out" : "animate-toast-slide-in"}`}
       style={{
         boxShadow:
           "0 12px 32px -4px rgba(26, 77, 46, 0.12), 0 4px 12px rgba(26, 77, 46, 0.04)",
@@ -60,7 +78,7 @@ function ToastItem({ toast, onDismiss }) {
       {isExpenseSuccess ? (
         <FlowClaimLogoAnimated />
       ) : (
-        <div className="p-2 rounded-xl bg-neon-500/10 text-forest-600 border border-neon-500/20 flex-shrink-0">
+        <div className="w-8 h-8 rounded-xl bg-neon-500/10 text-forest-600 border border-neon-500/20 flex items-center justify-center flex-shrink-0">
           <Zap className="w-4 h-4" />
         </div>
       )}
@@ -68,7 +86,9 @@ function ToastItem({ toast, onDismiss }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
           <span className="text-[10px] text-neon-700 font-bold uppercase tracking-wider">
-            {isExpenseSuccess ? "Success" : toast.type || "Update"}
+            {isExpenseSuccess
+              ? "Success"
+              : getNotificationLabel(toast.type)}
           </span>
         </div>
         <p className="text-sm font-medium text-forest-900 leading-snug truncate">
@@ -77,6 +97,7 @@ function ToastItem({ toast, onDismiss }) {
       </div>
 
       <button
+        type="button"
         onClick={handleManualDismiss}
         className="text-surface-400 hover:text-forest-700 hover:bg-forest-50/70 p-1.5 rounded-lg transition-all duration-150 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-neon-400/50"
         aria-label="Dismiss notification"
