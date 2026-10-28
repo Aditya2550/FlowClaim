@@ -18,12 +18,19 @@ import {
   X,
   Plus,
   BookOpen,
-  LifeBuoy
+  LifeBuoy,
+  History,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/approvals", label: "Approvals", icon: FileCheck, roles: ["admin", "manager", "finance", "director"] },
+  { path: "/approvals", label: "Pending Approvals", icon: FileCheck, roles: ["admin", "manager", "finance", "director"] },
+  {
+    path: "/approval-history",
+    label: "Approved / Rejected",
+    icon: History,
+    roles: ["admin", "manager", "finance", "director"],
+  },
   { path: "/expenses", label: "My Expenses", icon: Receipt },
   {
     path: "/analytics",
