@@ -181,11 +181,13 @@ export default function ExpenseForm({ onClose, onSubmitted, initialData }) {
 
       if (onClose) onClose();
     } catch (err) {
-      setError(
+      const msg =
         err?.response?.data?.error ||
-          err?.response?.data?.message ||
-          "Failed to submit expense. Please try again.",
-      );
+        err?.response?.data?.message ||
+        (typeof err?.response?.data === "string" ? err.response.data : "") ||
+        err?.message ||
+        "Failed to submit expense. Please try again.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -308,7 +310,7 @@ export default function ExpenseForm({ onClose, onSubmitted, initialData }) {
           >
             {currencies.map((c) => (
               <option key={c.code} value={c.code}>
-                {c.code} — {c.name}
+                {c.code} - {c.name}
               </option>
             ))}
           </select>

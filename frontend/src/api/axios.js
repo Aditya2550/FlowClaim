@@ -1,4 +1,5 @@
 import axios from "axios";
+import { reconnectSocketIfDisconnected, resetSocket } from "../services/websocketClient.js";
 
 const rawBaseUrl =
   import.meta.env.VITE_API_URL ||
@@ -20,9 +21,11 @@ api.interceptors.request.use((config) => {
 });
 
 function forceLogout() {
+  resetSocket();
   localStorage.removeItem("token");
   localStorage.removeItem("auth_user");
-  if (window.location.pathname !== "/login") {
+  const publicPaths = ["/", "/login", "/signup"];
+  if (!publicPaths.includes(window.location.pathname)) {
     window.location.href = "/login";
   }
 }
@@ -68,6 +71,7 @@ api.interceptors.response.use(
       }
 
       const newToken = await refreshPromise;
+      reconnectSocketIfDisconnected();
       original.headers.Authorization = `Bearer ${newToken}`;
       return api(original);
     } catch (refreshError) {

@@ -44,11 +44,13 @@ export default function ExpenseList({ refreshKey = 0 }) {
       })
       .catch((err) => {
         if (!active) return;
-        setError(
+        const msg =
           err?.response?.data?.error ||
-            err?.response?.data?.message ||
-            "Failed to load expenses",
-        );
+          err?.response?.data?.message ||
+          (typeof err?.response?.data === "string" ? err.response.data : "") ||
+          err?.message ||
+          "Failed to load expenses";
+        setError(msg);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -113,8 +115,8 @@ export default function ExpenseList({ refreshKey = 0 }) {
       )}
 
       {!loading && !error && visibleItems.length === 0 && (
-        <div className="px-6 py-10 text-sm text-surface-500">
-          No expenses yet. Submit your first claim.
+        <div className="px-6 py-10 text-center text-sm text-surface-500">
+          Start your fast expense approval journey by logging an expense above.
         </div>
       )}
 

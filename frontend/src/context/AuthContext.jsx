@@ -12,17 +12,18 @@ import {
   signup as signupRequest,
   logout as logoutRequest,
 } from "../api/authService";
+import { resetSocket, getSocket } from "../services/websocketClient.js";
 
 const AuthContext = createContext(null);
 
 function normalizeUser(rawUser, decoded = null) {
   const user = rawUser || {};
   return {
-    id: user.id || decoded?.userId || null,
+    id: user.id || decoded?.userId || decoded?.id || null,
     name: user.name || user.full_name || "",
     email: user.email || "",
     role: user.role || decoded?.role || null,
-    companyId: user.companyId || user.company_id || decoded?.companyId || null,
+    companyId: user.companyId || user.company_id || decoded?.companyId || decoded?.company_id || null,
     companyCurrency: user.companyCurrency || user.company_currency || null,
   };
 }
@@ -43,6 +44,9 @@ export function AuthProvider({ children }) {
 
     try {
       const decoded = jwtDecode(savedToken);
+      if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+        throw new Error("Token expired");
+      }
       const maybeUser = savedUser ? JSON.parse(savedUser) : null;
       const hydrated = normalizeUser(maybeUser, decoded);
       setToken(savedToken);
@@ -65,6 +69,8 @@ export function AuthProvider({ children }) {
     setUser(normalized);
     localStorage.setItem("token", nextToken);
     localStorage.setItem("auth_user", JSON.stringify(normalized));
+    resetSocket();
+    getSocket();
     return normalized;
   }, []);
 
@@ -100,6 +106,7 @@ export function AuthProvider({ children }) {
     } catch {
       // proceed with client-side cleanup even if server call fails
     } finally {
+      resetSocket();
       setUser(null);
       setToken(null);
       localStorage.removeItem("token");

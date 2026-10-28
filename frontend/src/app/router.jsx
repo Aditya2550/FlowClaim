@@ -13,6 +13,7 @@ import AdminPanelPage from "../pages/AdminPanelPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 import UnauthorizedPage from "../pages/UnauthorizedPage.jsx";
 import MyApprovalsPage from "../pages/MyApprovalsPage.jsx";
+import ApprovalHistoryPage from "../pages/ApprovalHistoryPage.jsx";
 
 function RoleHomeRedirect() {
   const { user } = useAuth();
@@ -79,6 +80,16 @@ export function AppRouter() {
               allowedRoles={["manager", "finance", "director", "admin"]}
             >
               <ApprovalQueuePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/approval-history"
+          element={
+            <ProtectedRoute
+              allowedRoles={["manager", "finance", "director", "admin"]}
+            >
+              <ApprovalHistoryPage />
             </ProtectedRoute>
           }
         />

@@ -1,4 +1,4 @@
-﻿import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env.js";
 import { query } from "../../config/db.js";
@@ -139,6 +139,10 @@ export const login = asyncHandler(async (req, res) => {
   const valid = await bcrypt.compare(password, user.password_hash);
   if (!valid) return res.status(401).json({ message: "Invalid credentials" });
 
+  if (user.is_active === false) {
+    return res.status(403).json({ message: "Account is deactivated" });
+  }
+
   const token = await issueTokens(res, user);
   res.json({
     token,
@@ -199,6 +203,11 @@ export const refresh = asyncHandler(async (req, res) => {
   const profile = await authModel.findById(decoded.userId);
   const user = profile.rows[0];
   if (!user) return res.status(401).json({ message: "User not found" });
+
+  if (user.is_active === false) {
+    await redis.del(key);
+    return res.status(401).json({ message: "Account is deactivated" });
+  }
 
   const accessToken = signAuthToken(user);
   res.json({ token: accessToken });

@@ -46,7 +46,7 @@ export default function RejectModal({ open, expense, onClose, onReject }) {
               Rejecting
             </p>
             <p className="font-manrope font-bold text-sm text-forest-900">
-              {expense.vendor || expense.merchant || "Expense"} —{" "}
+              {expense.vendor || expense.merchant || "Expense"} -{" "}
               {expense.employee?.name || expense.employee_name || "Employee"}
             </p>
             <p className="text-xs text-surface-500 mt-0.5">

@@ -19,7 +19,15 @@ app.use(
     credentials: true,
   }),
 );
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: env.NODE_ENV === "development" ? 2000 : 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many requests, please try again later." },
+  }),
+);
 app.use(morgan("dev"));
 app.use(express.json({ limit: "5mb" }));
 app.use(cookieParser());
