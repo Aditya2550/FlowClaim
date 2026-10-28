@@ -3,7 +3,7 @@ import { extractReceiptData } from "./ocr.service.js";
 import { ocrResponseSchema } from "./expenses.validator.js";
 import { pool } from "../../config/db.js";
 import { notificationsModel } from "../notifications/notifications.model.js";
-import { notifyUser } from "../../services/notification.service.js";
+import { safeNotify } from "../../services/notification.service.js";
 import {
   getApprovalTimeline,
   getCurrentPendingApprover,
@@ -139,15 +139,15 @@ export async function createExpense(req, res) {
 
       const created = await expensesModel.getExpenseWithSteps(expense.id);
 
-      const firstApprover = await getCurrentPendingApprover(expense.id, pool);
-      if (firstApprover) {
-        const note = await notificationsModel.create({
-          userId: firstApprover.id,
+      const pendingApprovers = await getPendingApprovers(expense.id, pool);
+      for (const approver of pendingApprovers) {
+        await safeNotify({
+          userId: approver.id,
           title: "New expense pending your approval",
           body: `${submitter.name || "An employee"} submitted a ${category} expense for ${currency} ${amount}.`,
           expenseId: expense.id,
+          type: "approval_requested",
         });
-        notifyUser(firstApprover.id, note.rows[0]);
       }
 
       return ok(res, 201, created);
@@ -251,23 +251,40 @@ export async function approveExpense(req, res) {
 
       await client.query("COMMIT");
 
-      const nextApprover = await getCurrentPendingApprover(id, pool);
-      if (nextApprover) {
-        const note = await notificationsModel.create({
-          userId: nextApprover.id,
-          title: "Expense pending your approval",
-          body: `${expense.category} expense for ${expense.currency} ${expense.amount} needs your review.`,
-          expenseId: expense.id,
-        });
-        notifyUser(nextApprover.id, note.rows[0]);
-      } else {
-        const note = await notificationsModel.create({
+      try {
+        await notificationsModel.resolveExpenseNotifications(
+          req.user.userId,
+          expense.id,
+        );
+      } catch (err) {
+        console.error("Failed to resolve expense notifications:", err.message);
+      }
+
+      if (engineResult.done && engineResult.status === "approved") {
+        try {
+          await notificationsModel.resolveAllForExpense(expense.id);
+        } catch (err) {
+          console.error(
+            "Failed to resolve all expense notifications:",
+            err.message,
+          );
+        }
+
+        await safeNotify({
           userId: expense.user_id,
           title: "Expense approved",
           body: `Your ${expense.category} expense for ${expense.currency} ${expense.amount} has been fully approved.`,
           expenseId: expense.id,
+          type: "expense_approved",
         });
-        notifyUser(expense.user_id, note.rows[0]);
+      } else if (!engineResult.done && engineResult.nextApproverId) {
+        await safeNotify({
+          userId: engineResult.nextApproverId,
+          title: "Expense pending your approval",
+          body: `${expense.category} expense for ${expense.currency} ${expense.amount} needs your review.`,
+          expenseId: expense.id,
+          type: "approval_requested",
+        });
       }
 
       const updated = await expensesModel.getExpenseWithSteps(id);
@@ -336,13 +353,31 @@ export async function rejectExpense(req, res) {
       );
 
       await client.query("COMMIT");
-      const note = await notificationsModel.create({
+      try {
+        await notificationsModel.resolveExpenseNotifications(
+          req.user.userId,
+          expense.id,
+        );
+      } catch (err) {
+        console.error("Failed to resolve expense notifications:", err.message);
+      }
+
+      try {
+        await notificationsModel.resolveAllForExpense(expense.id);
+      } catch (err) {
+        console.error(
+          "Failed to resolve all expense notifications:",
+          err.message,
+        );
+      }
+
+      await safeNotify({
         userId: expense.user_id,
         title: "Expense rejected",
         body: `Your ${expense.category} expense for ${expense.currency} ${expense.amount} was rejected: ${String(comment).trim()}`,
         expenseId: expense.id,
+        type: "expense_rejected",
       });
-      notifyUser(expense.user_id, note.rows[0]);
       const updated = await expensesModel.getExpenseWithSteps(id);
       const currentPendingApprover = await getCurrentPendingApprover(id, pool);
       const timeline = await getApprovalTimeline(id, pool);
