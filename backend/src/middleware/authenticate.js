@@ -1,4 +1,4 @@
-﻿import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 import { redis } from "../config/redis.js";
 
@@ -28,10 +28,8 @@ export async function authenticate(req, res, next) {
 
   req.user = {
     userId: decoded.userId || decoded.id,
-    id: decoded.userId || decoded.id,
     role: decoded.role,
-    companyId: decoded.companyId,
-    email: decoded.email,
+    companyId: decoded.companyId || decoded.company_id,
   };
   next();
 }
